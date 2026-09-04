@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samson Nguyen — Resume</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1316;
+    --ink: #edebe4;
+    --ink-soft: #9aa1a6;
+    --accent: #86adbd;
+    --line: rgba(255,255,255,0.10);
+    --content-max: 620px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 19px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h3, .label {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+
+  a { color: var(--ink); }
+  a:hover { color: var(--accent); }
+
+  canvas#wave {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    display: block;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 64px 24px 90px 24px;
+  }
+
+  section { margin: 0 0 56px 0; }
+
+  /* Page header */
+  .page-header {
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-header h1 {
+    font-size: clamp(2rem, 8vw, 2.6rem);
+    line-height: 1.15;
+    font-weight: 600;
+    margin: 0 0 14px 0;
+  }
+
+  /* Top utility link (HOME) */
+  .top-links {
+    display: flex;
+    gap: 22px;
+    margin: 16px 0 0 0;
+  }
+
+  .top-link {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ink);
+  }
+
+  .top-link:hover { color: var(--accent); }
+
+  @media (min-width: 700px) {
+    .page-header {
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .top-links { margin: 0; }
+  }
+
+
+  /* PDF viewer */
+  .pdf-frame {
+    width: 100%;
+    height: 640px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #171b1f;
+    display: block;
+  }
+
+  .pdf-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .pdf-actions a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14.5px;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 10px 22px;
+    color: var(--ink);
+    transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+  }
+
+  .pdf-actions a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(134, 173, 189, 0.08);
+  }
+
+  /* Section headers */
+  h2 {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 23px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    margin: 0 0 22px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .resume-section {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    border-radius: 10px;
+  }
+
+  /* Static entries (no toggle affordance) */
+  .entry {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .entry:last-child { border-bottom: none; }
+
+  .entry-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+  }
+
+  .entry-top h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .entry-date {
+    font-family: 'Source Serif 4', serif;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .entry-sub {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  .entry ul {
+    margin: 14px 0 0 0;
+    padding: 0 0 0 18px;
+    color: var(--ink);
+    font-size: 17px;
+  }
+
+  .entry li { margin-bottom: 8px; }
+  .entry li:last-child { margin-bottom: 0; }
+
+  /* Education */
+  #education p { margin: 0; color: var(--ink-soft); }
+  #education .edu-title {
+    color: var(--ink);
+    font-weight: 600;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16.5px;
+  }
+
+  /* Skills */
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .skill-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14.5px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 14px;
+    color: var(--ink-soft);
+  }
+
+  footer {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (min-width: 700px) {
+    body { font-size: 20px; }
+    .content { padding: 90px 24px 110px 24px; }
+    .pdf-frame { height: 760px; }
+  }
+</style>
+</head>
+
+<body>
+
+<canvas id="wave"></canvas>
+
+<div class="content">
+
+  <div class="page-header">
+    <h1>Resume</h1>
+
+    <nav class="top-links">
+      <a href="index.html" class="top-link">Home</a>
+    </nav>
+  </div>
+
+  <section id="pdf-viewer">
+    <div class="pdf-actions">
+      <a href="Samson_Nguyen.pdf" target="_blank" rel="noopener">Open</a>
+      <a href="Samson_Nguyen.pdf" download>Download</a>
+    </div>
+
+    <iframe class="pdf-frame" src="Samson_Nguyen.pdf" title="Samson Nguyen Resume PDF"></iframe>
+  </section>
+
+  <section id="experience" class="resume-section">
+    <h2>Experience</h2>
+
+    <div class="entry">
+      <div class="entry-top">
+        <h3>Design Engineering Intern</h3>
+        <span class="entry-date">May 2026 – Present</span>
+      </div>
+      <div class="entry-sub">Thingz Inc. · Galena, IL</div>
+      <ul>
+        <li>Designed and managed large electrical substations in Autodesk Inventor using point cloud data and engineering drawings to provide a digital twin representative of real-world equipment and environment.</li>
+        <li>Developed models of electrical substation equipment, producing over 1,000 parts and subassemblies.</li>
+        <li>Rapidly created and managed a library of standardized substation parts and assemblies to streamline the CAD modeling process, reducing design and assembly turnaround time from a few hours to mere minutes.</li>
+        <li>Operated 360° LiDAR scanners and cameras to capture point cloud data across entire substations on-site.</li>
+        <li>Prepared weekly reports on modeling insights and progress, contributing to the project timeline.</li>
+        <li>Consistently adhere to modeling principles and requirement standards to ensure proper integration with existing parts, assemblies, and naming conventions.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="education">
+    <h2>Education</h2>
+    <p>
+      <span class="edu-title">Iowa State University</span> —
+      B.S. Mechanical Engineering, 4.00 GPA<br>
+      Expected May 2029 · Ames, Iowa
+    </p>
+  </section>
+
+  <section id="fsae" class="resume-section">
+    <h2>Formula SAE EV</h2>
+
+    <div class="entry">
+      <div class="entry-top">
+        <h3>Suspension Subsystem Member</h3>
+        <span class="entry-date">Sep 2025 – Present</span>
+      </div>
+      <div class="entry-sub">Cyclone Racing · Iowa State University</div>
+      <ul>
+        <li>Independently designed and manufactured a static strain gauge calibrator, involving statics calculations, hands-on tooling experience, and welding, culminating in significant data acquisition for the team's R&amp;D of strain gauges.</li>
+        <li>Created and implemented various 3D-printed jig parts to ensure the precise location of critical suspension components on all four corners of the vehicle, such as the front and rear A-arms, push rods, and tabs.</li>
+        <li>Researched and designed various solutions to connect suspension blade components to the anti-roll bar.</li>
+        <li>Collaborated with external design teams to ensure seamless integration between suspension parts.</li>
+        <li>Analyzed data on bearing options to determine the best solution for the specific use case.</li>
+        <li>Precisely 3D modeled parts to be easily scalable through use of parametric modeling techniques.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="solidworks-club" class="resume-section">
+    <h2>SolidWorks Club</h2>
+
+    <div class="entry">
+      <div class="entry-top">
+        <h3>Sophomore Representative</h3>
+        <span class="entry-date">Aug 2025 – Present</span>
+      </div>
+      <div class="entry-sub">Iowa State University</div>
+      <ul>
+        <li>Obtained SolidWorks CSWP certification through weekly CAD assignments and a rigorous final 3-hour assessment which tested part modeling, design iteration, and assembly skills, scoring a flawless 100%.</li>
+        <li>Elected as Sophomore Representative after first year of membership, demonstrating rapid growth and mentorship.</li>
+        <li>Assisted club members in learning core SolidWorks skills by providing 1-on-1 feedback and accumulated experience.</li>
+        <li>Built a stronger knowledge base within the club by encouraging peer-to-peer learning and hands-on practice.</li>
+        <li>Recruited new members by promoting the club to underclassmen and first-year Mechanical Engineering students, growing engagement with CAD across campus.</li>
+        <li>Review and evaluate engineering drawings in accordance with ASME Y14.5 and GD&amp;T standards.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="projects" class="resume-section">
+    <h2>Projects</h2>
+
+    <div class="entry">
+      <div class="entry-top">
+        <h3>Fishing Pole Holder</h3>
+        <span class="entry-date">Sep – Nov 2025</span>
+      </div>
+      <div class="entry-sub">Personal project</div>
+      <ul>
+        <li>Assessed design requirements and measurements for the product to ensure proper integration.</li>
+        <li>Developed and revised product design using paper sketches and SolidWorks CAD models.</li>
+        <li>Manufactured and constructed final design through use of 3D printing, successfully creating a solution.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="skills">
+    <h2>Skills and Certifications</h2>
+
+    <div class="skills-list">
+      <span class="skill-pill">SolidWorks CSWP</span>
+      <span class="skill-pill">Autodesk Inventor</span>
+      <span class="skill-pill">3D Printing (FDM)</span>
+      <span class="skill-pill">Python</span>
+      <span class="skill-pill">Microsoft Excel</span>
+      <span class="skill-pill">Microsoft Word</span>
+      <span class="skill-pill">Microsoft PowerPoint</span>
+    </div>
+  </section>
+
+  <footer>
+    Samson Nguyen — Mechanical Engineering, Iowa State University
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var canvas = document.getElementById('wave');
+  var ctx = canvas.getContext('2d');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var w, h, dpr;
+  var running = true;
+  var frameId = null; // guards against more than one active RAF chain
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  // ---- Background wave ----
+  var lines = [
+    { y: 0.14, amp: 16, freq: 0.0022, speed: 0.004,  phase: 0.0, p: 0, intensity: 0 },
+    { y: 0.30, amp: 24, freq: 0.0016, speed: 0.0028, phase: 1.4, p: 0, intensity: 0 },
+    { y: 0.46, amp: 13, freq: 0.0028, speed: 0.0052, phase: 3.1, p: 0, intensity: 0 },
+    { y: 0.62, amp: 21, freq: 0.0018, speed: 0.0036, phase: 4.6, p: 0, intensity: 0 },
+    { y: 0.78, amp: 15, freq: 0.0024, speed: 0.0044, phase: 2.2, p: 0, intensity: 0 },
+    { y: 0.92, amp: 18, freq: 0.0020, speed: 0.0032, phase: 5.5, p: 0, intensity: 0 }
+  ];
+
+  function waveY(l, x) {
+    return h * l.y
+      + Math.sin(x * l.freq + l.p + l.phase) * l.amp
+      + Math.sin(x * l.freq * 2.3 - l.p * 0.6 + l.phase) * (l.amp * 0.3);
+  }
+
+  function advanceWave() {
+    for (var i = 0; i < lines.length; i++) lines[i].p += lines[i].speed;
+  }
+
+  function drawWave() {
+    ctx.strokeStyle = 'rgba(134, 173, 189, 0.14)';
+    ctx.lineWidth = 1;
+    for (var i = 0; i < lines.length; i++) {
+      var l = lines[i];
+      ctx.beginPath();
+      for (var x = 0; x <= w; x += 6) {
+        var y = waveY(l, x);
+        if (l.intensity > 0.001 && refPointActive) {
+          var dx = x - refPointX;
+          var gauss = Math.exp(-(dx * dx) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
+          y += l.intensity * gauss * LOCAL_AMP * Math.sin(dx * LOCAL_FREQ + wigglePhase);
+        }
+        y += pulseOffsetForLine(i, x);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+  }
+
+  // ---- Localized frequency bump (cursor proximity, desktop only) ----
+  var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var PROXIMITY_MAX_DIST = 70;
+  var LOCAL_SIGMA = 45;
+  var LOCAL_FREQ = 0.25;
+  var LOCAL_AMP = 30;
+
+  var cursor = { x: 0, y: 0 };
+  var lastMoveTime = 0;
+
+  var refPointActive = false;
+  var refPointX = 0;
+  var refPointY = 0;
+  var wigglePhase = 0;
+
+  if (hoverCapable) {
+    window.addEventListener('mousemove', function (e) {
+      cursor.x = e.clientX;
+      cursor.y = e.clientY;
+      lastMoveTime = performance.now();
+    });
+  }
+
+  function updateProximity() {
+    refPointActive = false;
+
+    if (hoverCapable && lastMoveTime) {
+      refPointX = cursor.x;
+      refPointY = cursor.y;
+      refPointActive = true;
+    }
+
+    for (var i = 0; i < lines.length; i++) {
+      var l = lines[i];
+      var target = 0;
+      if (refPointActive) {
+        var dist = Math.abs(waveY(l, refPointX) - refPointY);
+        var proximity = 1 - Math.min(1, dist / PROXIMITY_MAX_DIST);
+        target = Math.pow(Math.max(0, proximity), 3);
+      }
+      l.intensity += (target - l.intensity) * 0.2;
+      if (l.intensity < 0.001) l.intensity = 0;
+    }
+
+    wigglePhase += 0.35;
+  }
+
+  // ---- Traveling line pulse (click exactly on a line) ----
+  // Both directions are timed to reach their respective screen edge
+  // at the same instant, regardless of distance.
+  var LINE_CLICK_TOLERANCE = 9;
+  var PULSE_DURATION = 60;
+
+  var linePulses = [];
+
+  function spawnLinePulse(lineIndex, originX) {
+    linePulses.push({
+      lineIndex: lineIndex,
+      originX: originX,
+      age: 0,
+      leftDist: originX,
+      rightDist: w - originX
+    });
+  }
+
+  function updateLinePulses() {
+    for (var i = linePulses.length - 1; i >= 0; i--) {
+      var p = linePulses[i];
+      p.age++;
+      if (p.age >= PULSE_DURATION) {
+        linePulses.splice(i, 1);
+      }
+    }
+  }
+
+  function pulseOffsetForLine(lineIndex, x) {
+    var offset = 0;
+    for (var i = 0; i < linePulses.length; i++) {
+      var p = linePulses[i];
+      if (p.lineIndex !== lineIndex) continue;
+
+      var progress = Math.min(1, p.age / PULSE_DURATION);
+      var amp = LOCAL_AMP * Math.max(0, 1 - progress);
+
+      var rightFront = p.originX + p.rightDist * progress;
+      var dxR = x - rightFront;
+      offset += amp * Math.exp(-(dxR * dxR) / (2 * LOCAL_SIGMA * LOCAL_SIGMA))
+                * Math.sin(dxR * LOCAL_FREQ + wigglePhase);
+
+      var leftFront = p.originX - p.leftDist * progress;
+      var dxL = x - leftFront;
+      offset += amp * Math.exp(-(dxL * dxL) / (2 * LOCAL_SIGMA * LOCAL_SIGMA))
+                * Math.sin(dxL * LOCAL_FREQ + wigglePhase);
+    }
+    return offset;
+  }
+
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('a')) return;
+    if (e.target.closest('iframe')) return;
+
+    var bestIdx = -1, bestDiff = Infinity;
+    for (var i = 0; i < lines.length; i++) {
+      var diff = Math.abs(waveY(lines[i], e.clientX) - e.clientY);
+      if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
+    }
+    if (bestIdx !== -1 && bestDiff <= LINE_CLICK_TOLERANCE) {
+      spawnLinePulse(bestIdx, e.clientX);
+    }
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    drawWave();
+  }
+
+  function loop() {
+    if (!running) { frameId = null; return; }
+    advanceWave();
+    updateProximity();
+    updateLinePulses();
+    draw();
+    frameId = requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', function () {
+    resize();
+    if (reduceMotion) draw();
+  });
+
+  document.addEventListener('visibilitychange', function () {
+    running = document.visibilityState === 'visible' && !reduceMotion;
+    if (running && frameId === null) frameId = requestAnimationFrame(loop);
+  });
+
+  resize();
+  if (reduceMotion) {
+    draw();
+  } else {
+    frameId = requestAnimationFrame(loop);
+  }
+})();
+</script>
+
+</body>
+</html>
