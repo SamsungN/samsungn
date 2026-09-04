@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
-
 <style>
   :root {
     --bg: #0f1316;
@@ -35,7 +34,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  h1, h2, h3, .label {
+  h1, h3, .label {
     font-family: 'IBM Plex Mono', 'Courier New', monospace;
   }
 
@@ -68,15 +67,7 @@
     font-size: clamp(2rem, 8vw, 2.6rem);
     line-height: 1.15;
     font-weight: 600;
-    margin: 0 0 10px 0;
-  }
-
-  .hero .meta {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 0.02em;
-    color: var(--ink-soft);
-    margin: 0 0 18px 0;
+    margin: 0 0 14px 0;
   }
 
   .hero .subhead {
@@ -117,17 +108,49 @@
 
   /* Section headers */
   h2 {
-    font-size: 14px;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 21px;
     font-weight: 600;
-    letter-spacing: 0.02em;
-    color: var(--ink-soft);
+    letter-spacing: 0.01em;
+    color: var(--ink);
     margin: 0 0 22px 0;
     padding-bottom: 12px;
     border-bottom: 1px solid var(--line);
+    position: relative;
+    transition: color 0.35s ease;
   }
 
-  #about p { margin: 0 0 16px 0; }
-  #about p:last-child { margin-bottom: 0; }
+  h2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    height: 1px;
+    width: 0%;
+    background: var(--accent);
+    transition: width 0.35s ease;
+  }
+
+  /* Hover / open state — only on sections that contain a toggle */
+  .toggle-section:hover {
+    background: rgba(255,255,255,0.025);
+  }
+
+  .toggle-section:hover h2,
+  .toggle-section.active h2 {
+    color: var(--accent);
+  }
+
+  .toggle-section:hover h2::after,
+  .toggle-section.active h2::after {
+    width: 100%;
+  }
+
+  .toggle-section:hover .plus,
+  .toggle-section.active .plus {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
 
   /* Accordion entries */
   .entry {
@@ -168,15 +191,15 @@
   }
 
   .entry-date {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
     color: var(--ink-soft);
     white-space: nowrap;
   }
 
   .entry-sub {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12.5px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 13.5px;
     color: var(--ink-soft);
     margin-top: 4px;
   }
@@ -192,7 +215,7 @@
     justify-content: center;
     font-size: 14px;
     color: var(--ink-soft);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     margin-top: 2px;
   }
 
@@ -314,7 +337,6 @@
 
   <div class="hero">
     <h1>Sam Nguyen</h1>
-    <div class="meta">Mechanical Engineering · Iowa State University</div>
     <p class="subhead">Building toward a career in space exploration.</p>
 
     <div class="hero-extra" id="heroExtra">
@@ -326,7 +348,7 @@
     </button>
   </div>
 
-  <section id="experience">
+  <section id="experience" class="toggle-section">
     <h2>Experience</h2>
 
     <div class="entry">
@@ -363,7 +385,7 @@
     </p>
   </section>
 
-  <section id="fsae">
+  <section id="fsae" class="toggle-section">
     <h2>Formula SAE EV</h2>
 
     <div class="entry">
@@ -391,7 +413,7 @@
     </div>
   </section>
 
-  <section id="solidworks-club">
+  <section id="solidworks-club" class="toggle-section">
     <h2>SolidWorks Club</h2>
 
     <div class="entry">
@@ -419,7 +441,7 @@
     </div>
   </section>
 
-  <section id="projects">
+  <section id="projects" class="toggle-section">
     <h2>Projects</h2>
 
     <div class="entry">
@@ -517,43 +539,25 @@
 
 <script>
 (function () {
-
   var canvas = document.getElementById('wave');
   var ctx = canvas.getContext('2d');
-
-  var reduceMotion =
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var w, h, dpr;
   var t = 0;
   var running = true;
 
-  /* Active accordion button */
-  var activeButton = null;
-
-  /* Orbit state */
-  var attract = 0;
-  var targetX = 0;
-  var targetY = 0;
-  var orbitRotation = 0;
-
   function resize() {
-
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-
     w = window.innerWidth;
     h = window.innerHeight;
-
     canvas.width = w * dpr;
     canvas.height = h * dpr;
-
     canvas.style.width = w + 'px';
     canvas.style.height = h + 'px';
-
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  /* Background waves */
+  // ---- Background wave ----
   var lines = [
     { y: 0.20, amp: 18, freq: 0.0022, speed: 0.005, phase: 0.0 },
     { y: 0.38, amp: 26, freq: 0.0016, speed: 0.0035, phase: 1.4 },
@@ -563,422 +567,165 @@
   ];
 
   function waveY(l, x) {
-
     return h * l.y
-      + Math.sin(
-          x * l.freq +
-          t * l.speed +
-          l.phase
-        ) * l.amp
-      + Math.sin(
-          x * l.freq * 2.3 -
-          t * l.speed * 0.6 +
-          l.phase
-        ) * (l.amp * 0.3);
+      + Math.sin(x * l.freq + t * l.speed + l.phase) * l.amp
+      + Math.sin(x * l.freq * 2.3 - t * l.speed * 0.6 + l.phase) * (l.amp * 0.3);
   }
 
-
-  /*
-   * 3D ORBIT
-   *
-   * Instead of a flat circle, this is a projected 3D orbital plane.
-   *
-   * The orbit is rotated continuously.
-   * The front half is brighter/thicker.
-   * The rear half is dimmer/thinner.
-   *
-   * There is intentionally NO connection to the background wave.
-   */
-  function drawOrbit(cx, cy) {
-
-    if (attract < 0.001) return;
-
-    var progress = attract;
-
-    /*
-     * Orbit dimensions.
-     * rx = horizontal radius
-     * ry = vertical compression
-     */
-    var rx = 25 * progress;
-    var ry = 9 * progress;
-
-    /*
-     * Tilt of the orbital plane.
-     */
-    var tilt = -0.22;
-
-    /*
-     * Rotation of the entire orbital plane.
-     */
-    var rotation = orbitRotation;
-
-    /*
-     * Number of points used to make the orbit smooth.
-     */
-    var steps = 120;
-
-    /*
-     * Draw the rear half first.
-     * This gives the orbit a sense of depth.
-     */
-    ctx.save();
-
-    ctx.lineCap = 'round';
-
-    /*
-     * BACK HALF
-     */
-    ctx.beginPath();
-
-    for (var i = 0; i <= steps / 2; i++) {
-
-      var theta =
-        Math.PI +
-        (Math.PI * i) / (steps / 2);
-
-      /*
-       * Base 3D orbital coordinates.
-       */
-      var x3d = rx * Math.cos(theta);
-      var y3d = ry * Math.sin(theta);
-
-      /*
-       * Rotate the projected orbital plane.
-       */
-      var x =
-        x3d * Math.cos(tilt) -
-        y3d * Math.sin(tilt);
-
-      var y =
-        x3d * Math.sin(tilt) +
-        y3d * Math.cos(tilt);
-
-      /*
-       * Slowly rotate the orbital plane.
-       */
-      var finalX =
-        x * Math.cos(rotation) -
-        y * Math.sin(rotation);
-
-      var finalY =
-        x * Math.sin(rotation) +
-        y * Math.cos(rotation);
-
-      if (i === 0) {
-        ctx.moveTo(
-          cx + finalX,
-          cy + finalY
-        );
-      } else {
-        ctx.lineTo(
-          cx + finalX,
-          cy + finalY
-        );
-      }
-    }
-
-    ctx.strokeStyle =
-      'rgba(134, 173, 189, ' +
-      (0.20 * progress).toFixed(3) +
-      ')';
-
-    ctx.lineWidth = 0.8;
-
-    ctx.stroke();
-
-
-    /*
-     * FRONT HALF
-     */
-    ctx.beginPath();
-
-    for (var j = 0; j <= steps / 2; j++) {
-
-      var theta2 =
-        (Math.PI * j) / (steps / 2);
-
-      var x3d2 = rx * Math.cos(theta2);
-      var y3d2 = ry * Math.sin(theta2);
-
-      var x2 =
-        x3d2 * Math.cos(tilt) -
-        y3d2 * Math.sin(tilt);
-
-      var y2 =
-        x3d2 * Math.sin(tilt) +
-        y3d2 * Math.cos(tilt);
-
-      var finalX2 =
-        x2 * Math.cos(rotation) -
-        y2 * Math.sin(rotation);
-
-      var finalY2 =
-        x2 * Math.sin(rotation) +
-        y2 * Math.cos(rotation);
-
-      if (j === 0) {
-        ctx.moveTo(
-          cx + finalX2,
-          cy + finalY2
-        );
-      } else {
-        ctx.lineTo(
-          cx + finalX2,
-          cy + finalY2
-        );
-      }
-    }
-
-    ctx.strokeStyle =
-      'rgba(134, 173, 189, ' +
-      (0.65 * progress).toFixed(3) +
-      ')';
-
-    ctx.lineWidth = 1.25;
-
-    ctx.stroke();
-
-    ctx.restore();
-  }
-
-
-  function draw() {
-
-    ctx.clearRect(0, 0, w, h);
-
-    /*
-     * Background wave lines.
-     * These are completely independent of the orbit.
-     */
-    ctx.strokeStyle =
-      'rgba(134, 173, 189, 0.14)';
-
+  function drawWave() {
+    ctx.strokeStyle = 'rgba(134, 173, 189, 0.14)';
     ctx.lineWidth = 1;
-
     for (var i = 0; i < lines.length; i++) {
-
       var l = lines[i];
-
       ctx.beginPath();
-
       for (var x = 0; x <= w; x += 6) {
-
         var y = waveY(l, x);
-
-        if (x === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
-
       ctx.stroke();
     }
+  }
 
-    /*
-     * Draw orbit separately.
-     * No wave-to-orbit line exists.
-     */
-    if (attract > 0.001) {
-      drawOrbit(targetX, targetY);
+  // ---- Radiating aura ----
+  // Only the most-recently-opened toggle radiates. Rings spawn on a
+  // fixed cadence at that toggle's position; when the target changes
+  // (a new toggle opens, or the active one closes), spawning simply
+  // moves to the new target — any rings already in flight keep
+  // expanding and fading on their own, which reads as a clean handoff
+  // with no abrupt cut.
+  var RING_LIFETIME = 90;   // frames
+  var RING_SPAWN_EVERY = 30; // frames — 3 rings coexist at steady state
+  var RING_BASE_R = 11;      // matches the toggle's own radius
+  var RING_MAX_R = 44;
+  var RING_ALPHA = 0.5;
+
+  var rings = [];
+  var framesSinceSpawn = RING_SPAWN_EVERY; // spawn immediately on activation
+  var openStack = [];   // buttons currently open, most-recent last
+  var auraButton = null;
+
+  function currentAuraTarget() {
+    return openStack.length ? openStack[openStack.length - 1] : null;
+  }
+
+  function spawnRing() {
+    if (!auraButton) return;
+    var rect = auraButton.querySelector('.plus').getBoundingClientRect();
+    rings.push({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+      age: 0
+    });
+  }
+
+  function updateAura() {
+    var target = currentAuraTarget();
+    if (target !== auraButton) {
+      auraButton = target;
+      framesSinceSpawn = RING_SPAWN_EVERY; // spawn right away at the new target
+    }
+
+    if (auraButton) {
+      framesSinceSpawn++;
+      if (framesSinceSpawn >= RING_SPAWN_EVERY) {
+        spawnRing();
+        framesSinceSpawn = 0;
+      }
+    }
+
+    for (var i = rings.length - 1; i >= 0; i--) {
+      rings[i].age++;
+      if (rings[i].age > RING_LIFETIME) rings.splice(i, 1);
     }
   }
 
-
-  function updateTarget() {
-
-    if (activeButton) {
-
-      var rect =
-        activeButton
-          .querySelector('.plus')
-          .getBoundingClientRect();
-
-      targetX =
-        rect.left +
-        rect.width / 2;
-
-      targetY =
-        rect.top +
-        rect.height / 2;
+  function drawAura() {
+    for (var i = 0; i < rings.length; i++) {
+      var ring = rings[i];
+      var progress = ring.age / RING_LIFETIME;
+      var r = RING_BASE_R + (RING_MAX_R - RING_BASE_R) * progress;
+      var alpha = RING_ALPHA * (1 - progress);
+      if (alpha <= 0) continue;
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(134, 173, 189, ' + alpha.toFixed(3) + ')';
+      ctx.lineWidth = 1;
+      ctx.arc(ring.x, ring.y, r, 0, Math.PI * 2);
+      ctx.stroke();
     }
   }
 
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    drawWave();
+    drawAura();
+  }
 
   function loop() {
-
     if (!running) return;
-
-    /*
-     * Smooth orbit appearance/disappearance.
-     */
-    var goal =
-      activeButton ? 1 : 0;
-
-    attract +=
-      (goal - attract) * 0.06;
-
-    if (attract < 0.0005) {
-      attract = 0;
-    }
-
-    updateTarget();
-
-    /*
-     * Background wave motion.
-     */
     t += 1;
-
-    /*
-     * Continuous orbital rotation.
-     *
-     * This is deliberately slow so it feels
-     * like a physical orbital plane rather than
-     * a spinning loading icon.
-     */
-    orbitRotation += 0.012;
-
+    updateAura();
     draw();
-
     requestAnimationFrame(loop);
   }
 
-
   window.addEventListener('resize', function () {
-
     resize();
-
-    if (reduceMotion) {
-      draw();
-    }
+    if (reduceMotion) draw();
   });
 
-
-  document.addEventListener(
-    'visibilitychange',
-    function () {
-
-      running =
-        document.visibilityState === 'visible' &&
-        !reduceMotion;
-
-      if (running) {
-        requestAnimationFrame(loop);
-      }
-    }
-  );
-
+  document.addEventListener('visibilitychange', function () {
+    running = document.visibilityState === 'visible' && !reduceMotion;
+    if (running) requestAnimationFrame(loop);
+  });
 
   resize();
-
   if (reduceMotion) {
     draw();
   } else {
     requestAnimationFrame(loop);
   }
 
+  // ---- Toggles (independent, no accordion) ----
+  document.querySelectorAll('.entry-toggle').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var entry = btn.closest('.entry');
+      var section = btn.closest('.toggle-section');
+      var isOpen = entry.classList.contains('open');
 
-  /*
-   * Accordion toggles
-   */
-  document
-    .querySelectorAll('.entry-toggle')
-    .forEach(function (btn) {
+      if (isOpen) {
+        entry.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        entry.querySelector('.entry-detail').style.maxHeight = null;
 
-      btn.addEventListener(
-        'click',
-        function () {
+        var idx = openStack.indexOf(btn);
+        if (idx !== -1) openStack.splice(idx, 1);
+      } else {
+        entry.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        var detail = entry.querySelector('.entry-detail');
+        detail.style.maxHeight = detail.scrollHeight + 'px';
 
-          var entry =
-            btn.closest('.entry');
+        openStack.push(btn);
+      }
 
-          var wasOpen =
-            entry.classList.contains('open');
-
-          /*
-           * Close any currently open entries.
-           */
-          document
-            .querySelectorAll('.entry.open')
-            .forEach(function (e) {
-
-              e.classList.remove('open');
-
-              e.querySelector(
-                '.entry-toggle'
-              ).setAttribute(
-                'aria-expanded',
-                'false'
-              );
-
-              e.querySelector(
-                '.entry-detail'
-              ).style.maxHeight = null;
-            });
-
-
-          /*
-           * Open the clicked entry.
-           */
-          if (!wasOpen) {
-
-            entry.classList.add('open');
-
-            btn.setAttribute(
-              'aria-expanded',
-              'true'
-            );
-
-            var detail =
-              entry.querySelector(
-                '.entry-detail'
-              );
-
-            detail.style.maxHeight =
-              detail.scrollHeight + 'px';
-
-            activeButton = btn;
-
-          } else {
-
-            activeButton = null;
-          }
-        }
-      );
+      if (section) {
+        var stillOpen = section.querySelector('.entry.open');
+        section.classList.toggle('active', !!stillOpen);
+      }
     });
+  });
 
-
-  /*
-   * Hero more/less toggle
-   */
-  var moreBtn =
-    document.getElementById('moreToggle');
-
-  var heroExtra =
-    document.getElementById('heroExtra');
-
-  moreBtn.addEventListener(
-    'click',
-    function () {
-
-      var isOpen =
-        heroExtra.classList.toggle('open');
-
-      moreBtn.textContent =
-        isOpen ? 'less' : 'more';
-
-      moreBtn.setAttribute(
-        'aria-expanded',
-        isOpen ? 'true' : 'false'
-      );
-    }
-  );
-
+  // ---- Hero more/less toggle ----
+  var moreBtn = document.getElementById('moreToggle');
+  var heroExtra = document.getElementById('heroExtra');
+  moreBtn.addEventListener('click', function () {
+    var isOpen = heroExtra.classList.toggle('open');
+    moreBtn.textContent = isOpen ? 'less' : 'more';
+    moreBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
 })();
 </script>
 
 </body>
 </html>
-```
-
