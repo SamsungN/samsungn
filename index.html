@@ -131,25 +131,49 @@
     transition: width 0.35s ease;
   }
 
-  /* Hover / open state — only on sections that contain a toggle */
-  .toggle-section:hover {
-    background: rgba(255,255,255,0.025);
+  /* Widen the tint slightly beyond the text column, with soft corners.
+     Negative margin + equal padding keeps the text position unchanged. */
+  .toggle-section {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    border-radius: 10px;
   }
 
-  .toggle-section:hover h2,
+  /* Persistent while a toggle in the section is open */
   .toggle-section.active h2 {
     color: var(--accent);
   }
 
-  .toggle-section:hover h2::after,
   .toggle-section.active h2::after {
     width: 100%;
   }
 
-  .toggle-section:hover .plus,
   .toggle-section.active .plus {
     color: var(--accent);
     border-color: var(--accent);
+  }
+
+  /* Hover-only effects — scoped to devices with real hover (mouse/trackpad)
+     so touchscreens don't get stuck in a "hovered" state after a tap */
+  @media (hover: hover) and (pointer: fine) {
+    .toggle-section:hover {
+      background: rgba(255,255,255,0.025);
+    }
+
+    .toggle-section:hover h2 {
+      color: var(--accent);
+    }
+
+    .toggle-section:hover h2::after {
+      width: 100%;
+    }
+
+    .toggle-section:hover .plus {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
   }
 
   /* Accordion entries */
