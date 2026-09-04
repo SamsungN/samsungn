@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sam Nguyen — Mechanical Engineering Portfolio</title>
+<title>Samson Nguyen — Mechanical Engineering Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -29,7 +29,7 @@
     background: var(--bg);
     color: var(--ink);
     font-family: 'Source Serif 4', Georgia, serif;
-    font-size: 17px;
+    font-size: 19px;
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
@@ -38,8 +38,8 @@
     font-family: 'IBM Plex Mono', 'Courier New', monospace;
   }
 
-  a { color: var(--accent); }
-  a:hover { color: var(--ink); }
+  a { color: var(--ink); }
+  a:hover { color: var(--accent); }
 
   canvas#wave {
     position: fixed;
@@ -72,8 +72,8 @@
 
   .hero .subhead {
     font-family: 'Source Serif 4', serif;
-    font-size: 17.5px;
-    color: var(--ink-soft);
+    font-size: 19.5px;
+    color: var(--ink);
     margin: 0;
   }
 
@@ -87,8 +87,8 @@
 
   .hero-extra p {
     font-family: 'Source Serif 4', serif;
-    font-size: 17.5px;
-    color: var(--ink-soft);
+    font-size: 19.5px;
+    color: var(--ink);
     margin: 12px 0 0 0;
   }
 
@@ -98,10 +98,47 @@
     padding: 0;
     margin-top: 10px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12.5px;
+    font-size: 14px;
     color: var(--accent);
     cursor: pointer;
     letter-spacing: 0.02em;
+  }
+
+  /* Top-right utility links (RESUME / EMAIL / HOME) */
+  .hero-top {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .top-links {
+    display: flex;
+    gap: 22px;
+    margin: 16px 0 24px 0;
+  }
+
+  .top-link {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ink);
+  }
+
+  .top-link:hover { color: var(--accent); }
+
+  @media (min-width: 700px) {
+    .hero-top {
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .top-links { margin: 0; }
   }
 
   .more-link:hover { color: var(--ink); }
@@ -109,7 +146,7 @@
   /* Section headers */
   h2 {
     font-family: 'IBM Plex Mono', 'Courier New', monospace;
-    font-size: 21px;
+    font-size: 23px;
     font-weight: 600;
     letter-spacing: 0.01em;
     color: var(--ink);
@@ -199,21 +236,21 @@
   }
 
   .entry-top h3 {
-    font-size: 16.5px;
+    font-size: 18px;
     font-weight: 600;
     margin: 0;
   }
 
   .entry-date {
     font-family: 'Source Serif 4', serif;
-    font-size: 13px;
+    font-size: 14.5px;
     color: var(--ink-soft);
     white-space: nowrap;
   }
 
   .entry-sub {
     font-family: 'Source Serif 4', serif;
-    font-size: 13.5px;
+    font-size: 15px;
     color: var(--ink-soft);
     margin-top: 4px;
   }
@@ -261,8 +298,8 @@
   .entry-detail ul {
     margin: 0 0 20px 0;
     padding: 0 0 0 18px;
-    color: var(--ink-soft);
-    font-size: 15.5px;
+    color: var(--ink);
+    font-size: 17px;
   }
 
   .entry-detail li { margin-bottom: 8px; }
@@ -274,7 +311,7 @@
     color: var(--ink);
     font-weight: 600;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 15px;
+    font-size: 16.5px;
   }
 
   /* Skills */
@@ -286,7 +323,7 @@
 
   .skill-pill {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
+    font-size: 14.5px;
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 6px 14px;
@@ -309,7 +346,7 @@
     align-items: center;
     justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
+    font-size: 12px;
     color: var(--ink-soft);
     text-align: center;
     padding: 8px;
@@ -334,7 +371,7 @@
 
   .contact-links a {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 15px;
+    font-size: 16.5px;
     text-decoration: none;
     border-bottom: 1px solid var(--line);
     padding-bottom: 3px;
@@ -346,14 +383,14 @@
   }
 
   footer {
-    font-size: 12px;
+    font-size: 13.5px;
     color: var(--ink-soft);
     padding-top: 24px;
     border-top: 1px solid var(--line);
   }
 
   @media (min-width: 700px) {
-    body { font-size: 18px; }
+    body { font-size: 20px; }
     .content { padding: 90px 24px 110px 24px; }
     .placeholder-grid { grid-template-columns: repeat(3, 1fr); }
   }
@@ -367,7 +404,15 @@
 <div class="content">
 
   <div class="hero">
-    <h1>Sam Nguyen</h1>
+    <div class="hero-top">
+      <h1>Samson Nguyen</h1>
+
+      <nav class="top-links">
+        <a href="resume.html" class="top-link">Resume</a>
+        <a href="mailto:samsungleenguyen@gmail.com" class="top-link">Email</a>
+      </nav>
+    </div>
+
     <p class="subhead">Building toward a career in space exploration.</p>
 
     <div class="hero-extra" id="heroExtra">
@@ -396,24 +441,15 @@
 
       <div class="entry-detail">
         <ul>
-          <li>Designed and managed large electrical substations in Autodesk Inventor using point cloud data and engineering drawings to produce a digital twin of real-world equipment and environments.</li>
-          <li>Developed models of electrical substation equipment, producing over 1,000 parts and subassemblies.</li>
-          <li>Built and managed a library of standardized substation parts and assemblies, reducing design and assembly turnaround time from a few hours to mere minutes.</li>
-          <li>Operated 360° LiDAR scanners and cameras to capture point cloud data across entire substations on-site.</li>
-          <li>Prepared weekly reports on modeling insights and progress, contributing to the project timeline.</li>
-          <li>Adhered to modeling principles and requirement standards to ensure proper integration with existing parts, assemblies, and naming conventions.</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
         </ul>
       </div>
     </div>
-  </section>
-
-  <section id="education">
-    <h2>Education</h2>
-    <p>
-      <span class="edu-title">Iowa State University</span> —
-      B.S. Mechanical Engineering, 4.00 GPA<br>
-      Expected May 2029 · Ames, Iowa
-    </p>
   </section>
 
   <section id="fsae" class="toggle-section">
@@ -433,12 +469,12 @@
 
       <div class="entry-detail">
         <ul>
-          <li>Independently designed and manufactured a static strain-gauge calibrator, involving statics calculations, hands-on tooling, and welding, producing significant data for the team's strain-gauge R&amp;D.</li>
-          <li>Created and implemented 3D-printed jig parts to precisely locate critical suspension components on all four corners of the vehicle, including front and rear A-arms, push rods, and tabs.</li>
-          <li>Researched and designed solutions to connect suspension blade components to the anti-roll bar.</li>
-          <li>Collaborated with external design teams to ensure seamless integration between suspension parts.</li>
-          <li>Analyzed bearing options to determine the best solution for the specific use case.</li>
-          <li>Modeled parts parametrically for easy scalability.</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
         </ul>
       </div>
     </div>
@@ -461,12 +497,12 @@
 
       <div class="entry-detail">
         <ul>
-          <li>Obtained SolidWorks CSWP certification through weekly CAD assignments and a rigorous final 3-hour assessment testing part modeling, design iteration, and assembly skills, scoring 100%.</li>
-          <li>Elected Sophomore Representative after just one year of membership.</li>
-          <li>Assisted club members in learning core SolidWorks skills through 1-on-1 feedback.</li>
-          <li>Strengthened the club's knowledge base by encouraging peer-to-peer learning.</li>
-          <li>Recruited new members by promoting the club to underclassmen and first-year ME students.</li>
-          <li>Review and evaluate engineering drawings in accordance with ASME Y14.5 and GD&amp;T standards.</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
         </ul>
       </div>
     </div>
@@ -489,9 +525,9 @@
 
       <div class="entry-detail">
         <ul>
-          <li>Assessed design requirements and measurements to ensure proper integration.</li>
-          <li>Developed and revised the design using paper sketches and SolidWorks CAD models.</li>
-          <li>Manufactured and constructed the final design through 3D printing.</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
+          <li>Placeholder text</li>
         </ul>
       </div>
     </div>
@@ -509,6 +545,15 @@
       <span class="skill-pill">Microsoft Word</span>
       <span class="skill-pill">Microsoft PowerPoint</span>
     </div>
+  </section>
+
+  <section id="education">
+    <h2>Education</h2>
+    <p>
+      <span class="edu-title">Iowa State University</span> —
+      B.S. Mechanical Engineering, 4.00 GPA<br>
+      Expected May 2029 · Ames, Iowa
+    </p>
   </section>
 
   <section id="angling">
@@ -563,7 +608,7 @@
   </section>
 
   <footer>
-    Sam Nguyen — Mechanical Engineering, Iowa State University
+    Samson Nguyen — Mechanical Engineering, Iowa State University
   </footer>
 
 </div>
@@ -575,6 +620,7 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var w, h, dpr;
   var running = true;
+  var frameId = null; // guards against more than one active RAF chain
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -770,12 +816,12 @@
   }
 
   function loop() {
-    if (!running) return;
+    if (!running) { frameId = null; return; }
     advanceWave();
     updateProximity();
     updateLinePulses();
     draw();
-    requestAnimationFrame(loop);
+    frameId = requestAnimationFrame(loop);
   }
 
   window.addEventListener('resize', function () {
@@ -785,14 +831,14 @@
 
   document.addEventListener('visibilitychange', function () {
     running = document.visibilityState === 'visible' && !reduceMotion;
-    if (running) requestAnimationFrame(loop);
+    if (running && frameId === null) frameId = requestAnimationFrame(loop);
   });
 
   resize();
   if (reduceMotion) {
     draw();
   } else {
-    requestAnimationFrame(loop);
+    frameId = requestAnimationFrame(loop);
   }
 
   // ---- Toggles (independent, no accordion) ----
