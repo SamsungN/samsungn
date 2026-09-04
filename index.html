@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -197,9 +196,7 @@
     margin-top: 2px;
   }
 
-  .entry.open .plus {
-    transform: rotate(45deg);
-  }
+  .entry.open .plus { transform: rotate(45deg); }
 
   .entry-detail {
     max-height: 0;
@@ -218,11 +215,7 @@
   .entry-detail li:last-child { margin-bottom: 0; }
 
   /* Education */
-  #education p {
-    margin: 0;
-    color: var(--ink-soft);
-  }
-
+  #education p { margin: 0; color: var(--ink-soft); }
   #education .edu-title {
     color: var(--ink);
     font-weight: 600;
@@ -246,7 +239,7 @@
     color: var(--ink-soft);
   }
 
-  /* Angling / Art placeholders */
+  /* Angling / Art */
   .placeholder-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -311,7 +304,6 @@
     .placeholder-grid { grid-template-columns: repeat(3, 1fr); }
   }
 </style>
-
 </head>
 
 <body>
@@ -325,51 +317,48 @@
     <div class="meta">Mechanical Engineering · Iowa State University</div>
     <p class="subhead">Building toward a career in space exploration.</p>
 
-```
-<div class="hero-extra" id="heroExtra">
-  <p>More to come.</p>
-</div>
+    <div class="hero-extra" id="heroExtra">
+      <p>More to come.</p>
+    </div>
 
-<button class="more-link" id="moreToggle" aria-expanded="false">more</button>
-```
-
+    <button class="more-link" id="moreToggle" aria-expanded="false">
+      more
+    </button>
   </div>
 
   <section id="experience">
     <h2>Experience</h2>
 
-```
-<div class="entry">
-  <button class="entry-toggle" aria-expanded="false">
-    <div class="entry-main">
-      <div class="entry-top">
-        <h3>Design Engineering Intern</h3>
-        <span class="entry-date">May 2026 – Present</span>
+    <div class="entry">
+      <button class="entry-toggle" aria-expanded="false">
+        <div class="entry-main">
+          <div class="entry-top">
+            <h3>Design Engineering Intern</h3>
+            <span class="entry-date">May 2026 – Present</span>
+          </div>
+          <div class="entry-sub">Thingz · Galena, IL</div>
+        </div>
+        <span class="plus" aria-hidden="true">+</span>
+      </button>
+
+      <div class="entry-detail">
+        <ul>
+          <li>Designed and managed large electrical substations in Autodesk Inventor using point cloud data and engineering drawings to produce a digital twin of real-world equipment and environments.</li>
+          <li>Developed models of electrical substation equipment, producing over 1,000 parts and subassemblies.</li>
+          <li>Built and managed a library of standardized substation parts and assemblies, reducing design and assembly turnaround time from a few hours to mere minutes.</li>
+          <li>Operated 360° LiDAR scanners and cameras to capture point cloud data across entire substations on-site.</li>
+          <li>Prepared weekly reports on modeling insights and progress, contributing to the project timeline.</li>
+          <li>Adhered to modeling principles and requirement standards to ensure proper integration with existing parts, assemblies, and naming conventions.</li>
+        </ul>
       </div>
-      <div class="entry-sub">Thingz · Galena, IL</div>
     </div>
-    <span class="plus" aria-hidden="true">+</span>
-  </button>
-
-  <div class="entry-detail">
-    <ul>
-      <li>Designed and managed large electrical substations in Autodesk Inventor using point cloud data and engineering drawings to produce a digital twin of real-world equipment and environments.</li>
-      <li>Developed models of electrical substation equipment, producing over 1,000 parts and subassemblies.</li>
-      <li>Built and managed a library of standardized substation parts and assemblies, reducing design and assembly turnaround time from a few hours to mere minutes.</li>
-      <li>Operated 360° LiDAR scanners and cameras to capture point cloud data across entire substations on-site.</li>
-      <li>Prepared weekly reports on modeling insights and progress, contributing to the project timeline.</li>
-      <li>Adhered to modeling principles and requirement standards to ensure proper integration with existing parts, assemblies, and naming conventions.</li>
-    </ul>
-  </div>
-</div>
-```
-
   </section>
 
   <section id="education">
     <h2>Education</h2>
     <p>
-      <span class="edu-title">Iowa State University</span> — B.S. Mechanical Engineering, 4.00 GPA<br>
+      <span class="edu-title">Iowa State University</span> —
+      B.S. Mechanical Engineering, 4.00 GPA<br>
       Expected May 2029 · Ames, Iowa
     </p>
   </section>
@@ -377,160 +366,147 @@
   <section id="fsae">
     <h2>Formula SAE EV</h2>
 
-```
-<div class="entry">
-  <button class="entry-toggle" aria-expanded="false">
-    <div class="entry-main">
-      <div class="entry-top">
-        <h3>Suspension Subsystem Member</h3>
-        <span class="entry-date">Sep 2025 – Present</span>
+    <div class="entry">
+      <button class="entry-toggle" aria-expanded="false">
+        <div class="entry-main">
+          <div class="entry-top">
+            <h3>Suspension Subsystem Member</h3>
+            <span class="entry-date">Sep 2025 – Present</span>
+          </div>
+          <div class="entry-sub">Cyclone Racing · Iowa State University</div>
+        </div>
+        <span class="plus" aria-hidden="true">+</span>
+      </button>
+
+      <div class="entry-detail">
+        <ul>
+          <li>Independently designed and manufactured a static strain-gauge calibrator, involving statics calculations, hands-on tooling, and welding, producing significant data for the team's strain-gauge R&amp;D.</li>
+          <li>Created and implemented 3D-printed jig parts to precisely locate critical suspension components on all four corners of the vehicle, including front and rear A-arms, push rods, and tabs.</li>
+          <li>Researched and designed solutions to connect suspension blade components to the anti-roll bar.</li>
+          <li>Collaborated with external design teams to ensure seamless integration between suspension parts.</li>
+          <li>Analyzed bearing options to determine the best solution for the specific use case.</li>
+          <li>Modeled parts parametrically for easy scalability.</li>
+        </ul>
       </div>
-      <div class="entry-sub">Cyclone Racing · Iowa State University</div>
     </div>
-    <span class="plus" aria-hidden="true">+</span>
-  </button>
-
-  <div class="entry-detail">
-    <ul>
-      <li>Independently designed and manufactured a static strain-gauge calibrator, involving statics calculations, hands-on tooling, and welding, producing significant data for the team's strain-gauge R&amp;D.</li>
-      <li>Created and implemented 3D-printed jig parts to precisely locate critical suspension components on all four corners of the vehicle, including front and rear A-arms, push rods, and tabs.</li>
-      <li>Researched and designed solutions to connect suspension blade components to the anti-roll bar.</li>
-      <li>Collaborated with external design teams to ensure seamless integration between suspension parts.</li>
-      <li>Analyzed bearing options to determine the best solution for the specific use case.</li>
-      <li>Modeled parts parametrically for easy scalability.</li>
-    </ul>
-  </div>
-</div>
-```
-
   </section>
 
   <section id="solidworks-club">
     <h2>SolidWorks Club</h2>
 
-```
-<div class="entry">
-  <button class="entry-toggle" aria-expanded="false">
-    <div class="entry-main">
-      <div class="entry-top">
-        <h3>Sophomore Representative</h3>
-        <span class="entry-date">Aug 2025 – Present</span>
+    <div class="entry">
+      <button class="entry-toggle" aria-expanded="false">
+        <div class="entry-main">
+          <div class="entry-top">
+            <h3>Sophomore Representative</h3>
+            <span class="entry-date">Aug 2025 – Present</span>
+          </div>
+          <div class="entry-sub">Iowa State University</div>
+        </div>
+        <span class="plus" aria-hidden="true">+</span>
+      </button>
+
+      <div class="entry-detail">
+        <ul>
+          <li>Obtained SolidWorks CSWP certification through weekly CAD assignments and a rigorous final 3-hour assessment testing part modeling, design iteration, and assembly skills, scoring 100%.</li>
+          <li>Elected Sophomore Representative after just one year of membership.</li>
+          <li>Assisted club members in learning core SolidWorks skills through 1-on-1 feedback.</li>
+          <li>Strengthened the club's knowledge base by encouraging peer-to-peer learning.</li>
+          <li>Recruited new members by promoting the club to underclassmen and first-year ME students.</li>
+          <li>Review and evaluate engineering drawings in accordance with ASME Y14.5 and GD&amp;T standards.</li>
+        </ul>
       </div>
-      <div class="entry-sub">Iowa State University</div>
     </div>
-    <span class="plus" aria-hidden="true">+</span>
-  </button>
-
-  <div class="entry-detail">
-    <ul>
-      <li>Obtained SolidWorks CSWP certification through weekly CAD assignments and a rigorous final 3-hour assessment testing part modeling, design iteration, and assembly skills, scoring 100%.</li>
-      <li>Elected Sophomore Representative after just one year of membership.</li>
-      <li>Assisted club members in learning core SolidWorks skills through 1-on-1 feedback.</li>
-      <li>Strengthened the club's knowledge base by encouraging peer-to-peer learning.</li>
-      <li>Recruited new members by promoting the club to underclassmen and first-year ME students.</li>
-      <li>Review and evaluate engineering drawings in accordance with ASME Y14.5 and GD&amp;T standards.</li>
-    </ul>
-  </div>
-</div>
-```
-
   </section>
 
   <section id="projects">
     <h2>Projects</h2>
 
-```
-<div class="entry">
-  <button class="entry-toggle" aria-expanded="false">
-    <div class="entry-main">
-      <div class="entry-top">
-        <h3>Fishing Pole Holder</h3>
-        <span class="entry-date">Sep – Nov 2025</span>
+    <div class="entry">
+      <button class="entry-toggle" aria-expanded="false">
+        <div class="entry-main">
+          <div class="entry-top">
+            <h3>Fishing Pole Holder</h3>
+            <span class="entry-date">Sep – Nov 2025</span>
+          </div>
+          <div class="entry-sub">Personal project</div>
+        </div>
+        <span class="plus" aria-hidden="true">+</span>
+      </button>
+
+      <div class="entry-detail">
+        <ul>
+          <li>Assessed design requirements and measurements to ensure proper integration.</li>
+          <li>Developed and revised the design using paper sketches and SolidWorks CAD models.</li>
+          <li>Manufactured and constructed the final design through 3D printing.</li>
+        </ul>
       </div>
-      <div class="entry-sub">Personal project</div>
     </div>
-    <span class="plus" aria-hidden="true">+</span>
-  </button>
-
-  <div class="entry-detail">
-    <ul>
-      <li>Assessed design requirements and measurements to ensure proper integration.</li>
-      <li>Developed and revised the design using paper sketches and SolidWorks CAD models.</li>
-      <li>Manufactured and constructed the final design through 3D printing.</li>
-    </ul>
-  </div>
-</div>
-```
-
   </section>
 
   <section id="skills">
     <h2>Skills</h2>
 
-```
-<div class="skills-list">
-  <span class="skill-pill">SolidWorks CSWP</span>
-  <span class="skill-pill">Autodesk Inventor</span>
-  <span class="skill-pill">3D Printing (FDM)</span>
-  <span class="skill-pill">Python</span>
-  <span class="skill-pill">Microsoft Excel</span>
-  <span class="skill-pill">Microsoft Word</span>
-  <span class="skill-pill">Microsoft PowerPoint</span>
-</div>
-```
-
+    <div class="skills-list">
+      <span class="skill-pill">SolidWorks CSWP</span>
+      <span class="skill-pill">Autodesk Inventor</span>
+      <span class="skill-pill">3D Printing (FDM)</span>
+      <span class="skill-pill">Python</span>
+      <span class="skill-pill">Microsoft Excel</span>
+      <span class="skill-pill">Microsoft Word</span>
+      <span class="skill-pill">Microsoft PowerPoint</span>
+    </div>
   </section>
 
   <section id="angling">
     <h2>Angling</h2>
 
-```
-<p>
-  Iowa creeks and rivers, mostly wading — targeting bass and trout,
-  with pike as an occasional catch.
-</p>
+    <p>
+      Iowa creeks and rivers, mostly wading — targeting bass and trout,
+      with pike as an occasional catch.
+    </p>
 
-<div class="placeholder-grid">
-  <div class="placeholder-box">Photo placeholder</div>
-  <div class="placeholder-box">Photo placeholder</div>
-  <div class="placeholder-box">Photo placeholder</div>
-</div>
-```
-
+    <div class="placeholder-grid">
+      <div class="placeholder-box">Photo placeholder</div>
+      <div class="placeholder-box">Photo placeholder</div>
+      <div class="placeholder-box">Photo placeholder</div>
+    </div>
   </section>
 
   <section id="art">
     <h2>Art</h2>
 
-```
-<p>More to come — YouTube channel and drawings.</p>
-<p><a href="#">YouTube channel — link coming soon</a></p>
+    <p>More to come — YouTube channel and drawings.</p>
+    <p><a href="#">YouTube channel — link coming soon</a></p>
 
-<div class="placeholder-grid">
-  <div class="placeholder-box">Artwork placeholder</div>
-  <div class="placeholder-box">Artwork placeholder</div>
-  <div class="placeholder-box">Artwork placeholder</div>
-</div>
-```
-
+    <div class="placeholder-grid">
+      <div class="placeholder-box">Artwork placeholder</div>
+      <div class="placeholder-box">Artwork placeholder</div>
+      <div class="placeholder-box">Artwork placeholder</div>
+    </div>
   </section>
 
   <section id="contact">
     <h2>Contacts</h2>
 
-```
-<p>
-  Open to conversations about internships, co-ops, and roles in vehicle
-  dynamics, mechanical design, or aerospace.
-</p>
+    <p>
+      Open to conversations about internships, co-ops, and roles in vehicle
+      dynamics, mechanical design, or aerospace.
+    </p>
 
-<div class="contact-links">
-  <a href="mailto:samsungleenguyen@gmail.com">samsungleenguyen@gmail.com</a>
-  <a href="https://www.linkedin.com/in/samsungnguyen" target="_blank" rel="noopener">linkedin.com/in/samsungnguyen</a>
-  <a href="#">youtube.com/@your-channel</a>
-</div>
-```
+    <div class="contact-links">
+      <a href="mailto:samsungleenguyen@gmail.com">
+        samsungleenguyen@gmail.com
+      </a>
 
+      <a href="https://www.linkedin.com/in/samsungnguyen"
+         target="_blank"
+         rel="noopener">
+        linkedin.com/in/samsungnguyen
+      </a>
+
+      <a href="#">youtube.com/@your-channel</a>
+    </div>
   </section>
 
   <footer>
@@ -552,13 +528,17 @@
   var t = 0;
   var running = true;
 
-  // Active accordion button and orbit animation state
+  /* Active accordion button */
   var activeButton = null;
+
+  /* Orbit state */
   var attract = 0;
   var targetX = 0;
   var targetY = 0;
+  var orbitRotation = 0;
 
   function resize() {
+
     dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     w = window.innerWidth;
@@ -573,6 +553,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
+  /* Background waves */
   var lines = [
     { y: 0.20, amp: 18, freq: 0.0022, speed: 0.005, phase: 0.0 },
     { y: 0.38, amp: 26, freq: 0.0016, speed: 0.0035, phase: 1.4 },
@@ -582,95 +563,198 @@
   ];
 
   function waveY(l, x) {
+
     return h * l.y
-      + Math.sin(x * l.freq + t * l.speed + l.phase) * l.amp
       + Math.sin(
-          x * l.freq * 2.3
-          - t * l.speed * 0.6
-          + l.phase
+          x * l.freq +
+          t * l.speed +
+          l.phase
+        ) * l.amp
+      + Math.sin(
+          x * l.freq * 2.3 -
+          t * l.speed * 0.6 +
+          l.phase
         ) * (l.amp * 0.3);
   }
 
+
   /*
-    Clean circular orbit around the toggle button.
+   * 3D ORBIT
+   *
+   * Instead of a flat circle, this is a projected 3D orbital plane.
+   *
+   * The orbit is rotated continuously.
+   * The front half is brighter/thicker.
+   * The rear half is dimmer/thinner.
+   *
+   * There is intentionally NO connection to the background wave.
+   */
+  function drawOrbit(cx, cy) {
 
-    The orbit starts at the top of the button and gradually
-    draws itself around the button as the accordion opens.
-  */
-  function drawOrbit(cx, cy, nearestY) {
+    if (attract < 0.001) return;
 
-    var alpha = 0.55 * attract;
+    var progress = attract;
 
-    if (alpha < 0.02) return;
+    /*
+     * Orbit dimensions.
+     * rx = horizontal radius
+     * ry = vertical compression
+     */
+    var rx = 25 * progress;
+    var ry = 9 * progress;
 
+    /*
+     * Tilt of the orbital plane.
+     */
+    var tilt = -0.22;
+
+    /*
+     * Rotation of the entire orbital plane.
+     */
+    var rotation = orbitRotation;
+
+    /*
+     * Number of points used to make the orbit smooth.
+     */
+    var steps = 120;
+
+    /*
+     * Draw the rear half first.
+     * This gives the orbit a sense of depth.
+     */
     ctx.save();
 
-    ctx.strokeStyle =
-      'rgba(134, 173, 189, ' + alpha.toFixed(3) + ')';
+    ctx.lineCap = 'round';
 
-    ctx.lineWidth = 1;
-
-    var radius = 17;
-
-    var startAngle = -Math.PI / 2;
-    var totalAngle = Math.PI * 2 * attract;
-
-    var steps = 100;
-
+    /*
+     * BACK HALF
+     */
     ctx.beginPath();
 
-    for (var i = 0; i <= steps; i++) {
+    for (var i = 0; i <= steps / 2; i++) {
 
-      var progress = i / steps;
+      var theta =
+        Math.PI +
+        (Math.PI * i) / (steps / 2);
 
-      var angle =
-        startAngle + totalAngle * progress;
+      /*
+       * Base 3D orbital coordinates.
+       */
+      var x3d = rx * Math.cos(theta);
+      var y3d = ry * Math.sin(theta);
 
+      /*
+       * Rotate the projected orbital plane.
+       */
       var x =
-        cx + radius * Math.cos(angle);
+        x3d * Math.cos(tilt) -
+        y3d * Math.sin(tilt);
 
       var y =
-        cy + radius * Math.sin(angle);
+        x3d * Math.sin(tilt) +
+        y3d * Math.cos(tilt);
+
+      /*
+       * Slowly rotate the orbital plane.
+       */
+      var finalX =
+        x * Math.cos(rotation) -
+        y * Math.sin(rotation);
+
+      var finalY =
+        x * Math.sin(rotation) +
+        y * Math.cos(rotation);
 
       if (i === 0) {
-        ctx.moveTo(x, y);
+        ctx.moveTo(
+          cx + finalX,
+          cy + finalY
+        );
       } else {
-        ctx.lineTo(x, y);
+        ctx.lineTo(
+          cx + finalX,
+          cy + finalY
+        );
       }
     }
 
+    ctx.strokeStyle =
+      'rgba(134, 173, 189, ' +
+      (0.20 * progress).toFixed(3) +
+      ')';
+
+    ctx.lineWidth = 0.8;
+
     ctx.stroke();
 
-    /*
-      Clean straight connection from the wave
-      to the beginning of the orbit.
-    */
 
+    /*
+     * FRONT HALF
+     */
     ctx.beginPath();
 
-    ctx.moveTo(cx, nearestY);
+    for (var j = 0; j <= steps / 2; j++) {
 
-    ctx.lineTo(
-      cx,
-      cy - radius
-    );
+      var theta2 =
+        (Math.PI * j) / (steps / 2);
+
+      var x3d2 = rx * Math.cos(theta2);
+      var y3d2 = ry * Math.sin(theta2);
+
+      var x2 =
+        x3d2 * Math.cos(tilt) -
+        y3d2 * Math.sin(tilt);
+
+      var y2 =
+        x3d2 * Math.sin(tilt) +
+        y3d2 * Math.cos(tilt);
+
+      var finalX2 =
+        x2 * Math.cos(rotation) -
+        y2 * Math.sin(rotation);
+
+      var finalY2 =
+        x2 * Math.sin(rotation) +
+        y2 * Math.cos(rotation);
+
+      if (j === 0) {
+        ctx.moveTo(
+          cx + finalX2,
+          cy + finalY2
+        );
+      } else {
+        ctx.lineTo(
+          cx + finalX2,
+          cy + finalY2
+        );
+      }
+    }
+
+    ctx.strokeStyle =
+      'rgba(134, 173, 189, ' +
+      (0.65 * progress).toFixed(3) +
+      ')';
+
+    ctx.lineWidth = 1.25;
 
     ctx.stroke();
 
     ctx.restore();
   }
 
+
   function draw() {
 
     ctx.clearRect(0, 0, w, h);
 
+    /*
+     * Background wave lines.
+     * These are completely independent of the orbit.
+     */
     ctx.strokeStyle =
       'rgba(134, 173, 189, 0.14)';
 
     ctx.lineWidth = 1;
-
-    var nearestY = targetY;
-    var nearestDiff = Infinity;
 
     for (var i = 0; i < lines.length; i++) {
 
@@ -690,31 +774,17 @@
       }
 
       ctx.stroke();
-
-      if (attract > 0.001) {
-
-        var yAtTarget =
-          waveY(l, targetX);
-
-        var diff =
-          Math.abs(yAtTarget - targetY);
-
-        if (diff < nearestDiff) {
-
-          nearestDiff = diff;
-          nearestY = yAtTarget;
-        }
-      }
     }
 
+    /*
+     * Draw orbit separately.
+     * No wave-to-orbit line exists.
+     */
     if (attract > 0.001) {
-      drawOrbit(
-        targetX,
-        targetY,
-        nearestY
-      );
+      drawOrbit(targetX, targetY);
     }
   }
+
 
   function updateTarget() {
 
@@ -726,17 +796,23 @@
           .getBoundingClientRect();
 
       targetX =
-        rect.left + rect.width / 2;
+        rect.left +
+        rect.width / 2;
 
       targetY =
-        rect.top + rect.height / 2;
+        rect.top +
+        rect.height / 2;
     }
   }
+
 
   function loop() {
 
     if (!running) return;
 
+    /*
+     * Smooth orbit appearance/disappearance.
+     */
     var goal =
       activeButton ? 1 : 0;
 
@@ -749,39 +825,50 @@
 
     updateTarget();
 
-    // Background wave animation
+    /*
+     * Background wave motion.
+     */
     t += 1;
+
+    /*
+     * Continuous orbital rotation.
+     *
+     * This is deliberately slow so it feels
+     * like a physical orbital plane rather than
+     * a spinning loading icon.
+     */
+    orbitRotation += 0.012;
 
     draw();
 
     requestAnimationFrame(loop);
   }
 
-  window.addEventListener(
-    'resize',
-    function () {
 
-      resize();
+  window.addEventListener('resize', function () {
 
-      if (reduceMotion) {
-        draw();
-      }
+    resize();
+
+    if (reduceMotion) {
+      draw();
     }
-  );
+  });
+
 
   document.addEventListener(
     'visibilitychange',
     function () {
 
       running =
-        document.visibilityState === 'visible'
-        && !reduceMotion;
+        document.visibilityState === 'visible' &&
+        !reduceMotion;
 
       if (running) {
         requestAnimationFrame(loop);
       }
     }
   );
+
 
   resize();
 
@@ -791,10 +878,10 @@
     requestAnimationFrame(loop);
   }
 
-  /*
-    Accordion toggles
-  */
 
+  /*
+   * Accordion toggles
+   */
   document
     .querySelectorAll('.entry-toggle')
     .forEach(function (btn) {
@@ -809,6 +896,9 @@
           var wasOpen =
             entry.classList.contains('open');
 
+          /*
+           * Close any currently open entries.
+           */
           document
             .querySelectorAll('.entry.open')
             .forEach(function (e) {
@@ -827,6 +917,10 @@
               ).style.maxHeight = null;
             });
 
+
+          /*
+           * Open the clicked entry.
+           */
           if (!wasOpen) {
 
             entry.classList.add('open');
@@ -854,28 +948,22 @@
       );
     });
 
-  /*
-    Hero more/less toggle
-  */
 
+  /*
+   * Hero more/less toggle
+   */
   var moreBtn =
-    document.getElementById(
-      'moreToggle'
-    );
+    document.getElementById('moreToggle');
 
   var heroExtra =
-    document.getElementById(
-      'heroExtra'
-    );
+    document.getElementById('heroExtra');
 
   moreBtn.addEventListener(
     'click',
     function () {
 
       var isOpen =
-        heroExtra.classList.toggle(
-          'open'
-        );
+        heroExtra.classList.toggle('open');
 
       moreBtn.textContent =
         isOpen ? 'less' : 'more';
@@ -892,3 +980,5 @@
 
 </body>
 </html>
+```
+
