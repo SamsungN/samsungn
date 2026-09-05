@@ -10,10 +10,10 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f1316;
+    --bg: #151617;
     --ink: #edebe4;
     --ink-soft: #9aa1a6;
-    --accent: #86adbd;
+    --accent: #4aabc9;
     --line: rgba(255,255,255,0.10);
     --content-max: 620px;
   }
@@ -151,9 +151,10 @@
     font-weight: 600;
     letter-spacing: 0.01em;
     color: var(--ink);
-    margin: 0 0 22px 0;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--line);
+    margin: 0 0 14px -16px;
+    padding-top: 16px;
+    padding-left: 16px;
+    border-top: 1px solid var(--line);
     position: relative;
     transition: color 0.35s ease;
   }
@@ -162,7 +163,7 @@
     content: '';
     position: absolute;
     left: 0;
-    bottom: -1px;
+    top: -1px;
     height: 1px;
     width: 0%;
     background: var(--accent);
@@ -202,6 +203,42 @@
     .toggle-section:hover h2::after {
       width: 100%;
     }
+  }
+
+  /* Left-side vertical rail for every section. Base layer shows the
+     default muted line, or a quick fade to off-white when this
+     section is the one closest to the viewport's vertical center.
+     An accent overlay (toggle-sections only) grows downward from the
+     top on hover/open, visually overriding whichever color the base
+     layer currently shows. Positioned/sized entirely via JS since it
+     spans from a section's header down to its own last line of
+     content, and must track that as toggles expand or collapse. */
+  .rail-base,
+  .rail-accent {
+    position: absolute;
+    left: 8px;
+    width: 1px;
+    pointer-events: none;
+  }
+
+  .rail-base {
+    background: var(--line);
+    transition: background-color 0.15s ease, top 0.35s ease, height 0.35s ease;
+  }
+
+  .rail-base.centered {
+    background: var(--ink);
+  }
+
+  .rail-accent {
+    background: var(--accent);
+    transform-origin: top;
+    transform: scaleY(0);
+    transition: transform 0.35s ease, top 0.35s ease, height 0.35s ease;
+  }
+
+  .rail-accent.show {
+    transform: scaleY(1);
   }
 
   /* Accordion entries */
@@ -848,18 +885,18 @@
       var entry = btn.closest('.entry');
       var section = btn.closest('.toggle-section');
       var isOpen = entry.classList.contains('open');
+      var detail = entry.querySelector('.entry-detail');
 
       if (isOpen) {
         entry.classList.remove('open');
         btn.setAttribute('aria-expanded', 'false');
-        entry.querySelector('.entry-detail').style.maxHeight = null;
+        detail.style.maxHeight = null;
 
         var idx = openStack.indexOf(btn);
         if (idx !== -1) openStack.splice(idx, 1);
       } else {
         entry.classList.add('open');
         btn.setAttribute('aria-expanded', 'true');
-        var detail = entry.querySelector('.entry-detail');
         detail.style.maxHeight = detail.scrollHeight + 'px';
 
         openStack.push(btn);
@@ -868,7 +905,17 @@
       if (section) {
         var stillOpen = section.querySelector('.entry.open');
         section.classList.toggle('active', !!stillOpen);
+        updateRailAccent(section);
+
+        var sectionIndex = allSectionEls.indexOf(section);
+        if (sectionIndex !== -1) {
+          var railDelta = isOpen ? -detail.scrollHeight : detail.scrollHeight;
+          shiftRailsFrom(sectionIndex, railDelta);
+        }
       }
+
+      setTimeout(function () { layoutRails(); }, 380); // correct any drift after the 0.35s settle
+      requestCenterUpdate();
     });
   });
 
@@ -880,6 +927,119 @@
     moreBtn.textContent = isOpen ? 'less' : 'more';
     moreBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   });
+
+  // ---- Section rails ----
+  // A pair of divs (base + accent) per section, appended as siblings
+  // under .content and positioned via inline top/height so they sit
+  // correctly regardless of each section's own box quirks. The base
+  // shows the default muted line or the quick white "centered" fade;
+  // the accent overlay (toggle-sections only) grows downward from
+  // the top on hover/open, covering the base entirely once grown.
+  var contentEl = document.querySelector('.content');
+  var allSectionEls = Array.prototype.slice.call(document.querySelectorAll('.content > section'));
+  var railMap = new Map();
+
+  allSectionEls.forEach(function (sec) {
+    var base = document.createElement('div');
+    base.className = 'rail-base';
+    var accent = document.createElement('div');
+    accent.className = 'rail-accent';
+    contentEl.appendChild(base);
+    contentEl.appendChild(accent);
+    railMap.set(sec, { base: base, accent: accent });
+
+    if (hoverCapable && sec.classList.contains('toggle-section')) {
+      sec.addEventListener('mouseenter', function () {
+        sec.__railHovered = true;
+        updateRailAccent(sec);
+      });
+      sec.addEventListener('mouseleave', function () {
+        sec.__railHovered = false;
+        updateRailAccent(sec);
+      });
+    }
+  });
+
+  function layoutRails() {
+    var contentRect = contentEl.getBoundingClientRect();
+    allSectionEls.forEach(function (sec) {
+      var rail = railMap.get(sec);
+      var h2 = sec.querySelector('h2');
+      var topY = (h2 ? h2.getBoundingClientRect().top : sec.getBoundingClientRect().top) - contentRect.top;
+      var bottomY = sec.getBoundingClientRect().bottom - contentRect.top;
+      var height = Math.max(0, bottomY - topY);
+      rail.base.style.top = topY + 'px';
+      rail.base.style.height = height + 'px';
+      rail.accent.style.top = topY + 'px';
+      rail.accent.style.height = height + 'px';
+    });
+  }
+
+  function updateRailAccent(sec) {
+    var rail = railMap.get(sec);
+    if (!rail) return;
+    var isOpen = !!sec.querySelector('.entry.open');
+    rail.accent.classList.toggle('show', !!(isOpen || sec.__railHovered));
+  }
+
+  // Applies an exact height/position delta immediately (rather than
+  // re-measuring the DOM, which would race against the accordion's
+  // own in-progress transition) so the rail's own CSS transition
+  // animates in lockstep with the entry-detail's max-height change.
+  function shiftRailsFrom(sectionIndex, delta) {
+    var sec = allSectionEls[sectionIndex];
+    var rail = railMap.get(sec);
+    var curH = parseFloat(rail.base.style.height) || 0;
+    var newH = Math.max(0, curH + delta);
+    rail.base.style.height = newH + 'px';
+    rail.accent.style.height = newH + 'px';
+
+    for (var i = sectionIndex + 1; i < allSectionEls.length; i++) {
+      var s = allSectionEls[i];
+      var r = railMap.get(s);
+      var curTop = parseFloat(r.base.style.top) || 0;
+      var newTop = curTop + delta;
+      r.base.style.top = newTop + 'px';
+      r.accent.style.top = newTop + 'px';
+    }
+  }
+
+  function updateCenteredSection() {
+    var viewportMid = window.innerHeight / 2;
+    var closest = null, closestDiff = Infinity;
+    allSectionEls.forEach(function (sec) {
+      var rect = sec.getBoundingClientRect();
+      var mid = rect.top + rect.height / 2;
+      var diff = Math.abs(mid - viewportMid);
+      if (diff < closestDiff) { closestDiff = diff; closest = sec; }
+    });
+    allSectionEls.forEach(function (sec) {
+      railMap.get(sec).base.classList.toggle('centered', sec === closest);
+    });
+  }
+
+  var centerTicking = false;
+  function requestCenterUpdate() {
+    if (centerTicking) return;
+    centerTicking = true;
+    requestAnimationFrame(function () {
+      updateCenteredSection();
+      centerTicking = false;
+    });
+  }
+
+  window.addEventListener('scroll', requestCenterUpdate, { passive: true });
+  window.addEventListener('resize', function () {
+    layoutRails();
+    requestCenterUpdate();
+  });
+  window.addEventListener('load', function () {
+    layoutRails();
+    updateCenteredSection();
+  });
+
+  layoutRails();
+  updateCenteredSection();
 })();
 </script>
 
