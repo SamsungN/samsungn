@@ -9,10 +9,10 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f1316;
+    --bg: #151617;
     --ink: #edebe4;
     --ink-soft: #9aa1a6;
-    --accent: #86adbd;
+    --accent: #4aabc9;
     --line: rgba(255,255,255,0.10);
     --content-max: 620px;
   }
@@ -106,7 +106,6 @@
     .top-links { margin: 0; }
   }
 
-
   /* PDF viewer */
   .pdf-frame {
     width: 100%;
@@ -139,27 +138,93 @@
   .pdf-actions a:hover {
     border-color: var(--accent);
     color: var(--accent);
-    background: rgba(134, 173, 189, 0.08);
+    background: rgba(74, 171, 201, 0.08);
   }
 
-  /* Section headers */
+  /* Section headers — matches index.html's top-border + accent-underline style */
   h2 {
     font-family: 'IBM Plex Mono', 'Courier New', monospace;
     font-size: 23px;
     font-weight: 600;
     letter-spacing: 0.01em;
     color: var(--ink);
-    margin: 0 0 22px 0;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--line);
+    margin: 0 0 14px -16px;
+    padding-top: 16px;
+    padding-left: 16px;
+    border-top: 1px solid var(--line);
+    position: relative;
+    transition: color 0.35s ease;
   }
 
+  h2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -1px;
+    height: 1px;
+    width: 0%;
+    background: var(--accent);
+    transition: width 0.35s ease;
+  }
+
+  /* Widen the tint slightly beyond the text column, with soft corners.
+     Negative margin + equal padding keeps the text position unchanged. */
   .resume-section {
     margin-left: -16px;
     margin-right: -16px;
     padding-left: 16px;
     padding-right: 16px;
     border-radius: 10px;
+  }
+
+  /* Hover-only effects — scoped to devices with real hover (mouse/trackpad)
+     so touchscreens don't get stuck in a "hovered" state after a tap.
+     No persistent "active" state here since resume entries don't accordion. */
+  @media (hover: hover) and (pointer: fine) {
+    .resume-section:hover {
+      background: rgba(255,255,255,0.025);
+    }
+
+    .resume-section:hover h2 {
+      color: var(--accent);
+    }
+
+    .resume-section:hover h2::after {
+      width: 100%;
+    }
+  }
+
+  /* Left-side vertical rail for every section. Base layer shows the
+     default muted line, or a quick fade to off-white when this
+     section is the one closest to the viewport's vertical center.
+     An accent overlay (resume-sections only) shows on hover,
+     visually overriding whichever color the base layer currently shows. */
+  .rail-base,
+  .rail-accent {
+    position: absolute;
+    left: 8px;
+    width: 1px;
+    pointer-events: none;
+  }
+
+  .rail-base {
+    background: var(--line);
+    transition: background-color 0.15s ease, top 0.35s ease, height 0.35s ease;
+  }
+
+  .rail-base.centered {
+    background: var(--ink);
+  }
+
+  .rail-accent {
+    background: var(--accent);
+    transform-origin: top;
+    transform: scaleY(0);
+    transition: transform 0.35s ease, top 0.35s ease, height 0.35s ease;
+  }
+
+  .rail-accent.show {
+    transform: scaleY(1);
   }
 
   /* Static entries (no toggle affordance) */
@@ -438,7 +503,9 @@
     }
   }
 
-  // ---- Localized frequency bump (cursor proximity, desktop only) ----
+  // ---- Localized frequency bump (cursor proximity, desktop only —
+  // resume has no accordion entries, so there's no touch-side
+  // reference point the way index.html has via its openStack) ----
   var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var PROXIMITY_MAX_DIST = 70;
   var LOCAL_SIGMA = 45;
@@ -579,6 +646,86 @@
   } else {
     frameId = requestAnimationFrame(loop);
   }
+
+  // ---- Section rails (ported from index.html) ----
+  // Same left-side rail-base / rail-accent pair per section as the
+  // home page. Since resume entries don't accordion open/closed,
+  // the accent overlay here is purely hover-driven (desktop only)
+  // rather than tied to an "active" open state.
+  var contentEl = document.querySelector('.content');
+  var allSectionEls = Array.prototype.slice.call(document.querySelectorAll('.content > section'));
+  var railMap = new Map();
+
+  allSectionEls.forEach(function (sec) {
+    var base = document.createElement('div');
+    base.className = 'rail-base';
+    var accent = document.createElement('div');
+    accent.className = 'rail-accent';
+    contentEl.appendChild(base);
+    contentEl.appendChild(accent);
+    railMap.set(sec, { base: base, accent: accent });
+
+    if (hoverCapable && sec.classList.contains('resume-section')) {
+      sec.addEventListener('mouseenter', function () {
+        railMap.get(sec).accent.classList.add('show');
+      });
+      sec.addEventListener('mouseleave', function () {
+        railMap.get(sec).accent.classList.remove('show');
+      });
+    }
+  });
+
+  function layoutRails() {
+    var contentRect = contentEl.getBoundingClientRect();
+    allSectionEls.forEach(function (sec) {
+      var rail = railMap.get(sec);
+      var h2 = sec.querySelector('h2');
+      var topY = (h2 ? h2.getBoundingClientRect().top : sec.getBoundingClientRect().top) - contentRect.top;
+      var bottomY = sec.getBoundingClientRect().bottom - contentRect.top;
+      var height = Math.max(0, bottomY - topY);
+      rail.base.style.top = topY + 'px';
+      rail.base.style.height = height + 'px';
+      rail.accent.style.top = topY + 'px';
+      rail.accent.style.height = height + 'px';
+    });
+  }
+
+  function updateCenteredSection() {
+    var viewportMid = window.innerHeight / 2;
+    var closest = null, closestDiff = Infinity;
+    allSectionEls.forEach(function (sec) {
+      var rect = sec.getBoundingClientRect();
+      var mid = rect.top + rect.height / 2;
+      var diff = Math.abs(mid - viewportMid);
+      if (diff < closestDiff) { closestDiff = diff; closest = sec; }
+    });
+    allSectionEls.forEach(function (sec) {
+      railMap.get(sec).base.classList.toggle('centered', sec === closest);
+    });
+  }
+
+  var centerTicking = false;
+  function requestCenterUpdate() {
+    if (centerTicking) return;
+    centerTicking = true;
+    requestAnimationFrame(function () {
+      updateCenteredSection();
+      centerTicking = false;
+    });
+  }
+
+  window.addEventListener('scroll', requestCenterUpdate, { passive: true });
+  window.addEventListener('resize', function () {
+    layoutRails();
+    requestCenterUpdate();
+  });
+  window.addEventListener('load', function () {
+    layoutRails();
+    updateCenteredSection();
+  });
+
+  layoutRails();
+  updateCenteredSection();
 })();
 </script>
 
