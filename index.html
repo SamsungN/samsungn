@@ -10,11 +10,13 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #151617;
+    --bg: #0d0d0d;
     --ink: #edebe4;
     --ink-soft: #9aa1a6;
-    --accent: #4aabc9;
-    --line: rgba(255,255,255,0.10);
+    --accent: #c9504a;
+    --accent-tint: rgba(201, 93, 74, 0.18);
+    --ink-tint: rgba(237, 235, 228, 0.14);
+    --line: rgba(255, 255, 255, 0.26);
     --content-max: 620px;
   }
 
@@ -35,7 +37,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  h1, h3, .label {
+  h1, .label {
     font-family: 'IBM Plex Mono', 'Courier New', monospace;
   }
 
@@ -144,9 +146,39 @@
 
   .more-link:hover { color: var(--ink); }
 
+  /* Static, non-interactive group headers ("Experience", "Projects").
+     These sit above the divider line and never change color/state —
+     the line and all hover/toggle/rail behavior now live on the
+     sub-header (e.g. "Thingz") inside the section immediately below. */
+  .group-title {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 29px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    margin: 0 0 6px 0;
+  }
+
+  /* Group/section-level dividers — mark the top of each top-level
+     chunk (a group of toggle-sections, or a standalone section).
+     Left edge aligns with the rail (8px), right edge flush with the
+     normal text column, matching the span the old h2 border-top used. */
+  .group-title::before,
+  #skills::before,
+  #education::before,
+  #angling::before,
+  #art::before,
+  #contact::before {
+    content: '';
+    display: block;
+    height: 1px;
+    background: linear-gradient(to right, var(--accent) 0%, var(--line) 25%, var(--line) 100%);
+    margin: 0 0 24px -16px;
+  }
+
   /* Section headers */
   h2 {
-    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-family: 'Source Serif 4', Georgia, serif;
     font-size: 23px;
     font-weight: 600;
     letter-spacing: 0.01em;
@@ -154,7 +186,6 @@
     margin: 0 0 14px -16px;
     padding-top: 16px;
     padding-left: 16px;
-    border-top: 1px solid var(--line);
     position: relative;
     transition: color 0.35s ease;
   }
@@ -227,7 +258,7 @@
   }
 
   .rail-base.centered {
-    background: var(--ink);
+    background: var(--accent);
   }
 
   .rail-accent {
@@ -274,9 +305,29 @@
   }
 
   .entry-top h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
     font-size: 18px;
     font-weight: 600;
     margin: 0;
+    color: var(--ink-soft);
+    transition: color 0.3s ease;
+  }
+
+  /* Section is nearest the viewport's vertical center */
+  .section-centered .entry-top h3 {
+    color: var(--ink);
+  }
+
+  /* An entry inside the section is open */
+  .entry.open .entry-top h3 {
+    color: var(--ink);
+  }
+
+  /* Cursor hovering the section (desktop/trackpad only) */
+  @media (hover: hover) and (pointer: fine) {
+    .toggle-section:hover .entry-top h3 {
+      color: var(--ink);
+    }
   }
 
   .entry-date {
@@ -293,16 +344,22 @@
     margin-top: 4px;
   }
 
+  /* Toggle button — sized up site-wide. Color/fill state is layered:
+     default (grey outline) -> centered-white tint (section is the
+     one nearest viewport center) -> open/hover blue tint, with
+     open/hover always winning over the centered-white look. The
+     centered rule is written first and has lower selector weight,
+     so open/hover naturally override it; see notes below. */
   .plus {
     flex: 0 0 auto;
-    width: 22px;
-    height: 22px;
+    width: 30px;
+    height: 30px;
     border: 1px solid var(--line);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 17px;
     color: var(--ink-soft);
     background: transparent;
     transition: transform 0.3s ease, color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
@@ -311,19 +368,29 @@
 
   .entry.open .plus { transform: rotate(45deg); }
 
-  /* Blue tint fill: while open it stays filled; on hover it fills too.
-     Tint disappears the moment the entry is closed and not hovered. */
-  .entry.open .plus {
-    background: var(--accent);
+  /* Section-centered state: grey -> white outline/icon, filled with
+     a light white tint. Lower specificity than the open/hover rules
+     below, so those always take priority when they also apply. */
+  .section-centered .plus {
     border-color: var(--accent);
-    color: var(--bg);
+    color: var(--accent);
+    background: var(--accent-tint);
   }
 
+  /* Open state: light blue tint fill, accent-colored outline/icon
+     (wins over the white centered look above). */
+  .entry.open .plus {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Hover state mirrors the open look (also wins over centered-white). */
   @media (hover: hover) and (pointer: fine) {
     .entry-toggle:hover .plus {
-      background: var(--accent);
+      background: var(--accent-tint);
       border-color: var(--accent);
-      color: var(--bg);
+      color: var(--accent);
     }
   }
 
@@ -462,8 +529,10 @@
     </button>
   </div>
 
-  <section id="experience" class="toggle-section">
-    <h2>Experience</h2>
+  <div class="group-title" role="heading" aria-level="2">Experience</div>
+
+  <section id="thingz" class="toggle-section">
+    <h2>Thingz</h2>
 
     <div class="entry">
       <button class="entry-toggle" aria-expanded="false">
@@ -472,7 +541,7 @@
             <h3>Design Engineering Intern</h3>
             <span class="entry-date">May 2026 – Present</span>
           </div>
-          <div class="entry-sub">Thingz · Galena, IL</div>
+          <div class="entry-sub">Galena, IL</div>
         </div>
         <span class="plus" aria-hidden="true">+</span>
       </button>
@@ -546,17 +615,18 @@
     </div>
   </section>
 
-  <section id="projects" class="toggle-section">
-    <h2>Projects</h2>
+  <div class="group-title" role="heading" aria-level="2">Projects</div>
+
+  <section id="fishing-pole-holder" class="toggle-section">
+    <h2>Fishing Pole Holder</h2>
 
     <div class="entry">
       <button class="entry-toggle" aria-expanded="false">
         <div class="entry-main">
           <div class="entry-top">
-            <h3>Fishing Pole Holder</h3>
+            <h3>Personal Project</h3>
             <span class="entry-date">Sep – Nov 2025</span>
           </div>
-          <div class="entry-sub">Personal project</div>
         </div>
         <span class="plus" aria-hidden="true">+</span>
       </button>
@@ -692,7 +762,7 @@
   }
 
   function drawWave() {
-    ctx.strokeStyle = 'rgba(134, 173, 189, 0.14)';
+    ctx.strokeStyle = 'rgba(88, 108, 118, 0.11)';
     ctx.lineWidth = 1;
     for (var i = 0; i < lines.length; i++) {
       var l = lines[i];
@@ -709,6 +779,68 @@
         else ctx.lineTo(x, y);
       }
       ctx.stroke();
+    }
+
+    drawWiggleGlow();
+  }
+
+  // Subtle red flash riding along with any active wiggle — either a
+  // traveling click pulse or the cursor-proximity hover wiggle. Drawn
+  // as a separate overlay pass, segment by segment, so only the
+  // stretch of line actually wiggling tints red — everywhere else
+  // stays the normal grey. Each source fades using the same value
+  // that already drives its distortion (pulse age/progress, or
+  // l.intensity for hover), so the red is fully gone at exactly the
+  // moment the wiggle itself settles back to flat.
+  var GLOW_ALPHA = 0.5;      // peak overlay opacity
+  var GLOW_THRESHOLD = 0.02; // skip segments too faint to matter
+
+  function drawWiggleGlow() {
+    if (!linePulses.length && !refPointActive) return;
+
+    ctx.lineWidth = 1;
+
+    for (var i = 0; i < lines.length; i++) {
+      var l = lines[i];
+
+      var hasPulse = false;
+      for (var j = 0; j < linePulses.length; j++) {
+        if (linePulses[j].lineIndex === i) { hasPulse = true; break; }
+      }
+      var hasHover = refPointActive && l.intensity > 0.001;
+      if (!hasPulse && !hasHover) continue;
+
+      var prevX = null, prevY = null, prevIntensity = 0;
+
+      for (var x = 0; x <= w; x += 6) {
+        var y = waveY(l, x);
+        var hoverIntensity = 0;
+
+        if (hasHover) {
+          var dx = x - refPointX;
+          var gauss = Math.exp(-(dx * dx) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
+          y += l.intensity * gauss * LOCAL_AMP * Math.sin(dx * LOCAL_FREQ + wigglePhase);
+          hoverIntensity = l.intensity * gauss;
+        }
+        y += pulseOffsetForLine(i, x);
+
+        var intensity = hoverIntensity;
+        if (hasPulse) {
+          var pulseIntensity = pulseIntensityForLine(i, x);
+          if (pulseIntensity > intensity) intensity = pulseIntensity;
+        }
+
+        if (prevX !== null && (intensity > GLOW_THRESHOLD || prevIntensity > GLOW_THRESHOLD)) {
+          var segIntensity = Math.max(intensity, prevIntensity);
+          ctx.strokeStyle = 'rgba(201, 80, 74, ' + (segIntensity * GLOW_ALPHA).toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.moveTo(prevX, prevY);
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
+
+        prevX = x; prevY = y; prevIntensity = intensity;
+      }
     }
   }
 
@@ -832,6 +964,30 @@
                 * Math.sin(dxL * LOCAL_FREQ + wigglePhase);
     }
     return offset;
+  }
+
+  function pulseIntensityForLine(lineIndex, x) {
+    var maxIntensity = 0;
+    for (var i = 0; i < linePulses.length; i++) {
+      var p = linePulses[i];
+      if (p.lineIndex !== lineIndex) continue;
+
+      // Same progress/fade as pulseOffsetForLine's amplitude, so the
+      // red glow reaches zero at exactly the moment the wiggle does.
+      var progress = Math.min(1, p.age / PULSE_DURATION);
+      var fade = Math.max(0, 1 - progress);
+
+      var rightFront = p.originX + p.rightDist * progress;
+      var dxR = x - rightFront;
+      var gR = Math.exp(-(dxR * dxR) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
+      if (gR * fade > maxIntensity) maxIntensity = gR * fade;
+
+      var leftFront = p.originX - p.leftDist * progress;
+      var dxL = x - leftFront;
+      var gL = Math.exp(-(dxL * dxL) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
+      if (gL * fade > maxIntensity) maxIntensity = gL * fade;
+    }
+    return Math.min(1, maxIntensity);
   }
 
   document.addEventListener('click', function (e) {
@@ -1004,6 +1160,11 @@
     }
   }
 
+  // Tracks which section is nearest the viewport's vertical center,
+  // toggling both the rail's white fade AND a matching
+  // "section-centered" class on the section itself so toggle buttons
+  // inside it can pick up the same white treatment (see .plus CSS —
+  // open/hover states are written to always win over this one).
   function updateCenteredSection() {
     var viewportMid = window.innerHeight / 2;
     var closest = null, closestDiff = Infinity;
@@ -1014,7 +1175,9 @@
       if (diff < closestDiff) { closestDiff = diff; closest = sec; }
     });
     allSectionEls.forEach(function (sec) {
-      railMap.get(sec).base.classList.toggle('centered', sec === closest);
+      var isCentered = sec === closest;
+      railMap.get(sec).base.classList.toggle('centered', isCentered);
+      sec.classList.toggle('section-centered', isCentered);
     });
   }
 
