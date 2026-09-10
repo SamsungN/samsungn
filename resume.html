@@ -13,7 +13,7 @@
     --bg: #151617;
     --ink: #edebe4;
     --ink-soft: #9aa1a6;
-    --accent: #4aabc9;
+    --accent: #c9504a;
     --line: rgba(255,255,255,0.10);
     --content-max: 620px;
   }
@@ -139,7 +139,7 @@
   .pdf-actions a:hover {
     border-color: var(--accent);
     color: var(--accent);
-    background: rgba(74, 171, 201, 0.08);
+    background: rgba(201, 80, 74, 0.08);
   }
 
   /* Section headers — matches index.html's top-border + accent-underline style */
@@ -153,7 +153,7 @@
     padding-top: 16px;
     padding-left: 16px;
     border-top: 1px solid var(--line);
-    border-image: linear-gradient(to right, #c9504a 0%, var(--line) 25%, var(--line) 100%) 1;
+    border-image: linear-gradient(to right, var(--accent) 0%, var(--line) 25%, var(--line) 100%) 1;
     position: relative;
     transition: color 0.35s ease;
   }
@@ -215,7 +215,7 @@
   }
 
   .rail-base.centered {
-    background: #c9504a;
+    background: var(--accent);
   }
 
   .rail-accent {
@@ -515,7 +515,7 @@
   // that already drives its distortion (pulse age/progress, or
   // l.intensity for hover), so the red is fully gone at exactly the
   // moment the wiggle itself settles back to flat.
-  var GLOW_ALPHA = 0.5;      // peak overlay opacity
+  var GLOW_ALPHA = 0.85;     // peak overlay opacity
   var GLOW_THRESHOLD = 0.02; // skip segments too faint to matter
 
   function drawWiggleGlow() {
@@ -555,7 +555,8 @@
 
         if (prevX !== null && (intensity > GLOW_THRESHOLD || prevIntensity > GLOW_THRESHOLD)) {
           var segIntensity = Math.max(intensity, prevIntensity);
-          ctx.strokeStyle = 'rgba(201, 80, 74, ' + (segIntensity * GLOW_ALPHA).toFixed(3) + ')';
+          var displayAlpha = Math.pow(segIntensity, 0.5) * GLOW_ALPHA;
+          ctx.strokeStyle = 'rgba(201, 80, 74, ' + displayAlpha.toFixed(3) + ')';
           ctx.beginPath();
           ctx.moveTo(prevX, prevY);
           ctx.lineTo(x, y);
