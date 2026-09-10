@@ -153,6 +153,7 @@
     padding-top: 16px;
     padding-left: 16px;
     border-top: 1px solid var(--line);
+    border-image: linear-gradient(to right, #c9504a 0%, var(--line) 25%, var(--line) 100%) 1;
     position: relative;
     transition: color 0.35s ease;
   }
@@ -214,7 +215,7 @@
   }
 
   .rail-base.centered {
-    background: var(--ink);
+    background: #c9504a;
   }
 
   .rail-accent {
@@ -502,6 +503,68 @@
       }
       ctx.stroke();
     }
+
+    drawWiggleGlow();
+  }
+
+  // Subtle red flash riding along with any active wiggle — either a
+  // traveling click pulse or the cursor-proximity hover wiggle. Drawn
+  // as a separate overlay pass, segment by segment, so only the
+  // stretch of line actually wiggling tints red — everywhere else
+  // stays the normal grey. Each source fades using the same value
+  // that already drives its distortion (pulse age/progress, or
+  // l.intensity for hover), so the red is fully gone at exactly the
+  // moment the wiggle itself settles back to flat.
+  var GLOW_ALPHA = 0.5;      // peak overlay opacity
+  var GLOW_THRESHOLD = 0.02; // skip segments too faint to matter
+
+  function drawWiggleGlow() {
+    if (!linePulses.length && !refPointActive) return;
+
+    ctx.lineWidth = 1;
+
+    for (var i = 0; i < lines.length; i++) {
+      var l = lines[i];
+
+      var hasPulse = false;
+      for (var j = 0; j < linePulses.length; j++) {
+        if (linePulses[j].lineIndex === i) { hasPulse = true; break; }
+      }
+      var hasHover = refPointActive && l.intensity > 0.001;
+      if (!hasPulse && !hasHover) continue;
+
+      var prevX = null, prevY = null, prevIntensity = 0;
+
+      for (var x = 0; x <= w; x += 6) {
+        var y = waveY(l, x);
+        var hoverIntensity = 0;
+
+        if (hasHover) {
+          var dx = x - refPointX;
+          var gauss = Math.exp(-(dx * dx) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
+          y += l.intensity * gauss * LOCAL_AMP * Math.sin(dx * LOCAL_FREQ + wigglePhase);
+          hoverIntensity = l.intensity * gauss;
+        }
+        y += pulseOffsetForLine(i, x);
+
+        var intensity = hoverIntensity;
+        if (hasPulse) {
+          var pulseIntensity = pulseIntensityForLine(i, x);
+          if (pulseIntensity > intensity) intensity = pulseIntensity;
+        }
+
+        if (prevX !== null && (intensity > GLOW_THRESHOLD || prevIntensity > GLOW_THRESHOLD)) {
+          var segIntensity = Math.max(intensity, prevIntensity);
+          ctx.strokeStyle = 'rgba(201, 80, 74, ' + (segIntensity * GLOW_ALPHA).toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.moveTo(prevX, prevY);
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
+
+        prevX = x; prevY = y; prevIntensity = intensity;
+      }
+    }
   }
 
   // ---- Localized frequency bump (cursor proximity, desktop only —
@@ -601,6 +664,30 @@
                 * Math.sin(dxL * LOCAL_FREQ + wigglePhase);
     }
     return offset;
+  }
+
+  function pulseIntensityForLine(lineIndex, x) {
+    var maxIntensity = 0;
+    for (var i = 0; i < linePulses.length; i++) {
+      var p = linePulses[i];
+      if (p.lineIndex !== lineIndex) continue;
+
+      // Same progress/fade as pulseOffsetForLine's amplitude, so the
+      // red glow reaches zero at exactly the moment the wiggle does.
+      var progress = Math.min(1, p.age / PULSE_DURATION);
+      var fade = Math.max(0, 1 - progress);
+
+      var rightFront = p.originX + p.rightDist * progress;
+      var dxR = x - rightFront;
+      var gR = Math.exp(-(dxR * dxR) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
+      if (gR * fade > maxIntensity) maxIntensity = gR * fade;
+
+      var leftFront = p.originX - p.leftDist * progress;
+      var dxL = x - leftFront;
+      var gL = Math.exp(-(dxL * dxL) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
+      if (gL * fade > maxIntensity) maxIntensity = gL * fade;
+    }
+    return Math.min(1, maxIntensity);
   }
 
   document.addEventListener('click', function (e) {
