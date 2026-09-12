@@ -11,7 +11,7 @@
 <style>
   :root {
     --bg: #0d0d0d;
-    --ink: #edebe4;
+    --ink: #edebe4e9;
     --ink-soft: #9aa1a6;
     --accent: #c9504a;
     --accent-tint: rgba(201, 93, 74, 0.18);
@@ -85,8 +85,6 @@
     overflow: hidden;
     transition: max-height 0.35s ease;
   }
-
-  .hero-extra.open { max-height: 300px; }
 
   .hero-extra p {
     font-family: 'Source Serif 4', serif;
@@ -359,7 +357,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 17px;
+    font-size: 22px;
     color: var(--ink-soft);
     background: transparent;
     transition: transform 0.3s ease, color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
@@ -518,10 +516,12 @@
       </nav>
     </div>
 
-    <p class="subhead">Building toward a career in space exploration.</p>
+    <p class="subhead">Mechanical engineering student at Iowa State University. Summer 2026, I worked as a Design Engineering Intern at Thingz in Galena, Illinois. I also contribute to Iowa State’s Formula SAE team as a member of the suspension subsystem.
+ </p>
 
     <div class="hero-extra" id="heroExtra">
-      <p>More to come.</p>
+      <p>At Thingz, I built digital twins of electrical substations across the nation. Within Formula SAE, I contribute to the suspension subsystem, taking ownership of a variety of design and manufacturing projects. I also serve as the Sophomore Representative for Iowa State’s SolidWorks Club.</p>
+      <p>I take every opportunity to deepen my understanding of the world around us. Utilizing this knowledge, I strive to create solutions that make a lasting impact.</p>
     </div>
 
     <button class="more-link" id="moreToggle" aria-expanded="false">
@@ -1079,9 +1079,35 @@
   var moreBtn = document.getElementById('moreToggle');
   var heroExtra = document.getElementById('heroExtra');
   moreBtn.addEventListener('click', function () {
-    var isOpen = heroExtra.classList.toggle('open');
-    moreBtn.textContent = isOpen ? 'less' : 'more';
-    moreBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    var isOpen = heroExtra.classList.contains('open');
+    // heroExtra's own content never changes size, so scrollHeight is
+    // the same number whether we're opening or closing — it's exactly
+    // how far every section below the hero is about to shift.
+    var delta = heroExtra.scrollHeight;
+
+    if (isOpen) {
+      heroExtra.classList.remove('open');
+      heroExtra.style.maxHeight = null;
+      moreBtn.textContent = 'more';
+      moreBtn.setAttribute('aria-expanded', 'false');
+      shiftAllRailTops(-delta);
+    } else {
+      heroExtra.classList.add('open');
+      heroExtra.style.maxHeight = delta + 'px';
+      moreBtn.textContent = 'less';
+      moreBtn.setAttribute('aria-expanded', 'true');
+      shiftAllRailTops(delta);
+    }
+
+    // Applying the shift above (rather than waiting) means the rail's
+    // own "top 0.35s ease" transition starts at the same instant as
+    // heroExtra's max-height transition, so they move in lockstep
+    // instead of the rail lagging behind. This setTimeout just does a
+    // final re-measure once things settle, to correct any drift.
+    setTimeout(function () {
+      layoutRails();
+      requestCenterUpdate();
+    }, 380);
   });
 
   // ---- Section rails ----
@@ -1158,6 +1184,21 @@
       r.base.style.top = newTop + 'px';
       r.accent.style.top = newTop + 'px';
     }
+  }
+
+  // Shifts every section's rail down (or up) by the same fixed amount,
+  // immediately, so their CSS "top" transition runs in lockstep with
+  // whatever caused the shift (here, the hero expanding/collapsing).
+  // Unlike shiftRailsFrom, this doesn't resize any one section's own
+  // rail — it just moves all of them, since the hero itself has no rail.
+  function shiftAllRailTops(delta) {
+    allSectionEls.forEach(function (sec) {
+      var r = railMap.get(sec);
+      var curTop = parseFloat(r.base.style.top) || 0;
+      var newTop = curTop + delta;
+      r.base.style.top = newTop + 'px';
+      r.accent.style.top = newTop + 'px';
+    });
   }
 
   // Tracks which section is nearest the viewport's vertical center,
