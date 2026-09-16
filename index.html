@@ -350,18 +350,18 @@
      so open/hover naturally override it; see notes below. */
   .plus {
     flex: 0 0 auto;
-    width: 30px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
     border: 1px solid var(--line);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 17px;
+    font-size: 26px;
     color: var(--ink-soft);
     background: transparent;
     transition: transform 0.3s ease, color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
-    margin-top: 2px;
+    margin-top: -2px;
   }
 
   .entry.open .plus { transform: rotate(45deg); }
@@ -452,6 +452,73 @@
     color: var(--ink-soft);
     text-align: center;
     padding: 8px;
+  }
+
+  /* Angling photo thumbnails — real photos, click to open in the
+     lightbox. Same grid cell shape as .placeholder-box (used by Art)
+     but filled with an actual image instead of dashed-border text. */
+  .photo-thumb {
+    aspect-ratio: 1;
+    width: 100%;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    background: none;
+    cursor: pointer;
+    transition: border-color 0.25s ease;
+  }
+
+  .photo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .photo-thumb:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .photo-thumb:hover {
+      border-color: var(--accent);
+    }
+  }
+
+  /* Fullscreen lightbox for viewing an angling photo at full size.
+     Kept in the DOM at all times (not display:none) so opacity can
+     transition smoothly; pointer-events/visibility keep it fully
+     inert and untappable while hidden, on both desktop and mobile. */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.92);
+    opacity: 0;
+    visibility: hidden;
+    cursor: zoom-out;
+    transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+  }
+
+  .lightbox.show {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.25s ease, visibility 0s linear 0s;
+  }
+
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 6px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
   }
 
   #art p {
@@ -644,14 +711,38 @@
     <h2>Angling</h2>
 
     <p>
-      Write-up coming soon. Check out my resume for details.
+      Coming Soon. Click on the preview to see the whole photo.
     </p>
 
-    <div class="placeholder-grid">
-      <div class="placeholder-box">Photo placeholder</div>
-      <div class="placeholder-box">Photo placeholder</div>
-      <div class="placeholder-box">Photo placeholder</div>
+    <div class="placeholder-grid" id="anglingGrid">
+        <button class="photo-thumb" data-src="angling-4.jpg" aria-label="Open photo: holding a small trout">
+          <img src="angling-4.jpg" alt="Holding a small trout caught along the bank">
+        </button>
+        <button class="photo-thumb" data-src="angling-5.jpg" aria-label="Open photo: holding a largemouth bass">
+          <img src="angling-5.jpg" alt="Holding a largemouth bass near the water">
+        </button>
+        <button class="photo-thumb" data-src="angling-6.jpg" aria-label="Open photo: holding a brown trout in the shallows">
+          <img src="angling-6.jpg" alt="Holding a brown trout in the shallows">
+      </button>
     </div>
+
+    <div class="hero-extra" id="anglingExtra">
+      <div class="placeholder-grid">
+      <button class="photo-thumb" data-src="angling-1.jpg" aria-label="Open photo: fishing rod over a misty river at sunset">
+        <img src="angling-1.jpg" alt="Fishing rod extended over a misty river at sunset">
+      </button>
+      <button class="photo-thumb" data-src="angling-2.jpg" aria-label="Open photo: misty river through summer trees">
+        <img src="angling-2.jpg" alt="Misty river winding through summer trees">
+      </button>
+      <button class="photo-thumb" data-src="angling-3.jpg" aria-label="Open photo: dusk over a creek in a grassy field">
+        <img src="angling-3.jpg" alt="Dusk view of a creek in a grassy field">
+        </button>
+      </div>
+    </div>
+
+    <button class="more-link" id="anglingMoreToggle" aria-expanded="false">
+      more
+    </button>
   </section>
 
   <section id="art">
@@ -694,6 +785,10 @@
     Sam Nguyen — Mechanical Engineering, Iowa State University
   </footer>
 
+</div>
+
+<div class="lightbox" id="lightbox">
+  <img id="lightboxImg" src="" alt="">
 </div>
 
 <script>
@@ -968,6 +1063,8 @@
   document.addEventListener('click', function (e) {
     if (e.target.closest('a')) return;            // links: no effect
     if (e.target.closest('.entry-toggle')) return; // toggles handle their own state
+    if (e.target.closest('.photo-thumb')) return;  // photo thumbs open the lightbox instead
+    if (e.target.closest('.lightbox')) return;      // closing the lightbox shouldn't also spawn a pulse
 
     var bestIdx = -1, bestDiff = Infinity;
     for (var i = 0; i < lines.length; i++) {
@@ -1083,6 +1180,72 @@
       layoutRails();
       requestCenterUpdate();
     }, 380);
+  });
+
+  // ---- Angling more/less toggle ----
+  // Same idea as the hero toggle above, but #angling is itself one of
+  // the tracked sections (not something sitting above all of them),
+  // so growing it uses shiftRailsFrom() — the same function the
+  // accordion entries use to both resize their own section's rail
+  // and shift every section below it, applied immediately so it
+  // animates in lockstep with the max-height transition rather than
+  // lagging behind it.
+  var anglingMoreBtn = document.getElementById('anglingMoreToggle');
+  var anglingExtra = document.getElementById('anglingExtra');
+  var anglingSection = document.getElementById('angling');
+
+  anglingMoreBtn.addEventListener('click', function () {
+    var isOpen = anglingExtra.classList.contains('open');
+    var delta = anglingExtra.scrollHeight; // constant, content itself never changes size
+
+    if (isOpen) {
+      anglingExtra.classList.remove('open');
+      anglingExtra.style.maxHeight = null;
+      anglingMoreBtn.textContent = 'more';
+      anglingMoreBtn.setAttribute('aria-expanded', 'false');
+    } else {
+      anglingExtra.classList.add('open');
+      anglingExtra.style.maxHeight = delta + 'px';
+      anglingMoreBtn.textContent = 'less';
+      anglingMoreBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    var sectionIndex = allSectionEls.indexOf(anglingSection);
+    if (sectionIndex !== -1) {
+      shiftRailsFrom(sectionIndex, isOpen ? -delta : delta);
+    }
+
+    setTimeout(function () {
+      layoutRails();
+      requestCenterUpdate();
+    }, 380);
+  });
+
+  // ---- Photo lightbox ----
+  // Tapping/clicking any .photo-thumb opens its full image centered
+  // on screen; clicking anywhere on the overlay (including the image
+  // itself) closes it again. Works identically on touch and mouse
+  // since both fire a standard 'click' event.
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightboxImg');
+
+  document.querySelectorAll('.photo-thumb').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation(); // don't also trigger the background wave's click-pulse
+      var src = btn.getAttribute('data-src');
+      var img = btn.querySelector('img');
+      lightboxImg.src = src;
+      lightboxImg.alt = img ? img.getAttribute('alt') || '' : '';
+      lightbox.classList.add('show');
+    });
+  });
+
+  lightbox.addEventListener('click', function () {
+    lightbox.classList.remove('show');
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') lightbox.classList.remove('show');
   });
 
   // ---- Section rails ----
