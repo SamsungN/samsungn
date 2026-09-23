@@ -10,69 +10,54 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #121214;
+    --bg: #1c1b1b;
     --ink: #f2f1ec;
     --ink-soft: #9a9a96;
-    --accent: #a9ddff;
-    --accent-tint: rgba(169, 221, 255, 0.16);
-    --cool: #8fd0ff;
-    --cool-tint: rgba(143, 208, 255, 0.14);
+    --accent: #ff4d4d;
+    --accent-tint: rgba(255, 77, 77, 0.16);
+    --cool: #ff4d4d;
+    --cool-tint: rgba(255, 77, 77, 0.14);
     --line: rgba(242, 241, 236, 0.16);
-    /* Full flame — white-hot core, into blue, into a long pale-violet
-       plateau (the bulk of the run, echoing the mach-diamond glow),
-       with the muted amber/rust from the reference photos compressed
-       into the final ~25% before it fades out. This is the horizontal
-       bracket — the h2 underline — and always shows this full run,
-       hover or open. */
+    /* Full flame — red to white, left to right, fading out at the
+       very end. This is the horizontal bracket — the h2 underline —
+       and always shows this full run, hover or open. */
     --flame: linear-gradient(
       to right,
-      #eef8ff 0%,
-      #8ed6ff 10%,
-      #9bcfff 16%,
-      #b79be8 22%,
-      #c77bd0 30%,
-      #d05bb8 40%,
-      #c95aa9 50%,
-      #bd669f 60%,
-      #c57b9a 68%,
-      #dc9a7d 76%,
-      #e5ad68 83%,
-      #d47b48 90%,
-      #a94f2d 96%,
-      #7a3820 98%,
+      #ff4d4d 0%,
+      #ff6f5f 15%,
+      #ff9686 30%,
+      #ffb7a9 45%,
+      #ffd4c9 60%,
+      #ffe9e2 75%,
+      #fff8f5 88%,
+      #ffffff 95%,
       transparent 100%
     );
     --flame-vertical: linear-gradient(
       to bottom,
-      #eef8ff 0%,
-      #8ed6ff 10%,
-      #9bcfff 16%,
-      #b79be8 22%,
-      #c77bd0 30%,
-      #d05bb8 40%,
-      #c95aa9 50%,
-      #bd669f 60%,
-      #c57b9a 68%,
-      #dc9a7d 76%,
-      #e5ad68 83%,
-      #d47b48 90%,
-      #a94f2d 96%,
-      #7a3820 98%,
+      #ff4d4d 0%,
+      #ff6f5f 15%,
+      #ff9686 30%,
+      #ffb7a9 45%,
+      #ffd4c9 60%,
+      #ffe9e2 75%,
+      #fff8f5 88%,
+      #ffffff 95%,
       transparent 100%
     );
-    /* Cool flame — white-hot core straight into blue, no warm colors
-       at all. This is the vertical bracket — the rail — and it
-       always stops here, hover or open, never reaching the amber. */
+    /* Cool flame — solid red, capped before it would lighten toward
+       white. This is the vertical bracket — the rail — and it always
+       stops here, hover or open, never reaching the white end. */
     --cool-flame: linear-gradient(
       to right,
-      #eef8ff 0%,
-      #8ed6ff 42%,
+      #ff4d4d 0%,
+      #ff4d4d 42%,
       transparent 100%
     );
     --cool-flame-vertical: linear-gradient(
       to bottom,
-      #eef8ff 0%,
-      #8ed6ff 42%,
+      #ff4d4d 0%,
+      #ff4d4d 42%,
       transparent 100%
     );
     --content-max: 620px;
@@ -299,10 +284,10 @@
   /* Hover-only effects — scoped to devices with real hover (mouse/trackpad)
      so touchscreens don't get stuck in a "hovered" state after a tap.
      Tint is a light, subtle grey/white. The underline (the bracket's
-     horizontal/top arm) reveals the full flame here already — amber
-     included — while the rail (the bracket's vertical/left arm)
-     stays capped at blue via its own --cool-flame-vertical default
-     and never shows the warm colors at all. */
+     horizontal/top arm) reveals the full flame here already — the
+     white end included — while the rail (the bracket's vertical/left
+     arm) stays capped at solid red via its own --cool-flame-vertical
+     default and never lightens toward white. */
   @media (hover: hover) and (pointer: fine) {
     .toggle-section:hover {
       background: rgba(255, 255, 255, 0.035);
@@ -353,9 +338,8 @@
     background: var(--accent);
   }
 
-  /* Capped at blue by default (hover-only state); reveals the rest of
-     the gradient — violet and amber included — once the section is
-     actually toggled open. See updateRailAccent() for the swap. */
+  /* Solid red, capped before it would lighten toward white — shown
+     both on hover and while the section is toggled open. */
   .rail-accent {
     width: 2px;
     background: var(--cool-flame-vertical);
@@ -442,7 +426,7 @@
 
   /* Toggle button — sized up site-wide. Color/fill state is layered:
      default (grey outline) -> centered-white tint (section is the
-     one nearest viewport center) -> open/hover blue tint, with
+     one nearest viewport center) -> open/hover red tint, with
      open/hover always winning over the centered-white look. The
      centered rule is written first and has lower selector weight,
      so open/hover naturally override it; see notes below. */
@@ -476,7 +460,7 @@
     background: var(--accent-tint);
   }
 
-  /* Open state: light blue tint fill, accent-colored outline/icon
+  /* Open state: light red tint fill, accent-colored outline/icon
      (wins over the white centered look above). */
   .entry.open .plus {
     background: var(--accent-tint);
@@ -1034,7 +1018,7 @@
   }
 
   function drawWave() {
-    ctx.strokeStyle = 'rgba(210, 120, 70, 0.16)';
+    ctx.strokeStyle = 'rgba(155, 155, 155, 0.11)';
     ctx.lineWidth = 1;
     for (var i = 0; i < lines.length; i++) {
       var l = lines[i];
@@ -1044,9 +1028,17 @@
         if (l.intensity > 0.001 && refPointActive) {
           var dx = x - refPointX;
           var gauss = Math.exp(-(dx * dx) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
-          y += l.intensity * gauss * LOCAL_AMP * Math.sin(dx * LOCAL_FREQ + wigglePhase);
+          // The ripple's own texture is keyed to the canvas x position
+          // (not dx, the cursor-relative offset) so that tracing the
+          // cursor along the line doesn't fold the cursor's horizontal
+          // speed into the ripple's apparent oscillation rate — only
+          // the gaussian envelope (which fades the ripple in/out) moves
+          // with the cursor; the ripple's own animation speed is driven
+          // solely by wigglePhase.
+          y += l.intensity * gauss * LOCAL_AMP * Math.sin(x * LOCAL_FREQ + wigglePhase);
         }
         y += pulseOffsetForLine(i, x);
+        y += ambientOffsetForLine(i, x);
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
@@ -1056,26 +1048,26 @@
     drawWiggleGlow();
   }
 
-  // Subtle red flash riding along with any active wiggle — either a
-  // traveling click pulse or the cursor-proximity hover wiggle. Drawn
-  // as a separate overlay pass, segment by segment, so only the
-  // stretch of line actually wiggling tints red — everywhere else
-  // stays the normal grey. Each source fades using the same value
-  // that already drives its distortion (pulse age/progress, or
-  // l.intensity for hover), so the red is fully gone at exactly the
+  // Bright accent-red flash riding along with any active wiggle —
+  // either a traveling click pulse or the cursor-proximity hover
+  // wiggle. Drawn as a separate overlay pass, segment by segment, so
+  // only the stretch of line actually wiggling lights up — everywhere
+  // else stays the normal faint grey. Each source fades using the same
+  // value that already drives its distortion (pulse age/progress, or
+  // l.intensity for hover), so the glow is fully gone at exactly the
   // moment the wiggle itself settles back to flat.
+  // Hover glow is a white-hot center that transitions to red as the
+  // wiggle's intensity tapers off. Since intensity is 1 at the center
+  // and 0 at the taper, glowColorForIntensity() reverses the
+  // intensity value when looking up the gradient (k=0 at the center,
+  // k=1 at the taper).
   var GLOW_STOPS = [
     { t: 0.00, c: [255, 255, 255] },
-    { t: 0.10, c: [238, 248, 255] },
-    { t: 0.22, c: [142, 214, 255] },
-    { t: 0.32, c: [155, 190, 240] },
-    { t: 0.44, c: [199, 123, 208] },
-    { t: 0.56, c: [208, 91, 184] },
-    { t: 0.68, c: [220, 113, 150] },
-    { t: 0.78, c: [229, 157, 103] },
-    { t: 0.90, c: [201, 107, 60] },
-    { t: 0.97, c: [122, 56, 32] },
-    { t: 1.00, c: [122, 56, 32] }
+    { t: 0.15, c: [255, 233, 229] },
+    { t: 0.35, c: [255, 176, 161] },
+    { t: 0.55, c: [255, 122, 105] },
+    { t: 0.75, c: [255, 77, 77] },
+    { t: 1.00, c: [196, 40, 34] }
   ];
   var GLOW_ALPHA = 0.95;     // peak overlay opacity
   var GLOW_WIDTH = 1.8;      // px — slightly heavier than the base line
@@ -1084,11 +1076,10 @@
   function glowColorForIntensity(t) {
     // IMPORTANT: t is DISTANCE/FADE intensity: 1.0 is the exact
     // center of the hover wiggle and 0.0 is its tapered edge.
-    // The dividing-line gradient is ordered from white -> blue ->
-    // violet -> magenta -> rose -> amber -> rust. Reverse the lookup
-    // parameter so the strongest center gets the gradient's first
-    // (white-hot) color and the color progresses outward in the same
-    // order as the dividing line.
+    // The glow is white-hot at the center and reddens outward, so
+    // reverse the lookup parameter: the strongest center gets the
+    // gradient's first (white-hot) color and it progresses toward
+    // red as intensity fades.
     var k = 1 - Math.min(1, Math.max(0, t));
 
     for (var i = 1; i < GLOW_STOPS.length; i++) {
@@ -1108,7 +1099,7 @@
   }
 
   function drawWiggleGlow() {
-    if (!linePulses.length && !refPointActive) return;
+    if (!linePulses.length && !refPointActive && !ambientPulses.length) return;
 
     ctx.lineWidth = GLOW_WIDTH;
 
@@ -1119,8 +1110,12 @@
       for (var j = 0; j < linePulses.length; j++) {
         if (linePulses[j].lineIndex === i) { hasPulse = true; break; }
       }
+      var hasAmbient = false;
+      for (var m = 0; m < ambientPulses.length; m++) {
+        if (ambientPulses[m].lineIndex === i) { hasAmbient = true; break; }
+      }
       var hasHover = refPointActive && l.intensity > 0.001;
-      if (!hasPulse && !hasHover) continue;
+      if (!hasPulse && !hasHover && !hasAmbient) continue;
 
       var prevX = null, prevY = null, prevIntensity = 0;
 
@@ -1131,15 +1126,20 @@
         if (hasHover) {
           var dx = x - refPointX;
           var gauss = Math.exp(-(dx * dx) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
-          y += l.intensity * gauss * LOCAL_AMP * Math.sin(dx * LOCAL_FREQ + wigglePhase);
+          y += l.intensity * gauss * LOCAL_AMP * Math.sin(x * LOCAL_FREQ + wigglePhase);
           hoverIntensity = l.intensity * gauss;
         }
         y += pulseOffsetForLine(i, x);
+        y += ambientOffsetForLine(i, x);
 
         var intensity = hoverIntensity;
         if (hasPulse) {
           var pulseIntensity = pulseIntensityForLine(i, x);
           if (pulseIntensity > intensity) intensity = pulseIntensity;
+        }
+        if (hasAmbient) {
+          var ambIntensity = ambientIntensityForLine(i, x);
+          if (ambIntensity > intensity) intensity = ambIntensity;
         }
 
         if (prevX !== null && (intensity > GLOW_THRESHOLD || prevIntensity > GLOW_THRESHOLD)) {
@@ -1164,7 +1164,7 @@
   var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var PROXIMITY_MAX_DIST = 70;
   var LOCAL_SIGMA = 45;
-  var LOCAL_FREQ = 0.25;
+  var LOCAL_FREQ = 0.5;
   var LOCAL_AMP = 30;
 
   var cursor = { x: 0, y: 0 };
@@ -1174,6 +1174,9 @@
   var refPointX = 0;
   var refPointY = 0;
   var wigglePhase = 0;
+  var REF_POINT_SMOOTHING = 0.15; // eases the ref point toward the cursor so fast mouse
+                                   // moves don't yank the wiggle's phase and make the
+                                   // ripple look like it briefly speeds up
 
   if (hoverCapable) {
     window.addEventListener('mousemove', function (e) {
@@ -1185,10 +1188,20 @@
 
   function updateProximity() {
     refPointActive = false;
+    var targetX = refPointX, targetY = refPointY, hasTarget = false;
 
     if (hoverCapable && lastMoveTime) {
-      refPointX = cursor.x;
-      refPointY = cursor.y;
+      targetX = cursor.x;
+      targetY = cursor.y;
+      hasTarget = true;
+    }
+
+    if (hasTarget) {
+      // Ease toward the target instead of snapping straight to it —
+      // this is what keeps a fast mouse move from making the ripple
+      // frequency appear to spike.
+      refPointX += (targetX - refPointX) * REF_POINT_SMOOTHING;
+      refPointY += (targetY - refPointY) * REF_POINT_SMOOTHING;
       refPointActive = true;
     }
 
@@ -1204,7 +1217,7 @@
       if (l.intensity < 0.001) l.intensity = 0;
     }
 
-    wigglePhase += 0.35;
+    wigglePhase += 0.07;
   }
 
   // ---- Traveling line pulse (click exactly on a line) ----
@@ -1264,7 +1277,7 @@
       if (p.lineIndex !== lineIndex) continue;
 
       // Same progress/fade as pulseOffsetForLine's amplitude, so the
-      // red glow reaches zero at exactly the moment the wiggle does.
+      // glow reaches zero at exactly the moment the wiggle does.
       var progress = Math.min(1, p.age / PULSE_DURATION);
       var fade = Math.max(0, 1 - progress);
 
@@ -1277,6 +1290,87 @@
       var dxL = x - leftFront;
       var gL = Math.exp(-(dxL * dxL) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
       if (gL * fade > maxIntensity) maxIntensity = gL * fade;
+    }
+    return Math.min(1, maxIntensity);
+  }
+
+  // ---- Ambient "shooting star" hum ----
+  // Every so often, a small random stretch of a randomly picked line
+  // quietly takes on the same red wiggle/glow treatment as a hover
+  // or click — but stationary, and driven entirely by its own timer
+  // rather than input. A raised-cosine envelope (0 -> 1 -> 0) gives
+  // it a smooth, symmetric fade in and out with no hard edges. Kept
+  // deliberately infrequent and low-peak so it reads as a subtle
+  // ambient detail, not a distraction.
+  var ambientPulses = [];
+  var AMBIENT_MIN_INTERVAL = 5000;  // ms between occurrences (lower bound)
+  var AMBIENT_MAX_INTERVAL = 12000; // ms between occurrences (upper bound)
+  var AMBIENT_MAX_CONCURRENT = 2;   // never more than this many humming at once
+  var AMBIENT_DURATION = 300;       // base frames (~5s at 60fps) for a full in/out cycle
+  var AMBIENT_SIGMA_MIN = 45;       // px — narrowest affected stretch
+  var AMBIENT_SIGMA_MAX = 95;       // px — widest affected stretch
+  var AMBIENT_PEAK_MIN = 0.28;      // keeps the glow mostly in the red range,
+  var AMBIENT_PEAK_MAX = 0.5;       // rarely bright enough to read as white-hot
+
+  function ambientEnvelope(p) {
+    var t = Math.min(1, p.age / p.duration);
+    return 0.5 * (1 - Math.cos(2 * Math.PI * t)); // smooth 0 -> 1 -> 0, no hard edges
+  }
+
+  function spawnAmbientPulse() {
+    if (!running || reduceMotion) return;
+    if (ambientPulses.length >= AMBIENT_MAX_CONCURRENT) return;
+
+    ambientPulses.push({
+      lineIndex: Math.floor(Math.random() * lines.length),
+      x: Math.random() * w,
+      age: 0,
+      duration: Math.round(AMBIENT_DURATION * (0.75 + Math.random() * 0.5)),
+      sigma: AMBIENT_SIGMA_MIN + Math.random() * (AMBIENT_SIGMA_MAX - AMBIENT_SIGMA_MIN),
+      peak: AMBIENT_PEAK_MIN + Math.random() * (AMBIENT_PEAK_MAX - AMBIENT_PEAK_MIN)
+    });
+  }
+
+  function scheduleNextAmbientPulse() {
+    var delay = AMBIENT_MIN_INTERVAL + Math.random() * (AMBIENT_MAX_INTERVAL - AMBIENT_MIN_INTERVAL);
+    setTimeout(function () {
+      spawnAmbientPulse();
+      scheduleNextAmbientPulse();
+    }, delay);
+  }
+
+  function updateAmbientPulses() {
+    for (var i = ambientPulses.length - 1; i >= 0; i--) {
+      var p = ambientPulses[i];
+      p.age++;
+      if (p.age >= p.duration) ambientPulses.splice(i, 1);
+    }
+  }
+
+  function ambientOffsetForLine(lineIndex, x) {
+    var offset = 0;
+    for (var i = 0; i < ambientPulses.length; i++) {
+      var p = ambientPulses[i];
+      if (p.lineIndex !== lineIndex) continue;
+
+      var dx = x - p.x;
+      var gauss = Math.exp(-(dx * dx) / (2 * p.sigma * p.sigma));
+      var env = ambientEnvelope(p) * p.peak;
+      offset += env * gauss * LOCAL_AMP * Math.sin(x * LOCAL_FREQ + wigglePhase);
+    }
+    return offset;
+  }
+
+  function ambientIntensityForLine(lineIndex, x) {
+    var maxIntensity = 0;
+    for (var i = 0; i < ambientPulses.length; i++) {
+      var p = ambientPulses[i];
+      if (p.lineIndex !== lineIndex) continue;
+
+      var dx = x - p.x;
+      var gauss = Math.exp(-(dx * dx) / (2 * p.sigma * p.sigma));
+      var val = ambientEnvelope(p) * p.peak * gauss;
+      if (val > maxIntensity) maxIntensity = val;
     }
     return Math.min(1, maxIntensity);
   }
@@ -1305,6 +1399,7 @@
     advanceWave();
     updateProximity();
     updateLinePulses();
+    updateAmbientPulses();
     draw();
     frameId = requestAnimationFrame(loop);
   }
@@ -1324,6 +1419,7 @@
     draw();
   } else {
     frameId = requestAnimationFrame(loop);
+    scheduleNextAmbientPulse();
   }
 
   // ---- Section rails (ported from index.html) ----
