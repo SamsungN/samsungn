@@ -649,6 +649,24 @@
     .content { padding: 90px 24px 110px 24px; }
     .placeholder-grid { grid-template-columns: repeat(3, 1fr); }
   }
+
+    @media (max-width: 600px) {
+    body { font-size: 17px; }
+    .hero .subhead,
+    .hero-extra p { font-size: 17px; }
+    .top-link { font-size: 14.5px; }
+    .more-link { font-size: 14px; }
+    .group-title { font-size: 25px; }
+    h2 { font-size: 20px; }
+    .entry-top h3 { font-size: 16px; }
+    .entry-date { font-size: 13px; }
+    .entry-sub { font-size: 14px; }
+    .entry-detail p { font-size: 15.5px; }
+    #education .edu-title { font-size: 15px; }
+    .skill-pill { font-size: 13px; }
+    .contact-links a { font-size: 15px; }
+    footer { font-size: 12.5px; }
+  }
 </style>
 </head>
 
@@ -699,9 +717,9 @@
       </button>
 
       <div class="entry-detail">
-        <p>I worked in a tight knit team specializing in digital twin development, building an internal modeling infrastructure and knowledge base from scratch.</p>
-        <p>I 3D-modeled and performed point cloud analysis of substation equipment daily, ensuring centimeter-level accuracy between point cloud and 3D models. In parallel with the high-level assembly work, I accelerated internal development of a parts library. Iteration turnaround times were reduced roughly by 70%. Check out my resume for more details, or contact me directly, always happy to discuss engineering!</p>
-        <p>My takeway from this is the importance of adaptability in a fast-paced environment. Prior to this I had no experience with Inventor, but after a week of putting in the hours, it felt no different from SolidWorks. Opportunities to rapidly adapt and apply new skills are the reason I love engineering.</p>
+        <p>I worked in a tight-knit team specializing in digital twin development, building an internal modeling infrastructure and knowledge base from scratch.</p>
+        <p>I 3D-modeled and performed point cloud analysis of substation equipment daily, ensuring centimeter-level accuracy between point cloud and 3D models. In parallel with the high-level assembly work, I accelerated internal development of a parts library. Iteration turnaround times were reduced roughly by 70%. Check out my resume for more details, or contact me directly; always happy to discuss engineering!</p>
+        <p>My takeaway from this is the importance of adaptability in a fast-paced environment. Before this, I had no experience with Inventor, but after a week of putting in the hours, it felt no different from SolidWorks. Opportunities to rapidly adapt and apply new skills are the reason I love engineering.</p>
       </div>
     </div>
   </section>
@@ -722,7 +740,9 @@
       </button>
 
       <div class="entry-detail">
-        <p>Write-up coming soon. Check out my resume for details.</p>
+        <p>I'm a member of the suspension subsystem on Iowa State's Formula SAE Electric Vehicle team, where I design, model, and build components from concept through fabrication.</p>
+        <p>I own the bell crank assembly for the latest design cycle, revising design features to improve iteration efficiency. I also designed and manufactured a strain gauge calibration fixture, which produced significant data for our strain gauge R&D. To support production, I designed and 3D-printed jigs that precisely locate critical suspension geometries on all 4 corners of the vehicle. Along the way, I've gained experience in cross-functional teams and data analysis.</p>
+        <p>FSAE has allowed me to apply my coursework hands-on, turning concepts into parts that are built and tested. Fabricating my own projects has made me a better designer because I now think about the manufacturing perspective.</p>
       </div>
     </div>
   </section>
@@ -743,7 +763,9 @@
       </button>
 
       <div class="entry-detail">
-        <p>Write-up coming soon. Check out my resume for details.</p>
+        <p>I'm the Sophomore Representative for Iowa State's SolidWorks Club, where I've been a member since August 2025 and was elected to the role after my first year.</p>
+        <p>I earned my SolidWorks CSWP certification with a 100% on the 3-hour assessment, after working through the club's weekly CAD assignments. I use that foundation to help other members through 1-on-1 feedback on core modeling skills and design best practices, sharing what I've learned firsthand. I also represent the club at our info booth, where strong communication helped us reach a record 163 new member sign-ups.</p>
+        <p>Mentoring has become one of my favorite parts of engineering. Explaining a concept to someone else shows me how well I understand it, and there's nothing better than watching a member go from stuck to confident. I like to think that every piece of advice or tip I give is a contribution to a future fellow engineer.</p>
       </div>
     </div>
   </section>
@@ -781,6 +803,13 @@
       <span class="skill-pill">Microsoft Excel</span>
       <span class="skill-pill">Microsoft Word</span>
       <span class="skill-pill">Microsoft PowerPoint</span>
+      <span class="skill-pill">Metal Lathe</span>
+      <span class="skill-pill">MIG Welding</span>
+      <span class="skill-pill">Grinder &amp; Sander</span>
+      <span class="skill-pill">Horizontal &amp; Vertical Bandsaw</span>
+      <span class="skill-pill">Table Saw</span>
+      <span class="skill-pill">Mill</span>
+      <span class="skill-pill">Drill Press</span>
     </div>
   </section>
 
@@ -899,12 +928,15 @@
 
   // ---- Background wave ----
   var lines = [
-    { y: 0.14, amp: 16, freq: 0.0022, speed: 0.004,  phase: 0.0, p: 0, intensity: 0 },
-    { y: 0.30, amp: 24, freq: 0.0016, speed: 0.0028, phase: 1.4, p: 0, intensity: 0 },
-    { y: 0.46, amp: 13, freq: 0.0028, speed: 0.0052, phase: 3.1, p: 0, intensity: 0 },
-    { y: 0.62, amp: 21, freq: 0.0018, speed: 0.0036, phase: 4.6, p: 0, intensity: 0 },
-    { y: 0.78, amp: 15, freq: 0.0024, speed: 0.0044, phase: 2.2, p: 0, intensity: 0 },
-    { y: 0.92, amp: 18, freq: 0.0020, speed: 0.0032, phase: 5.5, p: 0, intensity: 0 }
+    { y: 0.10, amp: 16, freq: 0.0022, speed: 0.0040, phase: 0.0, p: 0, intensity: 0 },
+    { y: 0.20, amp: 24, freq: 0.0016, speed: 0.0028, phase: 1.4, p: 0, intensity: 0 },
+    { y: 0.30, amp: 13, freq: 0.0028, speed: 0.0052, phase: 3.1, p: 0, intensity: 0 },
+    { y: 0.40, amp: 21, freq: 0.0018, speed: 0.0036, phase: 4.6, p: 0, intensity: 0 },
+    { y: 0.50, amp: 15, freq: 0.0024, speed: 0.0044, phase: 2.2, p: 0, intensity: 0 },
+    { y: 0.60, amp: 18, freq: 0.0020, speed: 0.0032, phase: 5.5, p: 0, intensity: 0 },
+    { y: 0.70, amp: 19, freq: 0.0021, speed: 0.0038, phase: 0.8, p: 0, intensity: 0 },
+    { y: 0.80, amp: 14, freq: 0.0026, speed: 0.0046, phase: 3.9, p: 0, intensity: 0 },
+    { y: 0.90, amp: 22, freq: 0.0017, speed: 0.0030, phase: 2.9, p: 0, intensity: 0 }
   ];
 
   function waveY(l, x) {
@@ -918,7 +950,7 @@
   }
 
   function drawWave() {
-    ctx.strokeStyle = 'rgba(155, 155, 155, 0.11)';
+    ctx.strokeStyle = 'rgba(155, 155, 155, 0.055)';
     ctx.lineWidth = 1;
     for (var i = 0; i < lines.length; i++) {
       var l = lines[i];
