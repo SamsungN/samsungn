@@ -845,6 +845,22 @@
     .pdf-frame { height: 760px; }
   }
 
+  /* Phone-only font scaling. Kept last so it overrides the rules above. */
+  @media (max-width: 600px) {
+    body { font-size: 17px; }
+    .top-link { font-size: 14.5px; }
+    h2,
+    .resume-section h2 { font-size: 20px; }
+    .entry-top h3 { font-size: 16px; }
+    .entry-date { font-size: 13px; }
+    .entry-sub { font-size: 14px; }
+    .entry ul { font-size: 15.5px; }
+    #education .edu-title { font-size: 15px; }
+    .skill-pill { font-size: 13px; }
+    .pdf-actions a { font-size: 13px; padding: 9px 18px; }
+    footer { font-size: 12.5px; }
+  }
+
 </style>
 </head>
 
@@ -881,12 +897,13 @@
       </div>
       <div class="entry-sub">Thingz Inc. · Galena, IL</div>
       <ul>
-        <li>Designed and managed large electrical substations in Autodesk Inventor using point cloud data and engineering drawings to provide a digital twin representative of real-world equipment and environment.</li>
-        <li>Developed models of electrical substation equipment, producing over 1,000 parts and subassemblies.</li>
-        <li>Rapidly created and managed a library of standardized substation parts and assemblies to streamline the CAD modeling process, reducing design and assembly turnaround time from a few hours to mere minutes.</li>
-        <li>Operated 360° LiDAR scanners and cameras to capture point cloud data across entire substations on-site.</li>
-        <li>Prepared weekly reports on modeling insights and progress, contributing to the project timeline.</li>
-        <li>Consistently adhere to modeling principles and requirement standards to ensure proper integration with existing parts, assemblies, and naming conventions.</li>
+        <li>Designed and managed large electrical substations in Autodesk Inventor by aligning and interpreting 30M+ point LiDAR scans to produce a digital twin representative of real-world equipment and environment.</li>
+        <li>Reduced design turnaround time by roughly 70% by rapidly building and organizing a standardized library of substation parts and assemblies, streamlining the CAD process and providing reference models for future projects.</li>
+        <li>Developed accurate, detailed models of electrical substation equipment, producing 1,000+ parts and sub-assemblies.</li>
+        <li>Operated 360° LiDAR scanners and cameras on-site to capture point cloud data across an entire 5+ acre environment.</li>
+        <li>Worked cross-functionally to coordinate modeling efforts and deliver weekly verbal and written progress reports.</li>
+        <li>Identified a productivity gap and solved it through creation of assembly identifier flow charts, diagrams, and documentation.</li>
+        <li>Consistently adhere to modeling principles and quality standards to ensure compatibility between new and existing parts, assemblies, and naming conventions.</li>
       </ul>
     </div>
   </section>
@@ -910,12 +927,13 @@
       </div>
       <div class="entry-sub">Cyclone Racing · Iowa State University</div>
       <ul>
-        <li>Independently designed and manufactured a static strain gauge calibrator, involving statics calculations, hands-on tooling experience, and welding, culminating in significant data acquisition for the team's R&amp;D of strain gauges.</li>
-        <li>Created and implemented various 3D-printed jig parts to ensure the precise location of critical suspension components on all four corners of the vehicle, such as the front and rear A-arms, push rods, and tabs.</li>
-        <li>Researched and designed various solutions to connect suspension blade components to the anti-roll bar.</li>
-        <li>Collaborated with external design teams to ensure seamless integration between suspension parts.</li>
-        <li>Analyzed data on bearing options to determine the best solution for the specific use case.</li>
-        <li>Precisely 3D modeled parts to be easily scalable through use of parametric modeling techniques.</li>
+        <li>Independently designed and manufactured a strain gauge calibration fixture, involving statics calculations, hands-on fabrication, and welding, culminating in significant data acquisition for the team's R&amp;D of strain gauges.</li>
+        <li>Designed and additively manufactured jig tooling to ensure precise location of critical suspension component geometries during production, such as the A-arms, push rods, and tabs on all 4 corners of the vehicle.</li>
+        <li>Oversee and own the bell crank/rocker assembly of the latest design cycle, using design tables and proper modeling practices to validate decisions alongside improving knowledge transfer and documentation.</li>
+        <li>Worked hands-on and gained certifications on a wide variety of fabrication equipment for a diverse array of projects.</li>
+        <li>Analyzed bearing specifications to determine most efficient solution, balancing packaging constraints and cost reduction.</li>
+        <li>Collaborated with external design team to ensure seamless integration between Blade Holder and Servo-to-Blade Adapter.</li>
+        <li>Precisely modeled parts using parametric modeling techniques, enabling scalability and rapid design iteration to verify packaging concerns for Blade Holder and bearing integration.</li>
       </ul>
     </div>
   </section>
@@ -930,12 +948,10 @@
       </div>
       <div class="entry-sub">Iowa State University</div>
       <ul>
-        <li>Obtained SolidWorks CSWP certification through weekly CAD assignments and a rigorous final 3-hour assessment which tested part modeling, design iteration, and assembly skills, scoring a flawless 100%.</li>
-        <li>Elected as Sophomore Representative after first year of membership, demonstrating rapid growth and mentorship.</li>
-        <li>Assisted club members in learning core SolidWorks skills by providing 1-on-1 feedback and accumulated experience.</li>
-        <li>Built a stronger knowledge base within the club by encouraging peer-to-peer learning and hands-on practice.</li>
-        <li>Recruited new members by promoting the club to underclassmen and first-year Mechanical Engineering students, growing engagement with CAD across campus.</li>
-        <li>Review and evaluate engineering drawings in accordance with ASME Y14.5 and GD&amp;T standards.</li>
+        <li>Achieved SolidWorks CSWP Certification with a flawless 100% through weekly CAD assignments and a rigorous 3-hour final assessment covering part modeling, design iteration, and assembly skills.</li>
+        <li>Evaluated engineering drawings of models and assemblies for compliance with ASME Y14.5 standards.</li>
+        <li>Elected Sophomore Representative after first year of membership, demonstrating rapid growth and mentorship.</li>
+        <li>Provided 1-on-1 instruction to club members on core SolidWorks skills and design best practices.</li>
       </ul>
     </div>
   </section>
@@ -950,9 +966,8 @@
       </div>
       <div class="entry-sub">Personal project</div>
       <ul>
-        <li>Assessed design requirements and measurements for the product to ensure proper integration.</li>
-        <li>Developed and revised product design using paper sketches and SolidWorks CAD models.</li>
-        <li>Manufactured and constructed final design through use of 3D printing, successfully creating a solution.</li>
+        <li>Assessed design requirements using digital calipers and paper sketches to ensure proper product function.</li>
+        <li>Created and 3D-printed final solution using SolidWorks and Bambu Lab X1C, material choice of PETG.</li>
       </ul>
     </div>
   </section>
@@ -968,11 +983,18 @@
       <span class="skill-pill">Microsoft Excel</span>
       <span class="skill-pill">Microsoft Word</span>
       <span class="skill-pill">Microsoft PowerPoint</span>
+      <span class="skill-pill">Metal Lathe</span>
+      <span class="skill-pill">MIG Welding</span>
+      <span class="skill-pill">Grinder &amp; Sander</span>
+      <span class="skill-pill">Horizontal &amp; Vertical Bandsaw</span>
+      <span class="skill-pill">Table Saw</span>
+      <span class="skill-pill">Mill</span>
+      <span class="skill-pill">Drill Press</span>
     </div>
   </section>
 
   <footer>
-    Samson Nguyen — Mechanical Engineering, Iowa State University
+    Sam Nguyen — Mechanical Engineering, Iowa State University
   </footer>
 
 </div>
@@ -999,12 +1021,15 @@
 
   // ---- Background wave ----
   var lines = [
-    { y: 0.14, amp: 16, freq: 0.0022, speed: 0.004,  phase: 0.0, p: 0, intensity: 0 },
-    { y: 0.30, amp: 24, freq: 0.0016, speed: 0.0028, phase: 1.4, p: 0, intensity: 0 },
-    { y: 0.46, amp: 13, freq: 0.0028, speed: 0.0052, phase: 3.1, p: 0, intensity: 0 },
-    { y: 0.62, amp: 21, freq: 0.0018, speed: 0.0036, phase: 4.6, p: 0, intensity: 0 },
-    { y: 0.78, amp: 15, freq: 0.0024, speed: 0.0044, phase: 2.2, p: 0, intensity: 0 },
-    { y: 0.92, amp: 18, freq: 0.0020, speed: 0.0032, phase: 5.5, p: 0, intensity: 0 }
+    { y: 0.10, amp: 16, freq: 0.0022, speed: 0.0040, phase: 0.0, p: 0, intensity: 0 },
+    { y: 0.20, amp: 24, freq: 0.0016, speed: 0.0028, phase: 1.4, p: 0, intensity: 0 },
+    { y: 0.30, amp: 13, freq: 0.0028, speed: 0.0052, phase: 3.1, p: 0, intensity: 0 },
+    { y: 0.40, amp: 21, freq: 0.0018, speed: 0.0036, phase: 4.6, p: 0, intensity: 0 },
+    { y: 0.50, amp: 15, freq: 0.0024, speed: 0.0044, phase: 2.2, p: 0, intensity: 0 },
+    { y: 0.60, amp: 18, freq: 0.0020, speed: 0.0032, phase: 5.5, p: 0, intensity: 0 },
+    { y: 0.70, amp: 19, freq: 0.0021, speed: 0.0038, phase: 0.8, p: 0, intensity: 0 },
+    { y: 0.80, amp: 14, freq: 0.0026, speed: 0.0046, phase: 3.9, p: 0, intensity: 0 },
+    { y: 0.90, amp: 22, freq: 0.0017, speed: 0.0030, phase: 2.9, p: 0, intensity: 0 }
   ];
 
   function waveY(l, x) {
@@ -1018,7 +1043,7 @@
   }
 
   function drawWave() {
-    ctx.strokeStyle = 'rgba(155, 155, 155, 0.11)';
+    ctx.strokeStyle = 'rgba(155, 155, 155, 0.055)';
     ctx.lineWidth = 1;
     for (var i = 0; i < lines.length; i++) {
       var l = lines[i];
