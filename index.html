@@ -7,20 +7,53 @@
 <title>Sam Nguyen — Mechanical Engineering Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Bitter:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+<script src="theme.js"></script>
 <style>
+
+  /* Azeret Mono (self-hosted, OFL) */
+  @font-face {
+    font-family: 'Azeret Mono';
+    src: url('fonts/AzeretMono-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Azeret Mono';
+    src: url('fonts/AzeretMono-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Azeret Mono';
+    src: url('fonts/AzeretMono-600.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Azeret Mono';
+    src: url('fonts/AzeretMono-700.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Bitter (Google Fonts) */
+  /* Loaded directly in the document head; no local Bitter files required. */
+
   :root {
-    --bg: #1c1b1b;
-    --ink: #f2f1ec;
+    --bg: #141414;
+    --ink: #f2f2f2;
     --ink-soft: #9a9a96;
     --accent: #ff4d4d;
     --accent-tint: rgba(255, 77, 77, 0.16);
     --cool: #ff4d4d;
     --cool-tint: rgba(255, 77, 77, 0.14);
     --line: rgba(242, 241, 236, 0.16);
-    /* Full flame — red to white, left to right, fading out at the
-       very end. This is the horizontal bracket — the h2 underline —
-       and always shows this full run, hover or open. */
+    /* Full flame — red to white; used ONLY by the h2 pop-out underline on small sections */
     --flame: linear-gradient(
       to right,
       #ff4d4d 0%,
@@ -45,9 +78,7 @@
       #ffffff 95%,
       transparent 100%
     );
-    /* Cool flame — solid red, capped before it lightens toward white.
-       This is the vertical bracket — the rail — and it always stops
-       here, hover or open, never reaching the white end of the gradient. */
+    /* Cool flame — solid red, capped before it lightens; the vertical rail */
     --cool-flame: linear-gradient(
       to right,
       #ff4d4d 0%,
@@ -61,6 +92,7 @@
       transparent 100%
     );
     --content-max: 620px;
+    --content-top: 64px;   /* .content's top padding; the hero's mobile height calc uses it too */
   }
 
   * { box-sizing: border-box; }
@@ -74,14 +106,14 @@
     margin: 0;
     background: var(--bg);
     color: var(--ink);
-    font-family: 'Source Serif 4', Georgia, serif;
+    font-family: 'Bitter', Arial, sans-serif;
     font-size: 19px;
-    line-height: 1.65;
+    line-height: 1.72;
     -webkit-font-smoothing: antialiased;
   }
 
   h1, .label {
-    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-family: 'Azeret Mono', 'Courier New', monospace;
   }
 
   a { color: var(--ink); }
@@ -101,39 +133,117 @@
     z-index: 1;
     max-width: var(--content-max);
     margin: 0 auto;
-    padding: 64px 24px 90px 24px;
+    padding: var(--content-top) 24px 90px 24px;
   }
 
   section { margin: 0 0 56px 0; }
 
-  /* Hero */
-  .hero { margin-bottom: 60px; }
-
-  .hero h1 {
-    font-size: clamp(2rem, 8vw, 2.6rem);
-    line-height: 1.15;
-    font-weight: 600;
-    margin: 0 0 14px 0;
+  /* ---------------------------------------------------------------
+     Hero: name, large red rule, intro text, then the trout box (which
+     holds the link row). On every screen size the hero is as tall as the
+     screen, so the trout box is the last thing visible and the next large
+     divider (above "Experience") starts below the fold.
+     --------------------------------------------------------------- */
+  .hero {
+    margin-bottom: 64px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - var(--content-top) - 28px);    /* fallback */
+    min-height: calc(100svh - var(--content-top) - 28px);   /* 28px of breathing room under the box */
   }
 
+  .hero h1 {
+    font-size: clamp(2.4rem, 9.5vw, 3.3rem);
+    line-height: 1.15;
+    font-weight: 600;
+    margin: 0 0 18px 0;
+  }
+
+  /* The grey divider under the name: a plain static line. It keeps the same 2px footprint
+     the old canvas line had, with the 1px line in the lower row, so nothing below it shifts.
+     Same color in day and night. */
+  .hero-divider {
+    height: 2px;
+    margin: 0 0 22px 0;
+    border-bottom: 1px solid rgba(58, 58, 55, 0.5);
+  }
+
+  .hero-lines { text-align: left; }
+
   .hero .subhead {
-    font-family: 'Source Serif 4', serif;
-    font-size: 19.5px;
+    font-family: 'Bitter', Arial, sans-serif;
+    font-size: 20px;
     color: var(--ink);
     margin: 0;
   }
 
+  /* Trout box: link row at the top, the fish swims in the space below it (trout.js adds the canvas) */
+  .trout-stage {
+    position: relative;
+    width: 100%;
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;        /* phones: soak up the rest of the screen */
+    min-height: 220px;
+  }
+
+  .trout-stage canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .trout-nav {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    padding: 22px 7px 0 7px;   /* clear of the box's glow wall (10px in from the edge) */
+    margin: 0;
+  }
+
+  .top-link {
+    font-family: 'Azeret Mono', 'Courier New', monospace;
+    font-size: clamp(11px, 3.3vw, 21px);   /* five links fit on a 320-360px phone */
+    line-height: 1;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    padding: 6px 0;
+    color: var(--ink-soft);
+  }
+
+  .learn-more {
+    display: inline-block;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    font-style: italic;
+    text-underline-offset:3px
+
+  }
+
+  .learn-more:hover {
+    color: var(--accent);
+  }
+
+  .top-link:hover { color: var(--accent); }
+
+  /* Still used by the Angling "more" toggle */
   .hero-extra {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.35s ease;
-  }
-
-  .hero-extra p {
-    font-family: 'Source Serif 4', serif;
-    font-size: 19.5px;
-    color: var(--ink);
-    margin: 12px 0 0 0;
   }
 
   .more-link {
@@ -144,7 +254,7 @@
     border: none;
     padding: 0;
     margin-top: 12px;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Azeret Mono', 'Courier New', monospace;
     font-size: 15.5px;
     font-weight: 500;
     color: var(--cool);
@@ -170,61 +280,18 @@
     opacity: 1;
   }
 
-  /* Top-right utility links (RESUME / EMAIL / HOME) */
-  .hero-top {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .top-links {
-    display: flex;
-    gap: 22px;
-    margin: 16px 0 24px 0;
-  }
-
-  .top-link {
-    font-family: 'Source Serif 4', serif;
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    color: var(--ink);
-  }
-
-  .top-link:hover { color: var(--accent); }
-
-  @media (min-width: 700px) {
-    .hero-top {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    .top-links { margin: 0; }
-  }
-
-  /* Static, non-interactive group headers ("Experience", "Projects").
-     These sit above the divider line and never change color/state —
-     the line and all hover/toggle/rail behavior now live on the
-     sub-header (e.g. "Thingz") inside the section immediately below. */
+  /* Static group headers ("Experience", "Projects") */
   .group-title {
-    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-family: 'Azeret Mono', 'Courier New', monospace;
     font-size: 29px;
+    line-height: 1.65;
     font-weight: 700;
     letter-spacing: 0.01em;
     color: var(--ink);
     margin: 0 0 6px 0;
   }
 
-  /* Group/section-level dividers — mark the top of each top-level
-     chunk (a group of toggle-sections, or a standalone section).
-     Extends 16px past the normal text column on both sides, so it
-     lines up with the rail on the left and the tint's right edge on
-     the right — same overhang as the toggle-section tint itself. */
+  /* LARGE dividers: solid red, at the top of each top-level chunk, overhanging 16px each side */
   .group-title::before,
   #skills::before,
   #education::before,
@@ -234,14 +301,15 @@
     content: '';
     display: block;
     height: 2px;
-    background: var(--flame);
+    background: var(--accent);
     margin: 0 -16px 24px -16px;
   }
 
   /* Section headers */
   h2 {
-    font-family: 'Source Serif 4', Georgia, serif;
+    font-family: 'Bitter', Arial, sans-serif;
     font-size: 23px;
+    line-height: 1.65;
     font-weight: 600;
     letter-spacing: 0.01em;
     color: var(--ink);
@@ -252,6 +320,10 @@
     transition: color 0.35s ease;
   }
 
+  /* Sections with a role underneath: title and role sit closer together */
+  .toggle-section h2 { margin-bottom: 0; }
+
+  /* SMALL-section pop-out line: keeps the red-to-white gradient */
   h2::after {
     content: '';
     position: absolute;
@@ -263,8 +335,6 @@
     transition: width 0.35s ease;
   }
 
-  /* Widen the tint slightly beyond the text column, with soft corners.
-     Negative margin + equal padding keeps the text position unchanged. */
   .toggle-section {
     position: relative;
     margin-left: -16px;
@@ -272,22 +342,11 @@
     padding-left: 16px;
     padding-right: 16px;
     border-radius: 10px;
-  }
-
-  /* Section tint — flat, persists while a toggle in the section is
-     open (see .active below), otherwise only shown on hover. */
-  .toggle-section {
     background: transparent;
     transition: background 0.35s ease;
   }
 
-  /* Hover-only effects — scoped to devices with real hover (mouse/trackpad)
-     so touchscreens don't get stuck in a "hovered" state after a tap.
-     Tint is a light, subtle grey/white. The underline (the bracket's
-     horizontal/top arm) reveals the full flame here already — the
-     white end included — while the rail (the bracket's vertical/left
-     arm) stays capped at solid red via its own --cool-flame-vertical
-     default and never lightens toward white. */
+  /* Hover effects only on devices with real hover */
   @media (hover: hover) and (pointer: fine) {
     .toggle-section:hover {
       background: rgba(255, 255, 255, 0.035);
@@ -302,9 +361,6 @@
     }
   }
 
-  /* Persistent while a toggle in the section is open. No background
-     tint here anymore — just the header color/underline persisting
-     at the same full-flame look used on hover. */
   .toggle-section.active h2 {
     color: var(--accent);
   }
@@ -313,14 +369,7 @@
     width: calc(100% + 16px);
   }
 
-  /* Left-side vertical rail for every section. Base layer shows the
-     default muted line, or a quick fade to off-white when this
-     section is the one closest to the viewport's vertical center.
-     An accent overlay (toggle-sections only) grows downward from the
-     top on hover/open, visually overriding whichever color the base
-     layer currently shows. Positioned/sized entirely via JS since it
-     spans from a section's header down to its own last line of
-     content, and must track that as toggles expand or collapse. */
+  /* Left-side vertical rails, positioned/sized by JS */
   .rail-base,
   .rail-accent {
     position: absolute;
@@ -338,9 +387,6 @@
     background: var(--accent);
   }
 
-  /* Solid red, capped before it would lighten toward white — shown
-     both on hover and while the section is toggled open. See
-     updateRailAccent() for where it's applied. */
   .rail-accent {
     width: 2px;
     background: var(--cool-flame-vertical);
@@ -360,11 +406,13 @@
 
   .entry:last-child { border-bottom: none; }
 
+  /* line-height is set here on purpose: buttons ignore the page's line-height, and the
+     toggle circle below is aligned to the first row's metrics. */
   .entry-toggle {
     width: 100%;
     background: none;
     border: none;
-    padding: 18px 0;
+    padding: 10px 0 18px 0;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -372,7 +420,8 @@
     cursor: pointer;
     text-align: left;
     color: var(--ink);
-    font-family: 'Source Serif 4', Georgia, serif;
+    font-family: 'Bitter', Arial, sans-serif;
+    line-height: 1.35;
   }
 
   .entry-main { flex: 1 1 auto; }
@@ -386,7 +435,7 @@
   }
 
   .entry-top h3 {
-    font-family: 'Source Serif 4', Georgia, serif;
+    font-family: 'Bitter', Arial, sans-serif;
     font-size: 18px;
     font-weight: 600;
     margin: 0;
@@ -394,17 +443,31 @@
     transition: color 0.3s ease;
   }
 
-  /* Section is nearest the viewport's vertical center */
+    /* Project roles ("Personal Project"): same look as the paragraph text, grey */
+  :where(#projects) ~ .toggle-section .entry-top h3 {
+    font-size: 16px;
+    font-weight: 400;
+}
+:where(#projects) ~ .toggle-section .plus { margin-top: -5.5px; }
+
+@media (max-width: 600px) {
+  :where(#projects) ~ .toggle-section .entry-top h3 { font-size: 15.5px; }
+  :where(#projects) ~ .toggle-section .plus { margin-top: -6.5px; }
+}
   .section-centered .entry-top h3 {
     color: var(--ink);
   }
 
-  /* An entry inside the section is open */
+  /* Project sections (everything after the "Projects" heading, including future ones):
+     the role stays grey when the section is in the middle of the screen. */
+  :where(#projects) ~ .toggle-section.section-centered .entry-top h3 {
+    color: var(--ink-soft);
+  }
+
   .entry.open .entry-top h3 {
     color: var(--ink);
   }
 
-  /* Cursor hovering the section (desktop/trackpad only) */
   @media (hover: hover) and (pointer: fine) {
     .toggle-section:hover .entry-top h3 {
       color: var(--ink);
@@ -412,64 +475,66 @@
   }
 
   .entry-date {
-    font-family: 'Source Serif 4', serif;
+    font-family: 'Bitter', Arial, sans-serif;
     font-size: 14.5px;
     color: var(--ink-soft);
     white-space: nowrap;
   }
 
   .entry-sub {
-    font-family: 'Source Serif 4', serif;
+    font-family: 'Bitter', Arial, sans-serif;
     font-size: 15px;
     color: var(--ink-soft);
     margin-top: 4px;
   }
 
-  /* Toggle button — sized up site-wide. Color/fill state is layered:
-     default (grey outline) -> centered-white tint (section is the
-     one nearest viewport center) -> open/hover blue tint, with
-     open/hover always winning over the centered-white look. The
-     centered rule is written first and has lower selector weight,
-     so open/hover naturally override it; see notes below. */
+  /* Toggle button: grey -> accent when section is centered -> accent on open/hover.
+     The "+" is drawn with two CSS bars (not a text glyph) so it is always dead-center.
+     margin-top lines the circle's center up with the date's center on the first row. */
   .plus {
     flex: 0 0 auto;
+    position: relative;
     width: 34px;
     height: 34px;
     border: 1px solid var(--line);
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    font-size: 26px;
-    line-height: 1;
+    font-size: 0;
+    line-height: 0;
     color: var(--ink-soft);
     background: transparent;
     transition: transform 0.3s ease, color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
-    margin-top: -1px;
+    margin-top: -4.5px;
     padding: 0;
   }
 
+  .plus::before,
+  .plus::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: currentColor;
+    border-radius: 1px;
+    transform: translate(-50%, -50%);
+  }
+
+  .plus::before { width: 14px; height: 2px; }
+  .plus::after  { width: 2px; height: 14px; }
+
   .entry.open .plus { transform: rotate(45deg); }
 
-  /* Section-centered state: grey -> white outline/icon, filled with
-     a light white tint. Lower specificity than the open/hover rules
-     below, so those always take priority when they also apply. */
   .section-centered .plus {
     border-color: var(--accent);
     color: var(--accent);
     background: var(--accent-tint);
   }
 
-  /* Open state: light red tint fill, accent-colored outline/icon
-     (wins over the white centered look above). */
   .entry.open .plus {
     background: var(--accent-tint);
     border-color: var(--accent);
     color: var(--accent);
   }
 
-  /* Hover state mirrors the open look (also wins over centered-white). */
   @media (hover: hover) and (pointer: fine) {
     .entry-toggle:hover .plus {
       background: var(--accent-tint);
@@ -488,7 +553,7 @@
     margin: 0 0 14px 0;
     color: var(--ink);
     font-size: 17px;
-    line-height: 1.6;
+    line-height: 1.7;
   }
 
   .entry-detail p:last-child { margin-bottom: 20px; }
@@ -498,7 +563,7 @@
   #education .edu-title {
     color: var(--ink);
     font-weight: 600;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Azeret Mono', 'Courier New', monospace;
     font-size: 16.5px;
   }
 
@@ -510,8 +575,9 @@
   }
 
   .skill-pill {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Azeret Mono', 'Courier New', monospace;
     font-size: 14.5px;
+    line-height: 1.65;
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 6px 14px;
@@ -533,16 +599,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Azeret Mono', 'Courier New', monospace;
     font-size: 12px;
     color: var(--ink-soft);
     text-align: center;
     padding: 8px;
   }
 
-  /* Angling photo thumbnails — real photos, click to open in the
-     lightbox. Same grid cell shape as .placeholder-box (used by Art)
-     but filled with an actual image instead of dashed-border text. */
   .photo-thumb {
     aspect-ratio: 1;
     width: 100%;
@@ -575,10 +638,7 @@
     }
   }
 
-  /* Fullscreen lightbox for viewing an angling photo at full size.
-     Kept in the DOM at all times (not display:none) so opacity can
-     transition smoothly; pointer-events/visibility keep it fully
-     inert and untappable while hidden, on both desktop and mobile. */
+  /* Fullscreen lightbox */
   .lightbox {
     position: fixed;
     inset: 0;
@@ -625,8 +685,9 @@
   }
 
   .contact-links a {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Azeret Mono', 'Courier New', monospace;
     font-size: 16.5px;
+    line-height: 1.65;
     text-decoration: none;
     border-bottom: 1px solid var(--line);
     padding-bottom: 3px;
@@ -645,22 +706,27 @@
   }
 
   @media (min-width: 700px) {
+    :root { --content-top: 90px; }
     body { font-size: 20px; }
-    .content { padding: 90px 24px 110px 24px; }
+    .content { padding-bottom: 110px; }
     .placeholder-grid { grid-template-columns: repeat(3, 1fr); }
+
   }
 
-    @media (max-width: 600px) {
+  @media (max-width: 600px) {
+    :root { --content-top: 36px; }
     body { font-size: 17px; }
-    .hero .subhead,
-    .hero-extra p { font-size: 17px; }
-    .top-link { font-size: 14.5px; }
+    .hero h1 { margin-bottom: 14px; }
+    .hero-divider { margin-bottom: 18px; }
+    .hero .subhead { font-size: 16px; }
+    .trout-stage { margin-top: 18px; }
     .more-link { font-size: 14px; }
     .group-title { font-size: 25px; }
     h2 { font-size: 20px; }
     .entry-top h3 { font-size: 16px; }
     .entry-date { font-size: 13px; }
     .entry-sub { font-size: 14px; }
+    .plus { margin-top: -6px; }
     .entry-detail p { font-size: 15.5px; }
     #education .edu-title { font-size: 15px; }
     .skill-pill { font-size: 13px; }
@@ -677,26 +743,24 @@
 <div class="content">
 
   <div class="hero">
-    <div class="hero-top">
-      <h1>Sam Nguyen</h1>
+    <h1>Sam Nguyen</h1>
 
-      <nav class="top-links">
+    <!-- Static grey divider (styled in the CSS above) -->
+    <div class="hero-divider" id="heroDivider" aria-hidden="true"></div>
+
+    <div class="hero-lines">
+      <p class="subhead">Mechanical engineering student at Iowa State University. Summer 2026, I worked as an Engineering Intern at Thingz in Galena, Illinois. I also contribute to Iowa State’s Formula SAE team as a member of the suspension subsystem. <a href="about.html" class="learn-more"> Learn more</a></p>
+    </div>
+
+    <!-- Trout box. The link row lives inside it; trout.js adds the canvas behind the links. -->
+    <div class="trout-stage" id="troutStage">
+      <nav class="trout-nav" aria-label="Main">
+        <a href="#thingz" class="top-link" data-scroll="thingz" data-open>Work</a>
+        <a href="#fsae" class="top-link" data-scroll="fsae" data-open>FSAE</a>
+        <a href="#projects" class="top-link" data-scroll="projects" data-end="fishing-pole-holder">Projects</a>
         <a href="resume.html" class="top-link">Resume</a>
-        <a href="mailto:samsungleenguyen@gmail.com" class="top-link">Email</a>
       </nav>
     </div>
-
-    <p class="subhead">Mechanical engineering student at Iowa State University. Summer 2026, I worked as a  Engineering Intern at Thingz in Galena, Illinois. I also contribute to Iowa State’s Formula SAE team as a member of the suspension subsystem.
- </p>
-
-    <div class="hero-extra" id="heroExtra">
-      <p>At Thingz, I built digital twins of electrical substations across the nation. As a member of Formula SAE, I contribute to the suspension subsystem, taking ownership of a variety of design and manufacturing projects. I also serve as the Sophomore Representative for Iowa State’s SolidWorks Club, where I help fellow engineering students develop their CAD skills.</p>
-      <p>I take every opportunity to deepen my understanding of the principles of the world around me. Utilizing this knowledge, I strive to create inspiring innovations that make a positive impact.</p>
-    </div>
-
-    <button class="more-link" id="moreToggle" aria-expanded="false">
-      more
-    </button>
   </div>
 
   <div class="group-title" role="heading" aria-level="2">Experience</div>
@@ -741,7 +805,7 @@
 
       <div class="entry-detail">
         <p>I'm a member of the suspension subsystem on Iowa State's Formula SAE Electric Vehicle team, where I design, model, and build components from concept through fabrication.</p>
-        <p>I own the bell crank assembly for the latest design cycle, revising design features to improve iteration efficiency. I also designed and manufactured a strain gauge calibration fixture, which produced significant data for our strain gauge R&D. To support production, I designed and 3D-printed jigs that precisely locate critical suspension geometries on all 4 corners of the vehicle. Along the way, I've gained experience in cross-functional teams and data analysis.</p>
+        <p>I own the bell crank assembly for the latest design cycle, revising design features to improve iteration efficiency. I also designed and manufactured a strain gauge calibration fixture, which produced significant data for our strain gauge R&amp;D. To support production, I designed and 3D-printed jigs that precisely locate critical suspension geometries on all 4 corners of the vehicle. Along the way, I've gained experience in cross-functional teams and data analysis.</p>
         <p>FSAE has allowed me to apply my coursework hands-on, turning concepts into parts that are built and tested. Fabricating my own projects has made me a better designer because I now think about the manufacturing perspective.</p>
       </div>
     </div>
@@ -770,7 +834,7 @@
     </div>
   </section>
 
-  <div class="group-title" role="heading" aria-level="2">Projects</div>
+  <div class="group-title" id="projects" role="heading" aria-level="2">Projects</div>
 
   <section id="fishing-pole-holder" class="toggle-section">
     <h2>Fishing Pole Holder</h2>
@@ -779,8 +843,7 @@
       <button class="entry-toggle" aria-expanded="false">
         <div class="entry-main">
           <div class="entry-top">
-            <h3>Personal Project</h3>
-            <span class="entry-date">Sep – Nov 2025</span>
+            <h3>Self taught hand-sketching, CAD, and 3D printing.</h3>
           </div>
         </div>
         <span class="plus" aria-hidden="true">+</span>
@@ -908,476 +971,9 @@
 
 <script>
 (function () {
-  var canvas = document.getElementById('wave');
-  var ctx = canvas.getContext('2d');
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var w, h, dpr;
-  var running = true;
-  var frameId = null; // guards against more than one active RAF chain
-
-  function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    w = window.innerWidth;
-    h = window.innerHeight;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  // ---- Background wave ----
-  var lines = [
-    { y: 0.10, amp: 16, freq: 0.0022, speed: 0.0040, phase: 0.0, p: 0, intensity: 0 },
-    { y: 0.20, amp: 24, freq: 0.0016, speed: 0.0028, phase: 1.4, p: 0, intensity: 0 },
-    { y: 0.30, amp: 13, freq: 0.0028, speed: 0.0052, phase: 3.1, p: 0, intensity: 0 },
-    { y: 0.40, amp: 21, freq: 0.0018, speed: 0.0036, phase: 4.6, p: 0, intensity: 0 },
-    { y: 0.50, amp: 15, freq: 0.0024, speed: 0.0044, phase: 2.2, p: 0, intensity: 0 },
-    { y: 0.60, amp: 18, freq: 0.0020, speed: 0.0032, phase: 5.5, p: 0, intensity: 0 },
-    { y: 0.70, amp: 19, freq: 0.0021, speed: 0.0038, phase: 0.8, p: 0, intensity: 0 },
-    { y: 0.80, amp: 14, freq: 0.0026, speed: 0.0046, phase: 3.9, p: 0, intensity: 0 },
-    { y: 0.90, amp: 22, freq: 0.0017, speed: 0.0030, phase: 2.9, p: 0, intensity: 0 }
-  ];
-
-  function waveY(l, x) {
-    return h * l.y
-      + Math.sin(x * l.freq + l.p + l.phase) * l.amp
-      + Math.sin(x * l.freq * 2.3 - l.p * 0.6 + l.phase) * (l.amp * 0.3);
-  }
-
-  function advanceWave() {
-    for (var i = 0; i < lines.length; i++) lines[i].p += lines[i].speed;
-  }
-
-  function drawWave() {
-    ctx.strokeStyle = 'rgba(155, 155, 155, 0.055)';
-    ctx.lineWidth = 1;
-    for (var i = 0; i < lines.length; i++) {
-      var l = lines[i];
-      ctx.beginPath();
-      for (var x = 0; x <= w; x += 6) {
-        var y = waveY(l, x);
-        if (l.intensity > 0.001 && refPointActive) {
-          var dx = x - refPointX;
-          var gauss = Math.exp(-(dx * dx) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
-          // The ripple's own texture is keyed to the canvas x position
-          // (not dx, the cursor-relative offset) so that tracing the
-          // cursor along the line doesn't fold the cursor's horizontal
-          // speed into the ripple's apparent oscillation rate — only
-          // the gaussian envelope (which fades the ripple in/out) moves
-          // with the cursor; the ripple's own animation speed is driven
-          // solely by wigglePhase.
-          y += l.intensity * gauss * LOCAL_AMP * Math.sin(x * LOCAL_FREQ + wigglePhase);
-        }
-        y += pulseOffsetForLine(i, x);
-        y += ambientOffsetForLine(i, x);
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-    }
-
-    drawWiggleGlow();
-  }
-
-  // Bright accent-red flash riding along with any active wiggle —
-  // either a traveling click pulse or the cursor-proximity hover
-  // wiggle. Drawn as a separate overlay pass, segment by segment, so
-  // only the stretch of line actually wiggling lights up — everywhere
-  // else stays the normal faint grey. Each source fades using the same
-  // value that already drives its distortion (pulse age/progress, or
-  // l.intensity for hover), so the glow is fully gone at exactly the
-  // moment the wiggle itself settles back to flat.
-  // Hover glow is a white-hot center that transitions to red as the
-  // wiggle's intensity tapers off. Since intensity is 1 at the center
-  // and 0 at the taper, glowColorForIntensity() reverses the
-  // intensity value when looking up the gradient (k=0 at the center,
-  // k=1 at the taper).
-  var GLOW_STOPS = [
-    { t: 0.00, c: [255, 255, 255] },
-    { t: 0.15, c: [255, 233, 229] },
-    { t: 0.35, c: [255, 176, 161] },
-    { t: 0.55, c: [255, 122, 105] },
-    { t: 0.75, c: [255, 77, 77] },
-    { t: 1.00, c: [196, 40, 34] }
-  ];
-  var GLOW_ALPHA = 0.95;     // peak overlay opacity
-  var GLOW_WIDTH = 1.8;      // px — slightly heavier than the base line
-  var GLOW_THRESHOLD = 0.02; // skip segments too faint to matter
-
-  function glowColorForIntensity(t) {
-    // IMPORTANT: t is DISTANCE/FADE intensity: 1.0 is the exact
-    // center of the hover wiggle and 0.0 is its tapered edge.
-    // The glow is white-hot at the center and reddens outward, so
-    // reverse the lookup parameter: the strongest center gets the
-    // gradient's first (white-hot) color and it progresses toward
-    // red as intensity fades.
-    var k = 1 - Math.min(1, Math.max(0, t));
-
-    for (var i = 1; i < GLOW_STOPS.length; i++) {
-      if (k <= GLOW_STOPS[i].t) {
-        var a = GLOW_STOPS[i - 1];
-        var b = GLOW_STOPS[i];
-        var u = (k - a.t) / (b.t - a.t);
-        var r = Math.round(a.c[0] + (b.c[0] - a.c[0]) * u);
-        var g = Math.round(a.c[1] + (b.c[1] - a.c[1]) * u);
-        var blue = Math.round(a.c[2] + (b.c[2] - a.c[2]) * u);
-        return r + ',' + g + ',' + blue;
-      }
-    }
-
-    var last = GLOW_STOPS[GLOW_STOPS.length - 1].c;
-    return last[0] + ',' + last[1] + ',' + last[2];
-  }
-
-  function drawWiggleGlow() {
-    if (!linePulses.length && !refPointActive && !ambientPulses.length) return;
-
-    ctx.lineWidth = GLOW_WIDTH;
-
-    for (var i = 0; i < lines.length; i++) {
-      var l = lines[i];
-
-      var hasPulse = false;
-      for (var j = 0; j < linePulses.length; j++) {
-        if (linePulses[j].lineIndex === i) { hasPulse = true; break; }
-      }
-      var hasAmbient = false;
-      for (var m = 0; m < ambientPulses.length; m++) {
-        if (ambientPulses[m].lineIndex === i) { hasAmbient = true; break; }
-      }
-      var hasHover = refPointActive && l.intensity > 0.001;
-      if (!hasPulse && !hasHover && !hasAmbient) continue;
-
-      var prevX = null, prevY = null, prevIntensity = 0;
-
-      for (var x = 0; x <= w; x += 6) {
-        var y = waveY(l, x);
-        var hoverIntensity = 0;
-
-        if (hasHover) {
-          var dx = x - refPointX;
-          var gauss = Math.exp(-(dx * dx) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
-          y += l.intensity * gauss * LOCAL_AMP * Math.sin(x * LOCAL_FREQ + wigglePhase);
-          hoverIntensity = l.intensity * gauss;
-        }
-        y += pulseOffsetForLine(i, x);
-        y += ambientOffsetForLine(i, x);
-
-        var intensity = hoverIntensity;
-        if (hasPulse) {
-          var pulseIntensity = pulseIntensityForLine(i, x);
-          if (pulseIntensity > intensity) intensity = pulseIntensity;
-        }
-        if (hasAmbient) {
-          var ambIntensity = ambientIntensityForLine(i, x);
-          if (ambIntensity > intensity) intensity = ambIntensity;
-        }
-
-        if (prevX !== null && (intensity > GLOW_THRESHOLD || prevIntensity > GLOW_THRESHOLD)) {
-          var segIntensity = Math.max(intensity, prevIntensity);
-          ctx.strokeStyle = 'rgba(' + glowColorForIntensity(segIntensity) + ', ' + (segIntensity * GLOW_ALPHA).toFixed(3) + ')';
-          ctx.beginPath();
-          ctx.moveTo(prevX, prevY);
-          ctx.lineTo(x, y);
-          ctx.stroke();
-        }
-
-        prevX = x; prevY = y; prevIntensity = intensity;
-      }
-    }
-
-    ctx.lineWidth = 1; // leave the context as the base wave pass expects it
-  }
-
-  // ---- Localized frequency bump ----
-  // Desktop: driven by cursor position. Touch: driven by the
-  // most-recently-opened toggle's position, following it as the page
-  // scrolls, with hand-off to the next most-recent toggle if the
-  // active one closes. Every line reacts independently based on its
-  // own vertical distance from the reference point — more than one
-  // line can react at once if the cursor sits between them. A steep
-  // falloff curve keeps the effect invisible until the reference
-  // point is genuinely close to a given line.
+  // Shared with sin-wave.js so touch devices can follow open toggles
   var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  var PROXIMITY_MAX_DIST = 70; // px — beyond this, no effect at all
-  var LOCAL_SIGMA = 45;        // px — horizontal width of the wiggle zone
-  var LOCAL_FREQ = 0.5;       // tight, high-frequency ripple
-  var LOCAL_AMP = 30;          // px — max extra peak/dip height at full intensity
-
-  var cursor = { x: 0, y: 0 };
-  var lastMoveTime = 0;
-  var openStack = []; // toggles currently open, most-recent last
-
-  var refPointActive = false;
-  var refPointX = 0;
-  var refPointY = 0;
-  var wigglePhase = 0;
-  var REF_POINT_SMOOTHING = 0.15; // eases the ref point toward the cursor so fast mouse
-                                   // moves don't yank the wiggle's phase and make the
-                                   // ripple look like it briefly speeds up
-
-  if (hoverCapable) {
-    window.addEventListener('mousemove', function (e) {
-      cursor.x = e.clientX;
-      cursor.y = e.clientY;
-      lastMoveTime = performance.now();
-    });
-  }
-
-  function updateProximity() {
-    refPointActive = false;
-    var targetX = refPointX, targetY = refPointY, hasTarget = false;
-
-    if (hoverCapable) {
-      if (lastMoveTime) {
-        targetX = cursor.x;
-        targetY = cursor.y;
-        hasTarget = true;
-      }
-    } else if (openStack.length) {
-      var btn = openStack[openStack.length - 1];
-      var rect = btn.querySelector('.plus').getBoundingClientRect();
-      targetX = rect.left + rect.width / 2;
-      targetY = rect.top + rect.height / 2;
-      hasTarget = true;
-    }
-
-    if (hasTarget) {
-      // Ease toward the target instead of snapping straight to it —
-      // this is what keeps a fast mouse move from making the ripple
-      // frequency appear to spike.
-      refPointX += (targetX - refPointX) * REF_POINT_SMOOTHING;
-      refPointY += (targetY - refPointY) * REF_POINT_SMOOTHING;
-      refPointActive = true;
-    }
-
-    for (var i = 0; i < lines.length; i++) {
-      var l = lines[i];
-      var target = 0;
-      if (refPointActive) {
-        var dist = Math.abs(waveY(l, refPointX) - refPointY);
-        var proximity = 1 - Math.min(1, dist / PROXIMITY_MAX_DIST);
-        target = Math.pow(Math.max(0, proximity), 3); // stays near-zero until close, then ramps fast
-      }
-      l.intensity += (target - l.intensity) * 0.2;
-      if (l.intensity < 0.001) l.intensity = 0;
-    }
-
-    wigglePhase += 0.07;
-  }
-
-  // ---- Traveling line pulse (click exactly on a line) ----
-  // Clicking within a tight tolerance of a line's current curve sends
-  // a high-frequency pulse outward in both directions from the click
-  // point, at the same height/tightness as before, fading as it
-  // travels. Both directions are timed to reach their respective
-  // screen edge at the same instant: whichever side has farther to go
-  // moves proportionally faster, so the pulse vanishes from both
-  // ends of the screen simultaneously regardless of where the click
-  // originated.
-  var LINE_CLICK_TOLERANCE = 9; // px — how exactly you must click on the line
-  var PULSE_DURATION = 60;      // frames — time for either side to reach its edge
-
-  var linePulses = [];
-
-  function spawnLinePulse(lineIndex, originX) {
-    linePulses.push({
-      lineIndex: lineIndex,
-      originX: originX,
-      age: 0,
-      leftDist: originX,
-      rightDist: w - originX
-    });
-  }
-
-  function updateLinePulses() {
-    for (var i = linePulses.length - 1; i >= 0; i--) {
-      var p = linePulses[i];
-      p.age++;
-      if (p.age >= PULSE_DURATION) {
-        linePulses.splice(i, 1);
-      }
-    }
-  }
-
-  function pulseOffsetForLine(lineIndex, x) {
-    var offset = 0;
-    for (var i = 0; i < linePulses.length; i++) {
-      var p = linePulses[i];
-      if (p.lineIndex !== lineIndex) continue;
-
-      // Both sides share the same 0→1 progress so they arrive at
-      // their (different-distance) edges at the same time.
-      var progress = Math.min(1, p.age / PULSE_DURATION);
-      var amp = LOCAL_AMP * Math.max(0, 1 - progress);
-
-      var rightFront = p.originX + p.rightDist * progress;
-      var dxR = x - rightFront;
-      offset += amp * Math.exp(-(dxR * dxR) / (2 * LOCAL_SIGMA * LOCAL_SIGMA))
-                * Math.sin(dxR * LOCAL_FREQ + wigglePhase);
-
-      var leftFront = p.originX - p.leftDist * progress;
-      var dxL = x - leftFront;
-      offset += amp * Math.exp(-(dxL * dxL) / (2 * LOCAL_SIGMA * LOCAL_SIGMA))
-                * Math.sin(dxL * LOCAL_FREQ + wigglePhase);
-    }
-    return offset;
-  }
-
-  function pulseIntensityForLine(lineIndex, x) {
-    var maxIntensity = 0;
-    for (var i = 0; i < linePulses.length; i++) {
-      var p = linePulses[i];
-      if (p.lineIndex !== lineIndex) continue;
-
-      // Same progress/fade as pulseOffsetForLine's amplitude, so the
-      // glow reaches zero at exactly the moment the wiggle does.
-      var progress = Math.min(1, p.age / PULSE_DURATION);
-      var fade = Math.max(0, 1 - progress);
-
-      var rightFront = p.originX + p.rightDist * progress;
-      var dxR = x - rightFront;
-      var gR = Math.exp(-(dxR * dxR) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
-      if (gR * fade > maxIntensity) maxIntensity = gR * fade;
-
-      var leftFront = p.originX - p.leftDist * progress;
-      var dxL = x - leftFront;
-      var gL = Math.exp(-(dxL * dxL) / (2 * LOCAL_SIGMA * LOCAL_SIGMA));
-      if (gL * fade > maxIntensity) maxIntensity = gL * fade;
-    }
-    return Math.min(1, maxIntensity);
-  }
-
-  // ---- Ambient "shooting star" hum ----
-  // Every so often, a small random stretch of a random line quietly
-  // takes on the same red wiggle/glow treatment as a hover or click —
-  // but stationary, and driven entirely by its own timer rather than
-  // input. A raised-cosine envelope (0 -> 1 -> 0) gives it a smooth,
-  // symmetric fade in and out with no hard edges. Kept deliberately
-  // infrequent and low-peak so it reads as a subtle ambient detail,
-  // not a distraction.
-  var ambientPulses = [];
-  var AMBIENT_MIN_INTERVAL = 5000;  // ms between occurrences (lower bound)
-  var AMBIENT_MAX_INTERVAL = 12000; // ms between occurrences (upper bound)
-  var AMBIENT_MAX_CONCURRENT = 2;   // never more than this many humming at once
-  var AMBIENT_DURATION = 300;       // base frames (~5s at 60fps) for a full in/out cycle
-  var AMBIENT_SIGMA_MIN = 45;       // px — narrowest affected stretch
-  var AMBIENT_SIGMA_MAX = 95;       // px — widest affected stretch
-  var AMBIENT_PEAK_MIN = 0.28;      // keeps the glow mostly in the red range,
-  var AMBIENT_PEAK_MAX = 0.5;       // rarely bright enough to read as white-hot
-
-  function ambientEnvelope(p) {
-    var t = Math.min(1, p.age / p.duration);
-    return 0.5 * (1 - Math.cos(2 * Math.PI * t)); // smooth 0 -> 1 -> 0, no hard edges
-  }
-
-  function spawnAmbientPulse() {
-    if (!running || reduceMotion) return;
-    if (ambientPulses.length >= AMBIENT_MAX_CONCURRENT) return;
-
-    ambientPulses.push({
-      lineIndex: Math.floor(Math.random() * lines.length),
-      x: Math.random() * w,
-      age: 0,
-      duration: Math.round(AMBIENT_DURATION * (0.75 + Math.random() * 0.5)),
-      sigma: AMBIENT_SIGMA_MIN + Math.random() * (AMBIENT_SIGMA_MAX - AMBIENT_SIGMA_MIN),
-      peak: AMBIENT_PEAK_MIN + Math.random() * (AMBIENT_PEAK_MAX - AMBIENT_PEAK_MIN)
-    });
-  }
-
-  function scheduleNextAmbientPulse() {
-    var delay = AMBIENT_MIN_INTERVAL + Math.random() * (AMBIENT_MAX_INTERVAL - AMBIENT_MIN_INTERVAL);
-    setTimeout(function () {
-      spawnAmbientPulse();
-      scheduleNextAmbientPulse();
-    }, delay);
-  }
-
-  function updateAmbientPulses() {
-    for (var i = ambientPulses.length - 1; i >= 0; i--) {
-      var p = ambientPulses[i];
-      p.age++;
-      if (p.age >= p.duration) ambientPulses.splice(i, 1);
-    }
-  }
-
-  function ambientOffsetForLine(lineIndex, x) {
-    var offset = 0;
-    for (var i = 0; i < ambientPulses.length; i++) {
-      var p = ambientPulses[i];
-      if (p.lineIndex !== lineIndex) continue;
-
-      var dx = x - p.x;
-      var gauss = Math.exp(-(dx * dx) / (2 * p.sigma * p.sigma));
-      var env = ambientEnvelope(p) * p.peak;
-      offset += env * gauss * LOCAL_AMP * Math.sin(x * LOCAL_FREQ + wigglePhase);
-    }
-    return offset;
-  }
-
-  function ambientIntensityForLine(lineIndex, x) {
-    var maxIntensity = 0;
-    for (var i = 0; i < ambientPulses.length; i++) {
-      var p = ambientPulses[i];
-      if (p.lineIndex !== lineIndex) continue;
-
-      var dx = x - p.x;
-      var gauss = Math.exp(-(dx * dx) / (2 * p.sigma * p.sigma));
-      var val = ambientEnvelope(p) * p.peak * gauss;
-      if (val > maxIntensity) maxIntensity = val;
-    }
-    return Math.min(1, maxIntensity);
-  }
-
-  document.addEventListener('click', function (e) {
-    if (e.target.closest('a')) return;            // links: no effect
-    if (e.target.closest('.entry-toggle')) return; // toggles handle their own state
-    if (e.target.closest('.photo-thumb')) return;  // photo thumbs open the lightbox instead
-    if (e.target.closest('.lightbox')) return;      // closing the lightbox shouldn't also spawn a pulse
-
-    var bestIdx = -1, bestDiff = Infinity;
-    for (var i = 0; i < lines.length; i++) {
-      var diff = Math.abs(waveY(lines[i], e.clientX) - e.clientY);
-      if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
-    }
-    if (bestIdx !== -1 && bestDiff <= LINE_CLICK_TOLERANCE) {
-      spawnLinePulse(bestIdx, e.clientX);
-    }
-  });
-
-  function draw() {
-    ctx.clearRect(0, 0, w, h);
-    drawWave();
-  }
-
-  function loop() {
-    if (!running) { frameId = null; return; }
-    advanceWave();
-    updateProximity();
-    updateLinePulses();
-    updateAmbientPulses();
-    draw();
-    frameId = requestAnimationFrame(loop);
-  }
-
-  window.addEventListener('resize', function () {
-    resize();
-    if (reduceMotion) draw();
-  });
-
-  document.addEventListener('visibilitychange', function () {
-    running = document.visibilityState === 'visible' && !reduceMotion;
-    if (running && frameId === null) frameId = requestAnimationFrame(loop);
-  });
-
-  resize();
-  if (reduceMotion) {
-    draw();
-  } else {
-    frameId = requestAnimationFrame(loop);
-    scheduleNextAmbientPulse();
-  }
+  var openStack = window.openStack = [];
 
   // ---- Toggles (independent, no accordion) ----
   document.querySelectorAll('.entry-toggle').forEach(function (btn) {
@@ -1414,61 +1010,19 @@
         }
       }
 
-      setTimeout(function () { layoutRails(); }, 380); // correct any drift after the 0.35s settle
+      setTimeout(function () { layoutRails(); }, 380);
       requestCenterUpdate();
     });
   });
 
-  // ---- Hero more/less toggle ----
-  var moreBtn = document.getElementById('moreToggle');
-  var heroExtra = document.getElementById('heroExtra');
-  moreBtn.addEventListener('click', function () {
-    var isOpen = heroExtra.classList.contains('open');
-    // heroExtra's own content never changes size, so scrollHeight is
-    // the same number whether we're opening or closing — it's exactly
-    // how far every section below the hero is about to shift.
-    var delta = heroExtra.scrollHeight;
-
-    if (isOpen) {
-      heroExtra.classList.remove('open');
-      heroExtra.style.maxHeight = null;
-      moreBtn.textContent = 'more';
-      moreBtn.setAttribute('aria-expanded', 'false');
-      shiftAllRailTops(-delta);
-    } else {
-      heroExtra.classList.add('open');
-      heroExtra.style.maxHeight = delta + 'px';
-      moreBtn.textContent = 'less';
-      moreBtn.setAttribute('aria-expanded', 'true');
-      shiftAllRailTops(delta);
-    }
-
-    // Applying the shift above (rather than waiting) means the rail's
-    // own "top 0.35s ease" transition starts at the same instant as
-    // heroExtra's max-height transition, so they move in lockstep
-    // instead of the rail lagging behind. This setTimeout just does a
-    // final re-measure once things settle, to correct any drift.
-    setTimeout(function () {
-      layoutRails();
-      requestCenterUpdate();
-    }, 380);
-  });
-
   // ---- Angling more/less toggle ----
-  // Same idea as the hero toggle above, but #angling is itself one of
-  // the tracked sections (not something sitting above all of them),
-  // so growing it uses shiftRailsFrom() — the same function the
-  // accordion entries use to both resize their own section's rail
-  // and shift every section below it, applied immediately so it
-  // animates in lockstep with the max-height transition rather than
-  // lagging behind it.
   var anglingMoreBtn = document.getElementById('anglingMoreToggle');
   var anglingExtra = document.getElementById('anglingExtra');
   var anglingSection = document.getElementById('angling');
 
   anglingMoreBtn.addEventListener('click', function () {
     var isOpen = anglingExtra.classList.contains('open');
-    var delta = anglingExtra.scrollHeight; // constant, content itself never changes size
+    var delta = anglingExtra.scrollHeight;
 
     if (isOpen) {
       anglingExtra.classList.remove('open');
@@ -1494,16 +1048,12 @@
   });
 
   // ---- Photo lightbox ----
-  // Tapping/clicking any .photo-thumb opens its full image centered
-  // on screen; clicking anywhere on the overlay (including the image
-  // itself) closes it again. Works identically on touch and mouse
-  // since both fire a standard 'click' event.
   var lightbox = document.getElementById('lightbox');
   var lightboxImg = document.getElementById('lightboxImg');
 
   document.querySelectorAll('.photo-thumb').forEach(function (btn) {
     btn.addEventListener('click', function (e) {
-      e.stopPropagation(); // don't also trigger the background wave's click-pulse
+      e.stopPropagation();
       var src = btn.getAttribute('data-src');
       var img = btn.querySelector('img');
       lightboxImg.src = src;
@@ -1521,12 +1071,6 @@
   });
 
   // ---- Section rails ----
-  // A pair of divs (base + accent) per section, appended as siblings
-  // under .content and positioned via inline top/height so they sit
-  // correctly regardless of each section's own box quirks. The base
-  // shows the default muted line or the quick white "centered" fade;
-  // the accent overlay (toggle-sections only) grows downward from
-  // the top on hover/open, covering the base entirely once grown.
   var contentEl = document.querySelector('.content');
   var allSectionEls = Array.prototype.slice.call(document.querySelectorAll('.content > section'));
   var railMap = new Map();
@@ -1575,10 +1119,6 @@
     rail.accent.style.background = 'var(--cool-flame-vertical)';
   }
 
-  // Applies an exact height/position delta immediately (rather than
-  // re-measuring the DOM, which would race against the accordion's
-  // own in-progress transition) so the rail's own CSS transition
-  // animates in lockstep with the entry-detail's max-height change.
   function shiftRailsFrom(sectionIndex, delta) {
     var sec = allSectionEls[sectionIndex];
     var rail = railMap.get(sec);
@@ -1597,26 +1137,6 @@
     }
   }
 
-  // Shifts every section's rail down (or up) by the same fixed amount,
-  // immediately, so their CSS "top" transition runs in lockstep with
-  // whatever caused the shift (here, the hero expanding/collapsing).
-  // Unlike shiftRailsFrom, this doesn't resize any one section's own
-  // rail — it just moves all of them, since the hero itself has no rail.
-  function shiftAllRailTops(delta) {
-    allSectionEls.forEach(function (sec) {
-      var r = railMap.get(sec);
-      var curTop = parseFloat(r.base.style.top) || 0;
-      var newTop = curTop + delta;
-      r.base.style.top = newTop + 'px';
-      r.accent.style.top = newTop + 'px';
-    });
-  }
-
-  // Tracks which section is nearest the viewport's vertical center,
-  // toggling both the rail's white fade AND a matching
-  // "section-centered" class on the section itself so toggle buttons
-  // inside it can pick up the same white treatment (see .plus CSS —
-  // open/hover states are written to always win over this one).
   function updateCenteredSection() {
     var viewportMid = window.innerHeight / 2;
     var closest = null, closestDiff = Infinity;
@@ -1653,10 +1173,78 @@
     updateCenteredSection();
   });
 
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      layoutRails();
+      updateCenteredSection();
+    });
+  }
+
   layoutRails();
   updateCenteredSection();
+
+  // ---- Hero link row: Work / FSAE / Projects jump links ----
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var scrollRaf = 0;
+
+  function stopScroll() { cancelAnimationFrame(scrollRaf); }
+  ['wheel', 'touchstart', 'keydown'].forEach(function (ev) {
+    window.addEventListener(ev, stopScroll, { passive: true });
+  });
+
+  function scrollToY(y) {
+    stopScroll();
+    var from = window.pageYOffset, dist = y - from;
+    if (reduceMotion || Math.abs(dist) < 2) {
+      window.scrollTo({ top: y, behavior: 'instant' });
+      return;
+    }
+    var dur = Math.min(600, 320 + Math.abs(dist) * 0.1), t0 = null;
+    function step(now) {
+      if (t0 === null) t0 = now;
+      var t = Math.min(1, (now - t0) / dur);
+      var e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      window.scrollTo({ top: from + dist * e, behavior: 'instant' });
+      if (t < 1) scrollRaf = requestAnimationFrame(step);
+    }
+    scrollRaf = requestAnimationFrame(step);
+  }
+
+  document.querySelectorAll('.top-link[data-scroll]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var el = document.getElementById(link.getAttribute('data-scroll'));
+      if (!el) return;
+      e.preventDefault();
+
+      var endId = link.getAttribute('data-end');
+      var endEl = (endId && document.getElementById(endId)) || el;
+
+      var topDoc = el.getBoundingClientRect().top + window.pageYOffset;
+      var height = endEl.getBoundingClientRect().bottom + window.pageYOffset - topDoc;
+      var grow = 0;
+
+      if (link.hasAttribute('data-open')) {
+        var entry = el.querySelector('.entry');
+        var btn = el.querySelector('.entry-toggle');
+        if (entry && btn && !entry.classList.contains('open')) {
+          grow = entry.querySelector('.entry-detail').scrollHeight;
+          btn.click();
+        }
+      }
+      height += grow;
+
+      var vh = window.innerHeight, margin = 16;
+      var y = height <= vh - margin * 2
+        ? topDoc + height / 2 - vh / 2
+        : topDoc - margin;
+      var maxY = document.documentElement.scrollHeight + grow - vh;
+      scrollToY(Math.max(0, Math.min(y, maxY)));
+    });
+  });
 })();
 </script>
 
+<script src="trout.js"></script>
+<script src="sin-wave.js"></script>
 </body>
 </html>
