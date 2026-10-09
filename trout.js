@@ -40,9 +40,9 @@
     ELEV: 0,              // view angle: 0 = pure side view, 1 = pure top-down
 
     // swimming motion
-    WAVE_AMP: 0.016,      // tail sweep as a fraction of body length (small = stiff, calm swim)
-    WAVE_FREQ_MIN: 1.0,   // tail beats per second when slow
-    WAVE_FREQ_MAX: 2.6,   // ... and when fast
+    WAVE_AMP: 0.025,      // tail sweep as a fraction of body length (small = stiff, calm swim)
+    WAVE_FREQ_MIN: 1.5,   // tail beats per second when slow
+    WAVE_FREQ_MAX: 3,   // ... and when fast
     WAVE_LEN: 1.05,       // wavelengths along the body
     BANK: 0,           // how much it rolls into turns
 
