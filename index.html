@@ -181,8 +181,8 @@
   /* Trout box: link row at the top, the fish swims in the space below it (trout.js adds the canvas) */
   .trout-stage {
     position: relative;
-    width: 100%;
-    margin-top: 22px;
+    width: calc(100% + 32px);
+    margin: 22px -16px 0 -16px;
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;        /* phones: soak up the rest of the screen */
@@ -206,7 +206,7 @@
     justify-content: space-between;
     align-items: baseline;
     gap: 8px;
-    padding: 22px 7px 0 7px;   /* clear of the box's glow wall (10px in from the edge) */
+    padding: 22px 16px 0 16px;   /* clear of the box's glow wall (10px in from the edge) */
     margin: 0;
   }
 
