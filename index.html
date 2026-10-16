@@ -53,7 +53,8 @@
     --cool: #ff4d4d;
     --cool-tint: rgba(255, 77, 77, 0.14);
     --line: rgba(242, 241, 236, 0.16);
-    /* Full flame — red to white; used ONLY by the h2 pop-out underline on small sections */
+    /* Full flame — red to white; used by the h2 pop-out underline AND the large section dividers (night theme).
+       In day theme, theme.js swaps this for a red-to-black version. */
     --flame: linear-gradient(
       to right,
       #ff4d4d 0%,
@@ -298,7 +299,8 @@
     margin: 0 0 6px 0;
   }
 
-  /* LARGE dividers: solid red, at the top of each top-level chunk, overhanging 16px each side */
+  /* LARGE dividers: same flame gradient as the pop-out lines (red to white at night,
+     red to black in day), at the top of each top-level chunk, overhanging 16px each side */
   .group-title::before,
   #skills::before,
   #education::before,
@@ -308,7 +310,7 @@
     content: '';
     display: block;
     height: 2px;
-    background: var(--accent);
+    background: var(--flame);
     margin: 0 -16px 24px -16px;
   }
 
@@ -591,26 +593,12 @@
     color: var(--ink-soft);
   }
 
-  /* Angling / Art */
+  /* Angling */
   .placeholder-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     margin-top: 18px;
-  }
-
-  .placeholder-box {
-    aspect-ratio: 1;
-    border: 1px dashed var(--line);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Azeret Mono', 'Courier New', monospace;
-    font-size: 12px;
-    color: var(--ink-soft);
-    text-align: center;
-    padding: 8px;
   }
 
   .photo-thumb {
@@ -674,6 +662,7 @@
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
   }
 
+  #angling p, 
   #art p {
     color: var(--ink-soft);
     margin: 0 0 12px 0;
@@ -897,7 +886,7 @@
     <h2>Angling</h2>
 
     <p>
-      More to come. Click on the preview to see the whole photo.
+      Catch and release. Click on photo to enlarge. More to come.
     </p>
 
     <div class="placeholder-grid" id="anglingGrid">
@@ -934,14 +923,8 @@
   <section id="art">
     <h2>Art</h2>
 
-    <p>Work in progress.</p>
-    <p><a href="#">YouTube channel. Link coming soon</a></p>
-
-    <div class="placeholder-grid">
-      <div class="placeholder-box">Artwork placeholder</div>
-      <div class="placeholder-box">Artwork placeholder</div>
-      <div class="placeholder-box">Artwork placeholder</div>
-    </div>
+    <p>Outside of engineering, I like to film and edit videos. Some of my films are on Youtube, but I plan on posting some engineering projects on there too.</p>
+    <p><a href="https://www.youtube.com/channel/UCLad_8ab3igRPqmnUffmAcw" target="_blank" rel="noopener">My Youtube channel</a></p>
   </section>
 
   <section id="contact">
@@ -949,7 +932,7 @@
 
     <p>
       Open to conversations about internships, co-ops, and roles in
-      consumer, automotive, and aerospace industries. (Fun fact: My legal name is Samsung, hence the email.)
+      consumer, automotive, and aerospace industries.
     </p>
 
     <div class="contact-links">
@@ -963,7 +946,11 @@
         linkedin.com/in/samsnguyen
       </a>
 
-      <a href="#">youtube.com/@your-channel</a>
+      <a href="https://www.youtube.com/channel/UCLad_8ab3igRPqmnUffmAcw"
+         target="_blank"
+         rel="noopener">
+        My Youtube channel
+      </a>
     </div>
   </section>
 
