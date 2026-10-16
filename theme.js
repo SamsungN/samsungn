@@ -96,12 +96,15 @@
       '--cool: rgb(' + DAY_RED.join(',') + '); --cool-tint: rgba(' + DAY_RED.join(',') + ',0.12); }',
 
     /* gradients that hardcode the night red: in day they follow the animated accent instead.
-       (Gradients can't fade on their own, so these swap at the flip; the colors around them fade.) */
+       --flame is the day twin of the night red-to-white gradient: crimson to black (white would
+       vanish on the light background). It drives both the small-section pop-out lines and the
+       large section dividers. (Gradients can't fade on their own, so these swap at the flip;
+       the colors around them fade.) */
     ':root[data-theme="day"] { ' +
       '--cool-flame: linear-gradient(to right, var(--accent) 0%, var(--accent) 42%, transparent 100%); ' +
       '--cool-flame-vertical: linear-gradient(to bottom, var(--accent) 0%, var(--accent) 42%, transparent 100%); ' +
-      '--flame: linear-gradient(to right, var(--accent) 0%, var(--accent) 30%, transparent 100%); ' +
-      '--flame-vertical: linear-gradient(to bottom, var(--accent) 0%, var(--accent) 30%, transparent 100%); }',
+      '--flame: linear-gradient(to right, var(--accent) 0%, #050505 95%, transparent 100%); ' +
+      '--flame-vertical: linear-gradient(to bottom, var(--accent) 0%, #050505 95%, transparent 100%); }',
 
     /* hardcoded light-on-dark tints that need a dark-on-light twin */
     '@media (hover: hover) and (pointer: fine) { :root[data-theme="day"] .toggle-section:hover { background: rgba(20,20,20,0.05); } }',
