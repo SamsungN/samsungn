@@ -41,57 +41,11 @@
     font-display: swap;
   }
 
-  /* Bitter (Google Fonts) */
-  /* Loaded directly in the document head; no local Bitter files required. */
-
+  /* All colors come from theme.js as CSS variables:
+     --bg --ink --ink-soft --accent --accent-tint --line --surface --hover-tint
+     --flame --flame-vertical --accent-fade --accent-fade-vertical
+     To change a color, edit the PALETTE in theme.js, not this file. */
   :root {
-    --bg: #141414;
-    --ink: #f2f2f2;
-    --ink-soft: #9a9a96;
-    --accent: #ff4d4d;
-    --accent-tint: rgba(255, 77, 77, 0.16);
-    --cool: #ff4d4d;
-    --cool-tint: rgba(255, 77, 77, 0.14);
-    --line: rgba(242, 241, 236, 0.16);
-    /* Full flame — red to white; used by the h2 pop-out underline AND the large section dividers (night theme).
-       In day theme, theme.js swaps this for a red-to-black version. */
-    --flame: linear-gradient(
-      to right,
-      #ff4d4d 0%,
-      #ff6f5f 15%,
-      #ff9686 30%,
-      #ffb7a9 45%,
-      #ffd4c9 60%,
-      #ffe9e2 75%,
-      #fff8f5 88%,
-      #ffffff 95%,
-      transparent 100%
-    );
-    --flame-vertical: linear-gradient(
-      to bottom,
-      #ff4d4d 0%,
-      #ff6f5f 15%,
-      #ff9686 30%,
-      #ffb7a9 45%,
-      #ffd4c9 60%,
-      #ffe9e2 75%,
-      #fff8f5 88%,
-      #ffffff 95%,
-      transparent 100%
-    );
-    /* Cool flame — solid red, capped before it lightens; the vertical rail */
-    --cool-flame: linear-gradient(
-      to right,
-      #ff4d4d 0%,
-      #ff4d4d 42%,
-      transparent 100%
-    );
-    --cool-flame-vertical: linear-gradient(
-      to bottom,
-      #ff4d4d 0%,
-      #ff4d4d 42%,
-      transparent 100%
-    );
     --content-max: 620px;
     --content-top: 57px;   /* .content's top padding; the hero's mobile height calc uses it too */
   }
@@ -118,7 +72,7 @@
   }
 
   a { color: var(--ink); }
-  a:hover { color: var(--cool); }
+  a:hover { color: var(--accent); }
 
   canvas#wave {
     position: fixed;
@@ -140,7 +94,7 @@
   section { margin: 0 0 56px 0; }
 
   /* ---------------------------------------------------------------
-     Hero: name, large red rule, intro text, then the trout box (which
+     Hero: name, large rule, intro text, then the trout box (which
      holds the link row). On every screen size the hero is as tall as the
      screen, so the trout box is the last thing visible and the next large
      divider (above "Experience") starts below the fold.
@@ -161,13 +115,12 @@
     margin: 0 0 18px 0;
   }
 
-  /* The grey divider under the name: a plain static line. It keeps the same 2px footprint
-     the old canvas line had, with the 1px line in the lower row, so nothing below it shifts.
-     Same color in day and night. */
+  /* The divider under the name: a plain static line. It keeps the same 2px footprint
+     the old canvas line had, with the 1px line in the lower row, so nothing below it shifts. */
   .hero-divider {
     height: 2px;
     margin: 0 0 22px 0;
-    border-bottom: 1px solid rgba(58, 58, 55, 0.5);
+    border-bottom: 1px solid var(--line);
   }
 
   .hero-lines { text-align: left; }
@@ -181,7 +134,7 @@
   }
 
   .hero .about-line {
-    margin: 24px 0 0 0;     
+    margin: 24px 0 0 0;
     text-align: center;
     font-size: 20px;       /* matches .subhead */
   }
@@ -237,8 +190,7 @@
     text-decoration: underline;
     text-decoration-thickness: 1px;
     font-style: italic;
-    text-underline-offset:3px
-
+    text-underline-offset: 3px;
   }
 
   .about:hover {
@@ -247,7 +199,7 @@
 
   .top-link:hover { color: var(--accent); }
 
-  /* Still used by the Angling "more" toggle */
+  /* Angling "more" toggle */
   .hero-extra {
     max-height: 0;
     overflow: hidden;
@@ -265,7 +217,7 @@
     font-family: 'Azeret Mono', 'Courier New', monospace;
     font-size: 15.5px;
     font-weight: 500;
-    color: var(--cool);
+    color: var(--accent);
     cursor: pointer;
     letter-spacing: 0.02em;
     opacity: 0.75;
@@ -299,8 +251,8 @@
     margin: 0 0 6px 0;
   }
 
-  /* LARGE dividers: same flame gradient as the pop-out lines (red to white at night,
-     red to black in day), at the top of each top-level chunk, overhanging 16px each side */
+  /* LARGE dividers: the accent-to-ink gradient (--flame), at the top of each top-level chunk,
+     overhanging 16px each side */
   .group-title::before,
   #skills::before,
   #education::before,
@@ -332,7 +284,7 @@
   /* Sections with a role underneath: title and role sit closer together */
   .toggle-section h2 { margin-bottom: 0; }
 
-  /* SMALL-section pop-out line: keeps the red-to-white gradient */
+  /* SMALL-section pop-out line */
   h2::after {
     content: '';
     position: absolute;
@@ -358,7 +310,7 @@
   /* Hover effects only on devices with real hover */
   @media (hover: hover) and (pointer: fine) {
     .toggle-section:hover {
-      background: rgba(255, 255, 255, 0.035);
+      background: var(--hover-tint);
     }
 
     .toggle-section:hover h2 {
@@ -398,7 +350,7 @@
 
   .rail-accent {
     width: 2px;
-    background: var(--cool-flame-vertical);
+    background: var(--accent-fade-vertical);
     transform-origin: top;
     transform: scaleY(0);
     transition: transform 0.35s ease, top 0.35s ease, height 0.35s ease, background 0.35s ease;
@@ -452,17 +404,18 @@
     transition: color 0.3s ease;
   }
 
-    /* Project roles ("Personal Project"): same look as the paragraph text, grey */
+  /* Project roles ("Personal Project"): same look as the paragraph text, grey */
   :where(#projects) ~ .toggle-section .entry-top h3 {
     font-size: 16px;
     font-weight: 400;
-}
-:where(#projects) ~ .toggle-section .plus { margin-top: -5.5px; }
+  }
+  :where(#projects) ~ .toggle-section .plus { margin-top: -5.5px; }
 
-@media (max-width: 600px) {
-  :where(#projects) ~ .toggle-section .entry-top h3 { font-size: 15.5px; }
-  :where(#projects) ~ .toggle-section .plus { margin-top: -6.5px; }
-}
+  @media (max-width: 600px) {
+    :where(#projects) ~ .toggle-section .entry-top h3 { font-size: 15.5px; }
+    :where(#projects) ~ .toggle-section .plus { margin-top: -6.5px; }
+  }
+
   .section-centered .entry-top h3 {
     color: var(--ink);
   }
@@ -633,7 +586,7 @@
     }
   }
 
-  /* Fullscreen lightbox */
+  /* Fullscreen lightbox: the backdrop is the page background at 92% opacity */
   .lightbox {
     position: fixed;
     inset: 0;
@@ -642,7 +595,7 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: rgba(0, 0, 0, 0.92);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
     opacity: 0;
     visibility: hidden;
     cursor: zoom-out;
@@ -659,10 +612,9 @@
     max-width: 100%;
     max-height: 100%;
     border-radius: 6px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
   }
 
-  #angling p, 
+  #angling p,
   #art p {
     color: var(--ink-soft);
     margin: 0 0 12px 0;
@@ -741,7 +693,7 @@
   <div class="hero">
     <h1>Sam Nguyen</h1>
 
-    <!-- Static grey divider (styled in the CSS above) -->
+    <!-- Static divider (styled in the CSS above) -->
     <div class="hero-divider" id="heroDivider" aria-hidden="true"></div>
 
     <div class="hero-lines">
@@ -1111,7 +1063,6 @@
     if (!rail) return;
     var isOpen = !!sec.querySelector('.entry.open');
     rail.accent.classList.toggle('show', !!(isOpen || sec.__railHovered));
-    rail.accent.style.background = 'var(--cool-flame-vertical)';
   }
 
   function shiftRailsFrom(sectionIndex, delta) {
