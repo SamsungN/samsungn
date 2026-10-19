@@ -1,7 +1,8 @@
 /* Sine-wave background, standalone.
    Draws onto <canvas id="wave">. Load with <script src="sin-wave.js"></script>
    AFTER theme.js, your main script, and trout.js.
-   Colors follow the day / night theme through window.siteTheme (see theme.js). */
+   Every color here comes from theme.js through window.siteTheme; to change one, edit the
+   PALETTE in theme.js, not this file. */
 (function () {
   var canvas = document.getElementById('wave');
   var ctx = canvas.getContext('2d');
@@ -10,12 +11,11 @@
   var running = true;
   var frameId = null;
 
-  // ---- Theme colors (night -> day), refreshed once per frame by updateTheme() ----
-  var BG_LINE_NIGHT = [28, 27, 27];      // #1c1b1b
-  var BG_LINE_DAY = [238, 238, 238];     // #eaeaea, barely visible on the light page
-  var bgLineColor = 'rgb(28,27,27)';
-  var nameRed = 'rgb(255,77,77)';        // red wave lines inside the name
-  var nameGlowRGB = '0,0,0';             // pulse glow inside the name: black at night, white in day
+  // ---- Theme colors, refreshed once per frame by updateTheme() ----
+  var bgLineColor = '';     // faint background wave lines
+  var nameAccent = '';      // accent wave lines inside the name
+  var nameGlowRGB = '';     // pulse glow inside the name (the theme's "on accent" color)
+  var glowStops = [];       // wave glow ramp: [{ t, c:[r,g,b] }, ...]
 
   // ---- Overlay canvas: wave lines clipped to the letters of the name ----
   var NAME_LINE_WIDTH = 1.5;
@@ -121,45 +121,19 @@
     drawWiggleGlow();
   }
 
-  // Glow gradient. Night: white-hot center that reddens as the wiggle tapers off.
-  // Day: black center that goes to red the same way. Each frame, updateTheme() blends the two
-  // sets of stops by the theme mix into glowStops, which glowColorForIntensity() reads.
-  var GLOW_T = [0.00, 0.15, 0.35, 0.55, 0.75, 1.00];
-  var GLOW_NIGHT = [
-    [255, 255, 255],
-    [255, 233, 229],
-    [255, 176, 161],
-    [255, 122, 105],
-    [255, 77, 77],
-    [196, 40, 34]
-  ];
-  var GLOW_DAY = [
-    [0, 0, 0],
-    [40, 3, 9],
-    [93, 7, 21],
-    [147, 12, 34],
-    [200, 16, 46],     // the day crimson (same as theme.js)
-    [150, 10, 30]
-  ];
-  var glowStops = [];
+  // Glow ramp: the "ink" color at the hot center, easing to the accent as the wiggle tapers off.
+  // theme.js builds the stops (see GLOW_T there); glowColorForIntensity() reads them.
   var GLOW_ALPHA = 0.95;
   var GLOW_WIDTH = 1.8;
   var GLOW_THRESHOLD = 0.02;
 
   function updateTheme() {
     var st = window.siteTheme;
-
-    var bg = st ? st.blend(BG_LINE_NIGHT, BG_LINE_DAY) : BG_LINE_NIGHT;
+    var bg = st.waveLine();
     bgLineColor = 'rgb(' + Math.round(bg[0]) + ',' + Math.round(bg[1]) + ',' + Math.round(bg[2]) + ')';
-
-    glowStops.length = 0;
-    for (var i = 0; i < GLOW_T.length; i++) {
-      glowStops.push({ t: GLOW_T[i], c: st ? st.blend(GLOW_NIGHT[i], GLOW_DAY[i]) : GLOW_NIGHT[i] });
-    }
-
-    nameRed = 'rgb(' + (st ? st.redRGB() : '255,77,77') + ')';
-    var g = Math.round(255 * (st ? st.mix : 0));
-    nameGlowRGB = g + ',' + g + ',' + g;
+    glowStops = st.glowStops();
+    nameAccent = 'rgb(' + st.accentRGB() + ')';
+    nameGlowRGB = st.rgb('onAccent');
   }
 
   function glowColorForIntensity(t) {
@@ -380,7 +354,7 @@
   }
 
   // ---- Ambient hum (background lines only) ----
-  // ACTIVE: every few seconds a soft pulse spawns on a random background line
+  // Every few seconds a soft pulse spawns on a random background line
   // (scheduleNextAmbientPulse() is called at the bottom of the file). It is skipped
   // when the visitor prefers reduced motion, and the trout box does not mask it.
   var ambientPulses = [];
@@ -539,8 +513,8 @@
         xs.push(x); ys.push(sampleY); ins.push(sampleI);
       }
 
-      // base line: red
-      nctx.strokeStyle = nameRed;
+      // base line: accent
+      nctx.strokeStyle = nameAccent;
       nctx.lineWidth = NAME_LINE_WIDTH;
       nctx.beginPath();
       for (var k = 0; k < xs.length; k++) {
@@ -548,7 +522,7 @@
       }
       nctx.stroke();
 
-      // pulse / hover / ambient glow: black at night, white in day
+      // pulse / hover / ambient glow
       nctx.lineWidth = NAME_GLOW_WIDTH;
       for (var j = 1; j < xs.length; j++) {
         var s = Math.max(ins[j], ins[j - 1]);
@@ -563,7 +537,7 @@
 
     // keep only what's inside the letters
     nctx.globalCompositeOperation = 'destination-in';
-    nctx.fillStyle = '#000';
+    nctx.fillStyle = '#000';   // mask only: this color is never visible
     nctx.fillText(text, r.left, baseY);
     nctx.globalCompositeOperation = 'source-over';
   }
