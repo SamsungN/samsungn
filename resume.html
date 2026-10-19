@@ -43,56 +43,11 @@
     font-display: swap;
   }
 
+  /* All colors come from theme.js as CSS variables:
+     --bg --ink --ink-soft --accent --accent-tint --line --surface --hover-tint
+     --flame --flame-vertical --accent-fade --accent-fade-vertical
+     To change a color, edit the PALETTE in theme.js, not this file. */
   :root {
-    --bg: #141414;
-    --ink: #f2f2f2;
-    --ink-soft: #9a9a96;
-    --accent: #ff4d4d;
-    --accent-tint: rgba(255, 77, 77, 0.16);
-    --cool: #ff4d4d;
-    --cool-tint: rgba(255, 77, 77, 0.14);
-    --line: rgba(242, 242, 242, 0.16);
-
-    --flame: linear-gradient(
-      to right,
-      #ff4d4d 0%,
-      #ff6f5f 15%,
-      #ff9686 30%,
-      #ffb7a9 45%,
-      #ffd4c9 60%,
-      #ffe9e2 75%,
-      #fff8f5 88%,
-      #ffffff 95%,
-      transparent 100%
-    );
-
-    --flame-vertical: linear-gradient(
-      to bottom,
-      #ff4d4d 0%,
-      #ff6f5f 15%,
-      #ff9686 30%,
-      #ffb7a9 45%,
-      #ffd4c9 60%,
-      #ffe9e2 75%,
-      #fff8f5 88%,
-      #ffffff 95%,
-      transparent 100%
-    );
-
-    --cool-flame: linear-gradient(
-      to right,
-      #ff4d4d 0%,
-      #ff4d4d 42%,
-      transparent 100%
-    );
-
-    --cool-flame-vertical: linear-gradient(
-      to bottom,
-      #ff4d4d 0%,
-      #ff4d4d 42%,
-      transparent 100%
-    );
-
     --content-max: 620px;
   }
 
@@ -125,7 +80,7 @@
   }
 
   a:hover {
-    color: var(--cool);
+    color: var(--accent);
   }
 
   canvas#wave {
@@ -145,7 +100,7 @@
     padding: 64px 24px 90px;
   }
 
-  /* About-style top row */
+  /* Top row */
 
   .top-row {
     display: flex;
@@ -189,23 +144,10 @@
     margin: 0 0 56px 0;
   }
 
-  /* Group/section-level dividers */
+  /* Section dividers: the accent-to-ink gradient (--flame) */
 
-  .group-title {
-    font-family: 'Azeret Mono';
-    font-size: 29px;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    color: var(--ink);
-    margin: 0 0 6px 0;
-  }
-
-  .group-title::before,
   #skills::before,
   #education::before,
-  #angling::before,
-  #art::before,
-  #contact::before,
   #experience::before,
   #fsae::before,
   #solidworks-club::before,
@@ -243,7 +185,7 @@
     transition: width 0.35s ease;
   }
 
-  .toggle-section {
+  .resume-section {
     position: relative;
     margin-left: -16px;
     margin-right: -16px;
@@ -254,29 +196,19 @@
     transition: background 0.35s ease;
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .toggle-section:hover {
-      background: rgba(255, 255, 255, 0.035);
-    }
-
-    .toggle-section:hover h2 {
-      color: var(--accent);
-    }
-
-    .toggle-section:hover h2::after {
-      width: calc(100% + 16px);
-    }
+  .resume-section:hover {
+    background: var(--hover-tint);
   }
 
-  .toggle-section.active h2 {
+  .resume-section:hover h2 {
     color: var(--accent);
   }
 
-  .toggle-section.active h2::after {
+  .resume-section:hover h2::after {
     width: calc(100% + 16px);
   }
 
-  /* Left-side vertical rails */
+  /* Left-side vertical rails, positioned/sized by JS */
 
   .rail-base,
   .rail-accent {
@@ -300,7 +232,7 @@
 
   .rail-accent {
     width: 2px;
-    background: var(--cool-flame-vertical);
+    background: var(--accent-fade-vertical);
     transform-origin: top;
     transform: scaleY(0);
     transition:
@@ -314,33 +246,15 @@
     transform: scaleY(1);
   }
 
-  /* Accordion entries */
+  /* Entries */
 
   .entry {
+    padding: 18px 0;
     border-bottom: 1px solid var(--line);
   }
 
   .entry:last-child {
     border-bottom: none;
-  }
-
-  .entry-toggle {
-    width: 100%;
-    background: none;
-    border: none;
-    padding: 18px 0;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    cursor: pointer;
-    text-align: left;
-    color: var(--ink);
-    font-family: 'Bitter';
-  }
-
-  .entry-main {
-    flex: 1 1 auto;
   }
 
   .entry-top {
@@ -357,21 +271,6 @@
     font-weight: 600;
     margin: 0;
     color: var(--ink);
-    transition: color 0.3s ease;
-  }
-
-  .section-centered .entry-top h3 {
-    color: var(--ink);
-  }
-
-  .entry.open .entry-top h3 {
-    color: var(--ink);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .toggle-section:hover .entry-top h3 {
-      color: var(--ink);
-    }
   }
 
   .entry-date {
@@ -388,69 +287,19 @@
     margin-top: 4px;
   }
 
-  /* Toggle button */
-
-  .plus {
-    flex: 0 0 auto;
-    width: 34px;
-    height: 34px;
-    border: 1px solid var(--line);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    font-size: 26px;
-    color: var(--ink-soft);
-    background: transparent;
-    transition:
-      transform 0.3s ease,
-      color 0.3s ease,
-      border-color 0.3s ease,
-      background 0.3s ease;
-    margin-top: -1px;
-    padding: 0;
-  }
-
-  .entry.open .plus {
-    transform: rotate(45deg);
-  }
-
-  .section-centered .plus {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-tint);
-  }
-
-  .entry.open .plus {
-    background: var(--accent-tint);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .entry-toggle:hover .plus {
-      background: var(--accent-tint);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-  }
-
-  .entry-detail {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease;
-  }
-
-  .entry-detail p {
-    margin: 0 0 14px 0;
+  .entry ul {
+    margin: 14px 0 0 0;
+    padding: 0 0 0 18px;
     color: var(--ink);
     font-size: 17px;
-    line-height: 1.6;
   }
 
-  .entry-detail p:last-child {
-    margin-bottom: 20px;
+  .entry li {
+    margin-bottom: 8px;
+  }
+
+  .entry li:last-child {
+    margin-bottom: 0;
   }
 
   /* Education */
@@ -494,125 +343,7 @@
     background: var(--accent-tint);
   }
 
-  /* Angling / Art */
-
-  .placeholder-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 18px;
-  }
-
-  .placeholder-box {
-    aspect-ratio: 1;
-    border: 1px dashed var(--line);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Azeret Mono';
-    font-size: 12px;
-    color: var(--ink-soft);
-    text-align: center;
-    padding: 8px;
-  }
-
-  .photo-thumb {
-    aspect-ratio: 1;
-    width: 100%;
-    display: block;
-    margin: 0;
-    padding: 0;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    overflow: hidden;
-    background: none;
-    cursor: pointer;
-    transition: border-color 0.25s ease;
-  }
-
-  .photo-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .photo-thumb:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .photo-thumb:hover {
-      border-color: var(--accent);
-    }
-  }
-
-  .lightbox {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: rgba(0, 0, 0, 0.92);
-    opacity: 0;
-    visibility: hidden;
-    cursor: zoom-out;
-    transition:
-      opacity 0.25s ease,
-      visibility 0s linear 0.25s;
-  }
-
-  .lightbox.show {
-    opacity: 1;
-    visibility: visible;
-    transition:
-      opacity 0.25s ease,
-      visibility 0s linear 0s;
-  }
-
-  .lightbox img {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 6px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
-  }
-
-  #art p {
-    color: var(--ink-soft);
-    margin: 0 0 12px 0;
-  }
-
-  /* Contact */
-
-  #contact p {
-    color: var(--ink-soft);
-    margin: 0 0 22px 0;
-  }
-
-  .contact-links {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .contact-links a {
-    font-family: 'Azeret Mono';
-    font-size: 16.5px;
-    text-decoration: none;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 3px;
-    width: fit-content;
-  }
-
-  .contact-links a:hover {
-    border-color: var(--accent);
-  }
-
-  /* Resume-specific components */
+  /* PDF viewer */
 
   .pdf-actions {
     display: flex;
@@ -647,112 +378,8 @@
     height: 640px;
     border: 1px solid var(--line);
     border-radius: 10px;
-    background: #171b1f;
+    background: var(--surface);
     display: block;
-  }
-
-  .resume-section {
-    position: relative;
-    margin-left: -16px;
-    margin-right: -16px;
-    padding-left: 16px;
-    padding-right: 16px;
-    border-radius: 10px;
-    background: transparent;
-    transition: background 0.35s ease;
-  }
-
-  .resume-section:hover {
-    background: rgba(255,255,255,0.035);
-  }
-
-  .resume-section h2 {
-    font-family: 'Azeret Mono';
-    font-size: 23px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    color: var(--ink);
-    margin: 0 0 6px -16px;
-    padding-top: 16px;
-    padding-left: 16px;
-    position: relative;
-    transition: color 0.35s ease;
-  }
-
-  .resume-section h2::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: -1px;
-    height: 2px;
-    width: 0;
-    background: var(--flame);
-    transition: width 0.35s ease;
-  }
-
-  .resume-section:hover h2 {
-    color: var(--accent);
-  }
-
-  .resume-section:hover h2::after {
-    width: calc(100% + 16px);
-  }
-
-  .resume-section .entry-top h3 {
-    font-family: 'Bitter';
-  }
-
-  .entry {
-    padding: 18px 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .entry:last-child {
-    border-bottom: none;
-  }
-
-  .entry-top {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 8px 16px;
-  }
-
-  .entry-top h3 {
-    font-family: 'Bitter';
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0;
-  }
-
-  .entry-date {
-    font-family: 'Bitter';
-    font-size: 14.5px;
-    color: var(--ink-soft);
-    white-space: nowrap;
-  }
-
-  .entry-sub {
-    font-family: 'Bitter';
-    font-size: 15px;
-    color: var(--ink-soft);
-    margin-top: 4px;
-  }
-
-  .entry ul {
-    margin: 14px 0 0 0;
-    padding: 0 0 0 18px;
-    color: var(--ink);
-    font-size: 17px;
-  }
-
-  .entry li {
-    margin-bottom: 8px;
-  }
-
-  .entry li:last-child {
-    margin-bottom: 0;
   }
 
   footer {
@@ -763,14 +390,6 @@
   }
 
   @media (min-width: 700px) {
-    .content {
-      padding: 64px 24px 90px;
-    }
-
-    .placeholder-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
     .pdf-frame {
       height: 760px;
     }
@@ -793,8 +412,7 @@
       font-size: 15px;
     }
 
-    h2,
-    .resume-section h2 {
+    h2 {
       font-size: 20px;
     }
 
@@ -1034,7 +652,7 @@
     });
   }
 
-  /* ---- Center-section animation ---- */
+  /* ---- Center-section highlight ---- */
 
   function updateCenteredSection() {
     var viewportMid = window.innerHeight / 2;
