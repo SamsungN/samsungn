@@ -1,5 +1,9 @@
 /* trout.js — interactive trout for the hero section.
-   Needs <div id="troutStage"></div> in the page. */
+   Needs <div id="troutStage"></div> in the page.
+   A rainbow trout: dark olive back, silver belly, and a stripe down the middle of each side that
+   fades into the body above and below. The stripe takes the site accent from theme.js through
+   window.siteTheme; the box glow takes the theme's text color. The fish's other colors (back,
+   flank, belly, fins, spots, eye) are its own neutral anatomy and live in this file. */
 
 /* ============================ TROUT ENGINE ============================ */
 (function (root) {
@@ -54,6 +58,7 @@
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
   function ss(x) { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); }
   function lerp(a, b, t) { return a + (b - a) * t; }
+  function mixRGB(a, b, t) { return [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)]; }
   function hash(n) { var x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
   function angDiff(a, b) { var d = a - b; while (d > PI) d -= TAU; while (d < -PI) d += TAU; return d; }
   // rotate v by the rotation that carries unit vector a onto unit vector b (parallel transport)
@@ -69,80 +74,91 @@
     return out;
   }
 
-  /* ---------- colors (trout) ---------- */
-  var RED = [184, 78, 70];   // toned-down red: belly, lower flank and lower fins
-  var BODY_V = [ // dorsal -> ventral: dark back, grey flank, then red belly
-    [0.00, [40, 40, 39]], [0.20, [66, 66, 64]], [0.42, [130, 130, 126]], [0.58, [178, 177, 171]],
-    [0.74, [182, 132, 122]], [0.84, RED], [1.00, [198, 86, 76]]
+  /* ---------- colors (rainbow trout) ----------
+     Neutral anatomy colors first. The stripe stops in BODY_V / BODY_L are filled in every frame
+     from the site accent (see updateLook); the number in each comment is how much accent that
+     stop gets (1 = pure accent, 0 = pure neutral), so the stripe fades out smoothly both ways. */
+  var C = {
+    BACK:       [40, 40, 39],
+    BACK_SOFT:  [66, 66, 64],
+    FLANK:      [120, 121, 118],   // grey-olive upper flank, just above the stripe
+    SILVER:     [176, 178, 176],   // silver lower flank, just below the stripe
+    BELLY:      [208, 208, 203],
+    BELLY_LOW:  [224, 223, 218],
+    TOP_FLANK:  [108, 108, 105],   // flank seen from above
+    TOP_EDGE:   [190, 190, 186]    // underside edge seen from above
+  };
+
+  var BODY_V = [ // dorsal -> ventral: dark back, grey flank, STRIPE (fading in and out), silver, pale belly
+    [0.00, C.BACK],
+    [0.16, C.BACK_SOFT],
+    [0.30, C.FLANK],
+    [0.38, [0, 0, 0]],   // stripe 0.35 (blended with flank)
+    [0.46, [0, 0, 0]],   // stripe 0.80 (blended with flank)
+    [0.52, [0, 0, 0]],   // stripe 1.00 (pure accent: the center of the stripe)
+    [0.58, [0, 0, 0]],   // stripe 0.80 (blended with silver)
+    [0.66, [0, 0, 0]],   // stripe 0.35 (blended with silver)
+    [0.76, C.SILVER],
+    [0.90, C.BELLY],
+    [1.00, C.BELLY_LOW]
   ];
   var BODY_L = [ // left flank -> back -> right flank (used when seen from above)
-    [0.00, [184, 100, 92]], [0.10, [170, 166, 160]], [0.31, [108, 108, 105]], [0.50, [40, 40, 39]],
-    [0.69, [108, 108, 105]], [0.90, [170, 166, 160]], [1.00, [184, 100, 92]]
+    [0.00, C.TOP_EDGE],
+    [0.10, [0, 0, 0]],   // stripe 1.00
+    [0.20, [0, 0, 0]],   // stripe 0.50 (blended with top flank)
+    [0.31, C.TOP_FLANK],
+    [0.50, C.BACK],
+    [0.69, C.TOP_FLANK],
+    [0.80, [0, 0, 0]],   // stripe 0.50
+    [0.90, [0, 0, 0]],   // stripe 1.00
+    [1.00, C.TOP_EDGE]
   ];
   var LIGHT = (function () { var v = [-0.38, -0.62, -0.69], l = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]); return [v[0] / l, v[1] / l, v[2] / l]; })();
-  
-    /* ---------- day / night look ---------- */
+
+  var SPOT_COLOR = 'rgba(14,14,14,0.55)';   // small dark spots on the back and upper sides
+
+  /* ---------- day / night look ---------- */
   // Exposure: BASE brightens the whole fish; HIGHLIGHT pushes only the light colors toward white
-  // (dark back barely moves, flank and belly lift most). Night was fixed at BASE 0.6, HIGHLIGHT 0.
-  // Both fade with the theme. Raise DAY_* for a brighter fish in daylight.
+  // (dark back barely moves, flank and belly lift most). Both fade with the theme.
+  // Raise DAY_* for a brighter fish in daylight.
   var EXPOSURE = {
     NIGHT_BASE: 0.64, DAY_BASE: 0.80,
     NIGHT_HIGHLIGHT: 0.10, DAY_HIGHLIGHT: 0.35
   };
-  var DAY_RED = [176, 36, 52];     // trout's crimson in day (the night red stays [184, 78, 70])
-  var DAY_V = [                    // day colors for each BODY_V stop (same order); only the reds differ
-    [40, 40, 39], [66, 66, 64], [130, 130, 126], [178, 177, 171],
-    [184, 112, 116], DAY_RED, [196, 44, 60]
-  ];
-  var DAY_L = [                    // day colors for each BODY_L stop (same order)
-    [182, 66, 74], [170, 166, 160], [108, 108, 105], [40, 40, 39],
-    [108, 108, 105], [170, 166, 160], [182, 66, 74]
-  ];
-  var FIN_RED_IDX = [1, 2, 3, 5];  // the red fins in FINS
-  var SPECK_PALE_NIGHT = [214, 213, 206, 0.45], SPECK_PALE_DAY = [248, 247, 242, 0.6];
-  var SPECK_RED_NIGHT = [214, 70, 58, 0.9], SPECK_RED_DAY = [190, 30, 48, 0.9];
-    // night uses the same crimson as day
-  RED[0] = DAY_RED[0]; RED[1] = DAY_RED[1]; RED[2] = DAY_RED[2];
-  BODY_V[4][1] = DAY_V[4]; BODY_V[6][1] = DAY_V[6];
-  BODY_L[0][1] = DAY_L[0]; BODY_L[6][1] = DAY_L[6];
-  SPECK_RED_NIGHT = SPECK_RED_DAY;
 
-  var lookV = BODY_V.map(function (s) { return [s[0], [0, 0, 0]]; });   // blended + lifted each frame
+  var lookV = BODY_V.map(function (s) { return [s[0], [0, 0, 0]]; });   // lifted each frame
   var lookL = BODY_L.map(function (s) { return [s[0], [0, 0, 0]]; });
-  var baseExp = 0.6, speckPale = '', speckRed = '';
+  var baseExp = 0.6;
 
-  function siteMix() { return window.siteTheme ? window.siteTheme.mix : 0; }
-
-  function lookStops(src, day, dst, mix, hl) {
+  // copy each stop and push the light ones toward white (lights lift most, darks barely)
+  function liftStops(src, dst, hl) {
     for (var i = 0; i < src.length; i++) {
-      var a = src[i][1], b = day[i], o = dst[i][1];
-      var r = a[0] + (b[0] - a[0]) * mix, g = a[1] + (b[1] - a[1]) * mix, bl = a[2] + (b[2] - a[2]) * mix;
-      var lum = (0.3 * r + 0.59 * g + 0.11 * bl) / 255, k = hl * lum * lum;   // lights lift most, darks barely
-      o[0] = r + (255 - r) * k; o[1] = g + (255 - g) * k; o[2] = bl + (255 - bl) * k;
+      var s = src[i][1], o = dst[i][1];
+      var lum = (0.3 * s[0] + 0.59 * s[1] + 0.11 * s[2]) / 255, k = hl * lum * lum;
+      o[0] = s[0] + (255 - s[0]) * k; o[1] = s[1] + (255 - s[1]) * k; o[2] = s[2] + (255 - s[2]) * k;
     }
-  }
-
-  function mixRGBA(n, d, mix) {
-    return 'rgba(' + Math.round(n[0] + (d[0] - n[0]) * mix) + ',' + Math.round(n[1] + (d[1] - n[1]) * mix) + ',' +
-      Math.round(n[2] + (d[2] - n[2]) * mix) + ',' + (n[3] + (d[3] - n[3]) * mix).toFixed(3) + ')';
   }
 
   function updateLook() {
-    var mix = siteMix(), E = EXPOSURE;
+    var st = window.siteTheme, mix = st.mix, E = EXPOSURE;
     var hl = lerp(E.NIGHT_HIGHLIGHT, E.DAY_HIGHLIGHT, mix);
     baseExp = lerp(E.NIGHT_BASE, E.DAY_BASE, mix);
-    lookStops(BODY_V, DAY_V, lookV, mix, hl);
-    lookStops(BODY_L, DAY_L, lookL, mix, hl);
 
-    // red fins follow the shared red
-    var r = lerp(RED[0], DAY_RED[0], mix), g = lerp(RED[1], DAY_RED[1], mix), b = lerp(RED[2], DAY_RED[2], mix);
-    var lum = (0.3 * r + 0.59 * g + 0.11 * b) / 255, k = hl * lum * lum;
-    for (var i = 0; i < FIN_RED_IDX.length; i++) {
-      FINS[FIN_RED_IDX[i]].color = [r + (255 - r) * k, g + (255 - g) * k, b + (255 - b) * k, 0.92];
-    }
+    // the stripe follows the site accent
+    var acc = st.accent();
+    BODY_V[3][1] = mixRGB(C.FLANK, acc, 0.35);
+    BODY_V[4][1] = mixRGB(C.FLANK, acc, 0.80);
+    BODY_V[5][1] = acc;
+    BODY_V[6][1] = mixRGB(C.SILVER, acc, 0.80);
+    BODY_V[7][1] = mixRGB(C.SILVER, acc, 0.35);
 
-    speckPale = mixRGBA(SPECK_PALE_NIGHT, SPECK_PALE_DAY, mix);
-    speckRed = mixRGBA(SPECK_RED_NIGHT, SPECK_RED_DAY, mix);
+    BODY_L[1][1] = acc;
+    BODY_L[2][1] = mixRGB(C.TOP_FLANK, acc, 0.50);
+    BODY_L[6][1] = BODY_L[2][1];
+    BODY_L[7][1] = acc;
+
+    liftStops(BODY_V, lookV, hl);
+    liftStops(BODY_L, lookL, hl);
   }
 
   function rgb(c, f) {
@@ -165,33 +181,33 @@
   // Each fin returns [lat0, vert0, lat1, vert1] in px (a line across the slice), or null.
   // 'pair' fins are mirrored left/right.
   var FINS = [
-    { pair: false, color: [52, 52, 51, 0.94], fn: function (s, Hm, h, w) {
+    { pair: false, color: [52, 52, 51, 0.94], fn: function (s, Hm, h, w) {     // dorsal
       if (s < 0.37 || s > 0.50) return null;
       var u = (s - 0.37) / 0.13, hd = 0.52 * Hm * Math.pow(Math.sin(PI * u), 0.8) * (1 - 0.4 * u);
       return hd < 0.6 ? null : [0, h * 0.9, 0, h * 0.98 + hd];
     } },
-    { pair: false, color: [RED[0], RED[1], RED[2], 0.92], fn: function (s, Hm, h, w) {
+    { pair: false, color: [150, 152, 150, 0.9], fn: function (s, Hm, h, w) {   // anal
       if (s < 0.66 || s > 0.745) return null;
       var u = (s - 0.66) / 0.085, ha = 0.68 * Hm * Math.pow(Math.sin(PI * u), 0.8);
       return ha < 0.6 ? null : [0, -h * 0.9, 0, -(h * 0.98 + ha)];
     } },
-    { pair: true, color: [RED[0], RED[1], RED[2], 0.92], fn: function (s, Hm, h, w) {
+    { pair: true, color: [140, 142, 140, 0.9], fn: function (s, Hm, h, w) {    // pectoral
       if (s < 0.19 || s > 0.28) return null;
       var u = (s - 0.19) / 0.09, lp = 1.22 * Hm * Math.pow(Math.sin(PI * u), 0.8);
       return lp < 0.6 ? null : [w * 0.9, -0.42 * h, w * 0.9 + lp * 0.9, -0.42 * h - lp * 0.45];
     } },
-    { pair: true, color: [RED[0], RED[1], RED[2], 0.92], fn: function (s, Hm, h, w) {
+    { pair: true, color: [150, 152, 150, 0.9], fn: function (s, Hm, h, w) {    // pelvic
       if (s < 0.46 || s > 0.53) return null;
       var u = (s - 0.46) / 0.07, lp = 0.90 * Hm * Math.pow(Math.sin(PI * u), 0.8);
       return lp < 0.6 ? null : [w * 0.55, -0.88 * h, w * 0.55 + lp * 0.55, -0.88 * h - lp * 0.8];
     } },
-    { pair: false, color: [84, 56, 54, 0.94], fn: function (s, Hm, h, w) {   // tail, upper lobe
+    { pair: false, color: [70, 70, 68, 0.94], fn: function (s, Hm, h, w) {     // tail, upper lobe
       if (s < 0.86) return null;
       var u = clamp((s - 0.86) / 0.09, 0, 1), Y = Hm * (0.2 + 0.84 * ss(u));
       var yin = s > 0.925 ? 0.88 * Hm * 1.04 * Math.pow((s - 0.925) / 0.075, 1.15) : 0;
       return [0, yin, 0, Y];
     } },
-    { pair: false, color: [RED[0], RED[1], RED[2], 0.92], fn: function (s, Hm, h, w) {   // tail, lower lobe
+    { pair: false, color: [70, 70, 68, 0.94], fn: function (s, Hm, h, w) {     // tail, lower lobe
       if (s < 0.86) return null;
       var u = clamp((s - 0.86) / 0.09, 0, 1), Y = Hm * (0.2 + 0.84 * ss(u));
       var yin = s > 0.925 ? 0.88 * Hm * 1.04 * Math.pow((s - 0.925) / 0.075, 1.15) : 0;
@@ -199,7 +215,7 @@
     } }
   ];
 
-  var SPOT_ANGLES = [-76, -60, -44, -28, -12, 12, 28, 44, 60, 76, -92, -108, -124, 92, 108, 124];  // >=90 deg = lower flank
+  var SPOT_ANGLES = [-76, -60, -44, -28, -12, 12, 28, 44, 60, 76];  // 0 = middle of the back, 90 = middle of the side; spots stay above the stripe's lower edge
   var M = 12; // points per slice outline
 
   function convexHull(pts) {
@@ -470,7 +486,6 @@
     }
 
     // 6) fins
-    var finPts = [];
     for (j = 0; j < FINS.length; j++) {
       var fin = FINS[j], sides = fin.pair ? [1, -1] : [1];
       for (var sd = 0; sd < sides.length; sd++) {
@@ -505,12 +520,12 @@
       if (facing > 0.04) prims.push({ t: 2, x: projX(ex3, ez3), y: projY(ey3, ez3), r: Math.max(0.8, 0.016 * L) * (F / (F + ez3)) * (0.8 + 0.2 * Math.min(1, facing * 2.5)), z: Qz[Math.max(0, ie - 2)] - 0.5 });
     }
 
-    // 8) speckles: lots of tiny ones, jittered between slices; pale on the back, a few red low on the flank
+    // 8) spots: lots of tiny dark ones on the back and upper sides, jittered between slices
     var i0 = Math.round(0.12 * (N - 1)), i1 = Math.round(0.80 * (N - 1));
     for (i = i0; i <= i1; i++) {
       for (k = 0; k < SPOT_ANGLES.length; k++) {
-        var al = SPOT_ANGLES[k], red = Math.abs(al) >= 90;
-        if (hash(i * 7.3 + k * 1.9) > (red ? 0.15 : 0.28)) continue;
+        var al = SPOT_ANGLES[k];
+        if (hash(i * 7.3 + k * 1.9) > 0.28) continue;
         var o = hash(i * 5.1 + k * 3.7) - 0.5, i2 = o > 0 ? Math.min(N - 1, i + 1) : Math.max(0, i - 1), tt = Math.abs(o);
         var alr = (al + (hash(i * 2.3 + k * 6.1) - 0.5) * 10) * PI / 180, ca2 = Math.cos(alr), sa2 = Math.sin(alr);
         var Hh = lerp(bH[i], bH[i2], tt), Ww = lerp(bW[i], bW[i2], tt);
@@ -527,7 +542,7 @@
         var fc = -snz / snl;
         if (fc < 0.1) continue;
         var rr = (0.0085 + 0.006 * hash(i * 3.1 + k)) * L * (F / (F + pz3)) * (0.5 + 0.5 * fc);
-        prims.push({ t: 3, x: projX(px3, pz3), y: projY(py3, pz3), r: Math.max(0.6, rr), z: pz3 - 0.3, red: red });
+        prims.push({ t: 3, x: projX(px3, pz3), y: projY(py3, pz3), r: Math.max(0.6, rr), z: pz3 - 0.3 });
       }
     }
 
@@ -555,7 +570,7 @@
         ctx.fillStyle = '#0b0b0b'; ctx.fill();
       } else {
         ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU);
-        ctx.fillStyle = p.red ? speckRed : speckPale; ctx.fill();
+        ctx.fillStyle = SPOT_COLOR; ctx.fill();
       }
     }
   };
@@ -739,13 +754,13 @@
 
       ctx.save();
       ctx.lineCap = 'round';
-      var gc = Math.round(255 + (20 - 255) * (window.siteTheme ? window.siteTheme.mix : 0));   // white at night, near-black in day
+      var inkRGB = window.siteTheme.rgb('ink');   // the glow is drawn in the theme's text color
       var layers = [[7, 0.035], [3, 0.11], [1, 0.48]];
       for (var i = 0; i < layers.length; i++) {
         ctx.beginPath();
         ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
         ctx.lineWidth = layers[i][0];
-        ctx.strokeStyle = 'rgba(' + gc + ',' + gc + ',' + gc + ',' + (layers[i][1] * intensity) + ')';
+        ctx.strokeStyle = 'rgba(' + inkRGB + ',' + (layers[i][1] * intensity) + ')';
         ctx.stroke();
       }
       ctx.restore();
@@ -800,7 +815,7 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
       if (SHOW_BOX_OUTLINE) {
-        ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(' + window.siteTheme.rgb('ink') + ',0.18)'; ctx.lineWidth = 1;
         ctx.strokeRect(box.x + 0.5, box.y + 0.5, box.w - 1, box.h - 1);
       }
       drawBoxGlow();
