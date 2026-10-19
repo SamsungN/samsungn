@@ -1,38 +1,100 @@
-/* theme.js — site-wide day / night theme.
+/* theme.js — site-wide day / night theme AND the single home of every color on the site.
    Load in the <head> of every page, as the first script:
      <script src="theme.js"></script>
 
-   What it does
+   ====================================================================
+   WANT TO CHANGE THE LOOK? EDIT THE "PALETTE" BLOCK BELOW. NOTHING ELSE.
+   ====================================================================
+   - accent  is the MAIN color. The gradient lines, vertical rails, hover glow, wave glow ramp,
+             name lines and the trout's side stripe all derive from it.
+   - ink     is the text color. The end of every gradient follows it (light at night, dark in day).
+   - Everything else (lines, tints, hover shade, surfaces, wave-line grey) is computed from
+     bg / ink / accent using the small TUNING numbers further down.
+
+   What else this file does
    - Estimates whether the sun is up for the visitor (from their timezone, no location prompt)
      and sets <html data-theme="day"> or "night" before the page paints.
    - Flips live, with a smooth fade, when the sun rises or sets while the page is open.
    - Clicking the name in the index hero (.hero h1) flips the theme by hand. The override lasts
      until the next real sunrise/sunset, or until the page reloads.
-   - Injects the day palette (including a deeper crimson red for day) and the red
-     text-selection color.
-   - Shares the animated theme with the canvases:
-       window.siteTheme.mix          0 = night ... 1 = day (animated)
-       window.siteTheme.isDay()      true if the target theme is day
-       window.siteTheme.blend(n, d)  blends a number (or an equal-length array) from night to day
-       window.siteTheme.red()        the current accent red as [r, g, b], blended night -> day
-       window.siteTheme.redRGB()     the same, as a rounded "r,g,b" string for rgba(...) use
-       window 'themechange' event    fires on every step of the fade
+   - Shares the animated theme with the canvases (sin-wave.js, trout.js):
+       window.siteTheme.mix             0 = night ... 1 = day (animated)
+       window.siteTheme.isDay()         true if the target theme is day
+       window.siteTheme.blend(n, d)     blends a number (or equal-length array) from night to day
+       window.siteTheme.color(key)      current [r,g,b] of a palette key ('bg','ink','inkSoft','accent','onAccent')
+       window.siteTheme.rgb(key)        the same, as a "r,g,b" string for rgba(...) use
+       window.siteTheme.accent()        current accent as [r,g,b]
+       window.siteTheme.accentRGB()     current accent as a "r,g,b" string
+       window.siteTheme.waveLine()      [r,g,b] of the faint background wave lines
+       window.siteTheme.glowStops()     [{t, c:[r,g,b]}...] ramp used by the wave glow
+       window 'themechange' event       fires on every step of the fade
 */
 (function () {
   'use strict';
 
+  /* ==================================================================
+     PALETTE — the only place colors are chosen
+     ================================================================== */
+  var PALETTE = {
+    night: {
+      bg:       '#141414',   // page background
+      ink:      '#f2f2f2',   // main text (and the far end of every gradient)
+      inkSoft:  '#9a9a96',   // secondary text
+      accent:   '#4da3ff',   // MAIN COLOR, night: lighter blue for contrast on dark
+      onAccent: '#000000'    // glow drawn on top of accent-colored text (the name)
+    },
+    day: {
+      bg:       '#f7f7f7',
+      ink:      '#050505',
+      inkSoft:  '#3a3a37',
+      accent:   '#0a4fa3',   // MAIN COLOR, day: strong marine blue (about 7:1 on the day bg)
+      onAccent: '#ffffff'
+    }
+  };
+
+  var SELECTION_BG = '#7fb8ff';   // text-selection highlight, both themes (text on it is always black)
+
   /* ------------------------------------------------------------------
-     TUNING
+     TUNING — how derived colors are computed (no colors here, just amounts)
      ------------------------------------------------------------------ */
+  var TUNING = {
+    LINE_ALPHA_NIGHT: 0.16,   // dividers / borders: ink at this opacity
+    LINE_ALPHA_DAY: 0.24,
+    TINT_ALPHA: 0.15,         // accent wash behind active toggle buttons
+    HOVER_ALPHA: 0.045,       // ink wash behind a hovered section
+    SURFACE_MIX: 0.06,        // surfaces (pdf frame): bg moved this far toward ink
+    WAVE_LINE_MIX: 0.04,      // faint background wave lines: bg moved this far toward ink
+    GLOW_END_DARKEN: 0.25,    // darkest end of the wave glow ramp: accent darkened by this much
+    FADE_STOP: 0.42           // where the accent rail/underline fades out (0..1)
+  };
+
+  var GLOW_T = [0.00, 0.15, 0.35, 0.55, 0.75, 1.00];   // wave glow ramp positions (ink -> accent -> darker accent)
+
   var TRANSITION_MS = 900;   // length of the night <-> day fade
   var LAT_GUESS = 40;        // assumed latitude (deg). Only affects sunrise/sunset times; longitude comes from the timezone
   var CHECK_MS = 30000;      // how often to re-check the sun while the page is open
-  var SELECT_BG = '#ff7a7a'; // text-selection highlight (text on it is always black)
-
-  var NIGHT_RED = [255, 77, 77];   // #ff4d4d, the original accent
-  var DAY_RED = [200, 16, 46];     // #c8102e, crimson; about 5.2:1 on the day background
 
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ------------------------------------------------------------------
+     COLOR HELPERS
+     ------------------------------------------------------------------ */
+  function hexToRGB(h) {
+    h = h.replace('#', '');
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  }
+  function mixRGB(a, b, t) {
+    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+  }
+  function str(c) { return Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]); }
+  function rgb(c) { return 'rgb(' + str(c) + ')'; }
+  function rgba(c, a) { return 'rgba(' + str(c) + ',' + a + ')'; }
+
+  var P = { night: {}, day: {} };
+  ['night', 'day'].forEach(function (name) {
+    for (var k in PALETTE[name]) P[name][k] = hexToRGB(PALETTE[name][k]);
+  });
 
   /* ------------------------------------------------------------------
      SUN ESTIMATE
@@ -68,60 +130,62 @@
   }
 
   /* ------------------------------------------------------------------
-     STYLES (palette, selection color, fade)
-     The page colors are CSS variables. Registering them with @property lets the browser
-     animate them smoothly, so every element that uses them fades together.
+     CSS VARIABLES (generated from the palette)
+     Every color the pages use is one of these variables:
+       --bg --ink --ink-soft --accent --accent-tint --line --surface --hover-tint
+       --flame / --flame-vertical          accent -> ink gradient (section dividers, pop-out lines)
+       --accent-fade / --accent-fade-vertical   solid accent that fades out (rails)
      ------------------------------------------------------------------ */
+  function varsFor(name) {
+    var p = P[name];
+    var lineA = name === 'day' ? TUNING.LINE_ALPHA_DAY : TUNING.LINE_ALPHA_NIGHT;
+    return [
+      '--bg:' + rgb(p.bg),
+      '--ink:' + rgb(p.ink),
+      '--ink-soft:' + rgb(p.inkSoft),
+      '--accent:' + rgb(p.accent),
+      '--accent-tint:' + rgba(p.accent, TUNING.TINT_ALPHA),
+      '--line:' + rgba(p.ink, lineA),
+      '--surface:' + rgb(mixRGB(p.bg, p.ink, TUNING.SURFACE_MIX)),
+      '--hover-tint:' + rgba(p.ink, TUNING.HOVER_ALPHA)
+    ].join(';');
+  }
+
+  var fadePct = Math.round(TUNING.FADE_STOP * 100) + '%';
+  var GRADIENTS = [
+    '--flame: linear-gradient(to right, var(--accent) 0%, var(--ink) 95%, transparent 100%)',
+    '--flame-vertical: linear-gradient(to bottom, var(--accent) 0%, var(--ink) 95%, transparent 100%)',
+    '--accent-fade: linear-gradient(to right, var(--accent) 0%, var(--accent) ' + fadePct + ', transparent 100%)',
+    '--accent-fade-vertical: linear-gradient(to bottom, var(--accent) 0%, var(--accent) ' + fadePct + ', transparent 100%)'
+  ].join(';');
+
   var T = TRANSITION_MS + 'ms ease-in-out';
+  var ANIMATED = ['bg', 'ink', 'ink-soft', 'line', 'accent', 'accent-tint', 'surface', 'hover-tint'];
 
-  var css = [
-    '@property --bg { syntax: "<color>"; inherits: true; initial-value: #141414; }',
-    '@property --ink { syntax: "<color>"; inherits: true; initial-value: #f2f2f2; }',
-    '@property --ink-soft { syntax: "<color>"; inherits: true; initial-value: #9a9a96; }',
-    '@property --line { syntax: "<color>"; inherits: true; initial-value: rgba(242,242,242,0.16); }',
-    '@property --accent { syntax: "<color>"; inherits: true; initial-value: #ff4d4d; }',
-    '@property --accent-tint { syntax: "<color>"; inherits: true; initial-value: rgba(255,77,77,0.16); }',
-    '@property --cool { syntax: "<color>"; inherits: true; initial-value: #ff4d4d; }',
-    '@property --cool-tint { syntax: "<color>"; inherits: true; initial-value: rgba(255,77,77,0.14); }',
+  var css = [];
 
-    /* the fade is only switched on while a flip is happening */
-    ':root.theme-anim { transition: --bg ' + T + ', --ink ' + T + ', --ink-soft ' + T + ', --line ' + T + ', ' +
-      '--accent ' + T + ', --accent-tint ' + T + ', --cool ' + T + ', --cool-tint ' + T + '; }',
-    '@media (prefers-reduced-motion: reduce) { :root.theme-anim { transition: none; } }',
+  // register the colors so the browser can fade them
+  ANIMATED.forEach(function (v) {
+    css.push('@property --' + v + ' { syntax: "<color>"; inherits: true; initial-value: #000; }');
+  });
 
-    /* day = the two main values swapped; the grey is darkened so it stays readable on light;
-       the red deepens to crimson so it holds up against the light background */
-    ':root[data-theme="day"] { --bg: #f7f7f7; --ink: #050505; --ink-soft: #3a3a37; --line: rgba(5,5,5,0.24); ' +
-      '--accent: rgb(' + DAY_RED.join(',') + '); --accent-tint: rgba(' + DAY_RED.join(',') + ',0.14); ' +
-      '--cool: rgb(' + DAY_RED.join(',') + '); --cool-tint: rgba(' + DAY_RED.join(',') + ',0.12); }',
+  css.push(':root, :root[data-theme="night"] { ' + varsFor('night') + '; ' + GRADIENTS + '; }');
+  css.push(':root[data-theme="day"] { ' + varsFor('day') + '; ' + GRADIENTS + '; }');
 
-    /* gradients that hardcode the night red: in day they follow the animated accent instead.
-       --flame is the day twin of the night red-to-white gradient: crimson to black (white would
-       vanish on the light background). It drives both the small-section pop-out lines and the
-       large section dividers. (Gradients can't fade on their own, so these swap at the flip;
-       the colors around them fade.) */
-    ':root[data-theme="day"] { ' +
-      '--cool-flame: linear-gradient(to right, var(--accent) 0%, var(--accent) 42%, transparent 100%); ' +
-      '--cool-flame-vertical: linear-gradient(to bottom, var(--accent) 0%, var(--accent) 42%, transparent 100%); ' +
-      '--flame: linear-gradient(to right, var(--accent) 0%, #050505 95%, transparent 100%); ' +
-      '--flame-vertical: linear-gradient(to bottom, var(--accent) 0%, #050505 95%, transparent 100%); }',
+  // the fade is only switched on while a flip is happening
+  css.push(':root.theme-anim { transition: ' + ANIMATED.map(function (v) { return '--' + v + ' ' + T; }).join(', ') + '; }');
+  css.push('@media (prefers-reduced-motion: reduce) { :root.theme-anim { transition: none; } }');
 
-    /* hardcoded light-on-dark tints that need a dark-on-light twin */
-    '@media (hover: hover) and (pointer: fine) { :root[data-theme="day"] .toggle-section:hover { background: rgba(20,20,20,0.05); } }',
-    ':root[data-theme="day"] .resume-section:hover { background: rgba(20,20,20,0.05); }',
-    ':root[data-theme="day"] .pdf-frame { background: #e6e8ea; }',
+  // text selection: highlight color, black text, day and night
+  css.push('::selection { background: ' + SELECTION_BG + '; color: #000; }');
+  css.push('::-moz-selection { background: ' + SELECTION_BG + '; color: #000; }');
 
-    /* red highlight, black text, day and night */
-    '::selection { background: ' + SELECT_BG + '; color: #000; }',
-    '::-moz-selection { background: ' + SELECT_BG + '; color: #000; }',
-
-    /* the name is the hidden toggle: no tap flash on phones */
-    '.hero h1 { -webkit-tap-highlight-color: transparent; }'
-  ].join('\n');
+  // the name is the hidden toggle: no tap flash on phones
+  css.push('.hero h1 { -webkit-tap-highlight-color: transparent; }');
 
   var styleEl = document.createElement('style');
   styleEl.setAttribute('data-theme-styles', '');
-  styleEl.textContent = css;
+  styleEl.textContent = css.join('\n');
   (document.head || document.documentElement).appendChild(styleEl);
 
   /* ------------------------------------------------------------------
@@ -143,10 +207,19 @@
       for (var i = 0; i < night.length; i++) out[i] = night[i] + (day[i] - night[i]) * m;
       return out;
     },
-    red: function () { return api.blend(NIGHT_RED, DAY_RED); },
-    redRGB: function () {
-      var c = api.blend(NIGHT_RED, DAY_RED);
-      return Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]);
+    color: function (key) { return api.blend(P.night[key], P.day[key]); },
+    rgb: function (key) { return str(api.color(key)); },
+    accent: function () { return api.color('accent'); },
+    accentRGB: function () { return str(api.color('accent')); },
+    waveLine: function () { return mixRGB(api.color('bg'), api.color('ink'), TUNING.WAVE_LINE_MIX); },
+    glowStops: function () {
+      var ink = api.color('ink'), acc = api.accent(), out = [];
+      for (var i = 0; i < GLOW_T.length; i++) {
+        var t = GLOW_T[i];
+        var c = t <= 0.75 ? mixRGB(ink, acc, t / 0.75) : mixRGB(acc, [0, 0, 0], TUNING.GLOW_END_DARKEN * (t - 0.75) / 0.25);
+        out.push({ t: t, c: c });
+      }
+      return out;
     }
   };
 
