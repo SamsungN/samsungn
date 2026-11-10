@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="iconoir--sine-wave.png">
+  <link rel="icon" type="image/png" href="favicon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sam Nguyen — Mechanical Engineering Portfolio</title>
+<title>Sam Nguyen • Mechanical Engineering Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Bitter:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
@@ -91,7 +91,7 @@
     padding: var(--content-top) 24px 90px 24px;
   }
 
-  section { margin: 0 0 56px 0; }
+  section { margin: 0 0 56px 0; position: relative; }
 
   /* ---------------------------------------------------------------
      Hero: name, large rule, intro text, then the trout box (which
@@ -115,8 +115,8 @@
     margin: 0 0 18px 0;
   }
 
-  /* The divider under the name: a plain static line. It keeps the same 2px footprint
-     the old canvas line had, with the 1px line in the lower row, so nothing below it shifts. */
+  /* The divider under the name: a plain static line, 2px tall with the 1px line in the lower row.
+     The large section dividers below match its width. */
   .hero-divider {
     height: 2px;
     margin: 0 0 22px 0;
@@ -252,7 +252,7 @@
   }
 
   /* LARGE dividers: the accent-to-ink gradient (--flame), at the top of each top-level chunk,
-     overhanging 16px each side */
+  overhanging 16px each side. Same 1px line as the grey divider under the name. */
   .group-title::before,
   #skills::before,
   #education::before,
@@ -262,7 +262,7 @@
     content: '';
     display: block;
     height: 2px;
-    background: var(--flame);
+    background: var(--flame) left bottom / 100% 1px no-repeat;
     margin: 0 -16px 24px -16px;
   }
 
@@ -330,18 +330,21 @@
     width: calc(100% + 16px);
   }
 
-  /* Left-side vertical rails, positioned/sized by JS */
+  /* Left-side vertical rails: JS only adds the two elements inside each section; CSS anchors
+     them to the section's box, so they always match its position and height. */
   .rail-base,
   .rail-accent {
     position: absolute;
-    left: 8px;
+    left: var(--rail-left, 8px);
+    top: var(--rail-top, 0);
+    bottom: 0;
+    width: 2px;
     pointer-events: none;
   }
 
   .rail-base {
-    width: 2px;
     background: var(--line);
-    transition: background-color 0.15s ease, top 0.35s ease, height 0.35s ease;
+    transition: background-color 0.15s ease;
   }
 
   .rail-base.centered {
@@ -349,16 +352,19 @@
   }
 
   .rail-accent {
-    width: 2px;
     background: var(--accent-fade-vertical);
     transform-origin: top;
     transform: scaleY(0);
-    transition: transform 0.35s ease, top 0.35s ease, height 0.35s ease, background 0.35s ease;
+    transition: transform 0.35s ease, background 0.35s ease;
   }
 
   .rail-accent.show {
     transform: scaleY(1);
   }
+
+  section { --rail-left: -16px; }
+  .toggle-section { --rail-left: 0; }
+  #skills, #education, #angling, #art, #contact { --rail-top: 26px; }   /* clears the 2px divider + its 24px margin */
 
   /* Accordion entries */
   .entry {
@@ -681,6 +687,17 @@
     .contact-links a { font-size: 15px; }
     footer { font-size: 12.5px; }
   }
+
+  /* Scroll reveal: sections fade in the first time they enter the screen */
+  @keyframes revealFade { from { opacity: 0; } to { opacity: 1; } }
+  .reveal { opacity: 0; }
+  .reveal.in { opacity: 1; animation: revealFade 0.9s ease; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; }
+    .reveal.in { animation: none; }
+  }
+
 </style>
 </head>
 
@@ -694,7 +711,7 @@
     <h1>Sam Nguyen</h1>
 
     <!-- Static divider (styled in the CSS above) -->
-    <div class="hero-divider" id="heroDivider" aria-hidden="true"></div>
+    <div class="hero-divider" aria-hidden="true"></div>
 
     <div class="hero-lines">
       <p class="subhead">I'm a Mechanical Engineering student at Iowa State University. Summer 2026, I worked as an Engineering Intern at Thingz in Galena, Illinois. I also contribute to Iowa State’s Formula SAE team as a member of the suspension subsystem.</p>
@@ -918,9 +935,7 @@
 
 <script>
 (function () {
-  // Shared with sin-wave.js so touch devices can follow open toggles
   var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  var openStack = window.openStack = [];
 
   // ---- Toggles (independent, no accordion) ----
   document.querySelectorAll('.entry-toggle').forEach(function (btn) {
@@ -934,30 +949,17 @@
         entry.classList.remove('open');
         btn.setAttribute('aria-expanded', 'false');
         detail.style.maxHeight = null;
-
-        var idx = openStack.indexOf(btn);
-        if (idx !== -1) openStack.splice(idx, 1);
       } else {
         entry.classList.add('open');
         btn.setAttribute('aria-expanded', 'true');
         detail.style.maxHeight = detail.scrollHeight + 'px';
-
-        openStack.push(btn);
       }
 
       if (section) {
-        var stillOpen = section.querySelector('.entry.open');
-        section.classList.toggle('active', !!stillOpen);
+        section.classList.toggle('active', !!section.querySelector('.entry.open'));
         updateRailAccent(section);
-
-        var sectionIndex = allSectionEls.indexOf(section);
-        if (sectionIndex !== -1) {
-          var railDelta = isOpen ? -detail.scrollHeight : detail.scrollHeight;
-          shiftRailsFrom(sectionIndex, railDelta);
-        }
       }
 
-      setTimeout(function () { layoutRails(); }, 380);
       requestCenterUpdate();
     });
   });
@@ -965,11 +967,9 @@
   // ---- Angling more/less toggle ----
   var anglingMoreBtn = document.getElementById('anglingMoreToggle');
   var anglingExtra = document.getElementById('anglingExtra');
-  var anglingSection = document.getElementById('angling');
 
   anglingMoreBtn.addEventListener('click', function () {
     var isOpen = anglingExtra.classList.contains('open');
-    var delta = anglingExtra.scrollHeight;
 
     if (isOpen) {
       anglingExtra.classList.remove('open');
@@ -978,20 +978,12 @@
       anglingMoreBtn.setAttribute('aria-expanded', 'false');
     } else {
       anglingExtra.classList.add('open');
-      anglingExtra.style.maxHeight = delta + 'px';
+      anglingExtra.style.maxHeight = anglingExtra.scrollHeight + 'px';
       anglingMoreBtn.textContent = 'less';
       anglingMoreBtn.setAttribute('aria-expanded', 'true');
     }
 
-    var sectionIndex = allSectionEls.indexOf(anglingSection);
-    if (sectionIndex !== -1) {
-      shiftRailsFrom(sectionIndex, isOpen ? -delta : delta);
-    }
-
-    setTimeout(function () {
-      layoutRails();
-      requestCenterUpdate();
-    }, 380);
+    setTimeout(requestCenterUpdate, 380);
   });
 
   // ---- Photo lightbox ----
@@ -1018,7 +1010,6 @@
   });
 
   // ---- Section rails ----
-  var contentEl = document.querySelector('.content');
   var allSectionEls = Array.prototype.slice.call(document.querySelectorAll('.content > section'));
   var railMap = new Map();
 
@@ -1027,8 +1018,8 @@
     base.className = 'rail-base';
     var accent = document.createElement('div');
     accent.className = 'rail-accent';
-    contentEl.appendChild(base);
-    contentEl.appendChild(accent);
+    sec.insertBefore(accent, sec.firstChild);
+    sec.insertBefore(base, sec.firstChild);
     railMap.set(sec, { base: base, accent: accent });
 
     if (hoverCapable && sec.classList.contains('toggle-section')) {
@@ -1043,44 +1034,11 @@
     }
   });
 
-  function layoutRails() {
-    var contentRect = contentEl.getBoundingClientRect();
-    allSectionEls.forEach(function (sec) {
-      var rail = railMap.get(sec);
-      var h2 = sec.querySelector('h2');
-      var topY = (h2 ? h2.getBoundingClientRect().top : sec.getBoundingClientRect().top) - contentRect.top;
-      var bottomY = sec.getBoundingClientRect().bottom - contentRect.top;
-      var height = Math.max(0, bottomY - topY);
-      rail.base.style.top = topY + 'px';
-      rail.base.style.height = height + 'px';
-      rail.accent.style.top = topY + 'px';
-      rail.accent.style.height = height + 'px';
-    });
-  }
-
   function updateRailAccent(sec) {
     var rail = railMap.get(sec);
     if (!rail) return;
     var isOpen = !!sec.querySelector('.entry.open');
     rail.accent.classList.toggle('show', !!(isOpen || sec.__railHovered));
-  }
-
-  function shiftRailsFrom(sectionIndex, delta) {
-    var sec = allSectionEls[sectionIndex];
-    var rail = railMap.get(sec);
-    var curH = parseFloat(rail.base.style.height) || 0;
-    var newH = Math.max(0, curH + delta);
-    rail.base.style.height = newH + 'px';
-    rail.accent.style.height = newH + 'px';
-
-    for (var i = sectionIndex + 1; i < allSectionEls.length; i++) {
-      var s = allSectionEls[i];
-      var r = railMap.get(s);
-      var curTop = parseFloat(r.base.style.top) || 0;
-      var newTop = curTop + delta;
-      r.base.style.top = newTop + 'px';
-      r.accent.style.top = newTop + 'px';
-    }
   }
 
   function updateCenteredSection() {
@@ -1110,24 +1068,41 @@
   }
 
   window.addEventListener('scroll', requestCenterUpdate, { passive: true });
-  window.addEventListener('resize', function () {
-    layoutRails();
-    requestCenterUpdate();
-  });
-  window.addEventListener('load', function () {
-    layoutRails();
-    updateCenteredSection();
-  });
+  window.addEventListener('resize', requestCenterUpdate);
+  window.addEventListener('load', updateCenteredSection);
 
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(function () {
-      layoutRails();
-      updateCenteredSection();
-    });
+    document.fonts.ready.then(updateCenteredSection);
   }
 
-  layoutRails();
   updateCenteredSection();
+
+  // ---- Scroll reveal: anything off-screen at load fades in once, when it first scrolls into view ----
+  (function () {
+    if (!('IntersectionObserver' in window)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var items = Array.prototype.slice.call(
+      document.querySelectorAll('.content > .group-title, .content > section, .content > footer')
+    );
+    var vh = window.innerHeight;
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        en.target.classList.add('in');
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -6% 0px' });
+
+    items.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < vh * 0.92) return;   // already on screen at load: stays visible
+
+      el.classList.add('reveal');
+      io.observe(el);
+    });
+  })();
 
   // ---- Hero link row: Work / FSAE / Projects jump links ----
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1162,35 +1137,52 @@
       if (!el) return;
       e.preventDefault();
 
-      var endId = link.getAttribute('data-end');
-      var endEl = (endId && document.getElementById(endId)) || el;
+      // runs when the trout reaches the clicked spot (or the fallback timer fires)
+      function go() {
+        var endId = link.getAttribute('data-end');
+        var endEl = (endId && document.getElementById(endId)) || el;
 
-      var topDoc = el.getBoundingClientRect().top + window.pageYOffset;
-      var height = endEl.getBoundingClientRect().bottom + window.pageYOffset - topDoc;
-      var grow = 0;
+        var topDoc = el.getBoundingClientRect().top + window.pageYOffset;
+        var height = endEl.getBoundingClientRect().bottom + window.pageYOffset - topDoc;
+        var grow = 0;
 
-      if (link.hasAttribute('data-open')) {
-        var entry = el.querySelector('.entry');
-        var btn = el.querySelector('.entry-toggle');
-        if (entry && btn && !entry.classList.contains('open')) {
-          grow = entry.querySelector('.entry-detail').scrollHeight;
-          btn.click();
+        if (link.hasAttribute('data-open')) {
+          var entry = el.querySelector('.entry');
+          var btn = el.querySelector('.entry-toggle');
+          if (entry && btn && !entry.classList.contains('open')) {
+            grow = entry.querySelector('.entry-detail').scrollHeight;
+            btn.click();
+          }
         }
-      }
-      height += grow;
+        height += grow;
 
-      var vh = window.innerHeight, margin = 16;
-      var y = height <= vh - margin * 2
-        ? topDoc + height / 2 - vh / 2
-        : topDoc - margin;
-      var maxY = document.documentElement.scrollHeight + grow - vh;
-      scrollToY(Math.max(0, Math.min(y, maxY)));
+        var vh = window.innerHeight, margin = 16;
+        var y = height <= vh - margin * 2
+          ? topDoc + height / 2 - vh / 2
+          : topDoc - margin;
+        var maxY = document.documentElement.scrollHeight + grow - vh;
+        scrollToY(Math.max(0, Math.min(y, maxY)));
+      }
+
+      if (window.troutGoTo) window.troutGoTo(link, e, go); else go();
     });
   });
+
+  // Resume: wait for the trout, then switch pages. Ctrl/cmd/shift-click skips the wait (new tab/window).
+  var resumeLink = document.querySelector('.top-link[href="resume.html"]');
+  if (resumeLink) {
+    resumeLink.addEventListener('click', function (e) {
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0 || !window.troutGoTo) return;
+      e.preventDefault();
+      window.troutGoTo(resumeLink, e, function () { window.location.href = resumeLink.href; });
+    });
+  }
 })();
 </script>
 
 <script src="trout.js"></script>
 <script src="sin-wave.js"></script>
+<script src="bg-trout.js"></script>
+
 </body>
 </html>
