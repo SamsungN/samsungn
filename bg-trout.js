@@ -18,16 +18,16 @@
   /* ------------------------------------------------------------------
      TUNING — everything you'll want to play with lives here.
      ------------------------------------------------------------------ */
-  var LENGTH = 130;          // snout-to-tail length in px (same on every screen size)
+  var LENGTH = 120;          // snout-to-tail length in px (same on every screen size)
   var FIRST_S = 3;           // seconds after load until the first fish
   var GAP_MIN_S = 5;         // wait between fish, counted from when one leaves the screen...
   var GAP_MAX_S = 10;        // ...random between these two
   var PASS_S = 5;            // target time for one pass, edge to edge (speed is kept inside the limits below)
   var SPEED_MIN = 140;       // px/s
-  var SPEED_MAX = 380;       // px/s
+  var SPEED_MAX = 200;       // px/s
 
-  var OPACITY_NIGHT = 0.40;  // strongest opacity of a dot (0-1), dark theme
-  var OPACITY_DAY = 0.40;    // ... and light theme
+  var OPACITY_NIGHT = 0.50;  // strongest opacity of a dot (0-1), dark theme
+  var OPACITY_DAY = 0.50;    // ... and light theme
 
   // look: same dither as the hero trout
   var TILE_SIZE = 5;         // size of one cell in px
@@ -37,15 +37,15 @@
   // dot density (0-1) of each shading band, outer flank -> middle of the back, plus the fins and tail
   var BAND_FRACS = [1.00, 0.74, 0.48, 0.24];
   var BAND_DENS  = [0.30, 0.48, 0.72, 0.92];
-  var FIN_DENS = 0.30;
+  var FIN_DENS = 0.90;
   var TAIL_DENS = 0.36;
 
   // swimming
-  var WAVE_AMP = 0.06;       // tail sweep as a fraction of body length
-  var WAVE_LEN = 1.05;       // wavelengths along the body
+  var WAVE_AMP = 0.065;       // tail sweep as a fraction of body length
+  var WAVE_LEN = 1.1;       // wavelengths along the body
   var FREQ_MIN = 2.0;        // tail beats per second at SPEED_MIN
-  var FREQ_MAX = 3.4;        // ... and at SPEED_MAX
-  var MIN_TURN_RADIUS = 0.9; // tightest turn in body lengths; sharper random paths are thrown away
+  var FREQ_MAX = 2.5;        // ... and at SPEED_MAX
+  var MIN_TURN_RADIUS = 0.3; // tightest turn in body lengths; sharper random paths are thrown away
 
   // keeping clear of the hero trout box
   var BOX_FADE = 40;         // px over which the fish fades out as it nears the box (gone by the time it touches)
