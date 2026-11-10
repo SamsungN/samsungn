@@ -5,8 +5,8 @@
    ====================================================================
    WANT TO CHANGE THE LOOK? EDIT THE "PALETTE" BLOCK BELOW. NOTHING ELSE.
    ====================================================================
-   - accent  is the MAIN color. The gradient lines, vertical rails, hover glow, wave glow ramp,
-             name lines and the trout's side stripe all derive from it.
+   - accent  is the MAIN color. The gradient lines, vertical rails, name lines and the trout's
+             side stripe all derive from it.
    - ink     is the text color. The end of every gradient follows it (light at night, dark in day).
    - Everything else (lines, tints, hover shade, surfaces, wave-line grey) is computed from
      bg / ink / accent using the small TUNING numbers further down.
@@ -21,12 +21,11 @@
        window.siteTheme.mix             0 = night ... 1 = day (animated)
        window.siteTheme.isDay()         true if the target theme is day
        window.siteTheme.blend(n, d)     blends a number (or equal-length array) from night to day
-       window.siteTheme.color(key)      current [r,g,b] of a palette key ('bg','ink','inkSoft','accent','onAccent')
+       window.siteTheme.color(key)      current [r,g,b] of a palette key ('bg','ink','inkSoft','accent')
        window.siteTheme.rgb(key)        the same, as a "r,g,b" string for rgba(...) use
        window.siteTheme.accent()        current accent as [r,g,b]
        window.siteTheme.accentRGB()     current accent as a "r,g,b" string
        window.siteTheme.waveLine()      [r,g,b] of the faint background wave lines
-       window.siteTheme.glowStops()     [{t, c:[r,g,b]}...] ramp used by the wave glow
        window 'themechange' event       fires on every step of the fade
 */
 (function () {
@@ -40,15 +39,13 @@
       bg:       '#141414',   // page background
       ink:      '#f2f2f2',   // main text (and the far end of every gradient)
       inkSoft:  '#9a9a96',   // secondary text
-      accent:   '#4da3ff',   // MAIN COLOR, night: lighter blue for contrast on dark
-      onAccent: '#000000'    // glow drawn on top of accent-colored text (the name)
+      accent:   '#4da3ff'    // MAIN COLOR, night: lighter blue for contrast on dark
     },
     day: {
-      bg:       '#f7f7f7',
+      bg:       '#ffffff',
       ink:      '#050505',
       inkSoft:  '#3a3a37',
-      accent:   '#0a4fa3',   // MAIN COLOR, day: strong marine blue (about 7:1 on the day bg)
-      onAccent: '#ffffff'
+      accent:   '#0a4fa3'    // MAIN COLOR, day: strong marine blue (about 7:1 on the day bg)
     }
   };
 
@@ -64,11 +61,8 @@
     HOVER_ALPHA: 0.045,       // ink wash behind a hovered section
     SURFACE_MIX: 0.06,        // surfaces (pdf frame): bg moved this far toward ink
     WAVE_LINE_MIX: 0.04,      // faint background wave lines: bg moved this far toward ink
-    GLOW_END_DARKEN: 0.25,    // darkest end of the wave glow ramp: accent darkened by this much
     FADE_STOP: 0.42           // where the accent rail/underline fades out (0..1)
   };
-
-  var GLOW_T = [0.00, 0.15, 0.35, 0.55, 0.75, 1.00];   // wave glow ramp positions (ink -> accent -> darker accent)
 
   var TRANSITION_MS = 900;   // length of the night <-> day fade
   var LAT_GUESS = 40;        // assumed latitude (deg). Only affects sunrise/sunset times; longitude comes from the timezone
@@ -211,16 +205,7 @@
     rgb: function (key) { return str(api.color(key)); },
     accent: function () { return api.color('accent'); },
     accentRGB: function () { return str(api.color('accent')); },
-    waveLine: function () { return mixRGB(api.color('bg'), api.color('ink'), TUNING.WAVE_LINE_MIX); },
-    glowStops: function () {
-      var ink = api.color('ink'), acc = api.accent(), out = [];
-      for (var i = 0; i < GLOW_T.length; i++) {
-        var t = GLOW_T[i];
-        var c = t <= 0.75 ? mixRGB(ink, acc, t / 0.75) : mixRGB(acc, [0, 0, 0], TUNING.GLOW_END_DARKEN * (t - 0.75) / 0.25);
-        out.push({ t: t, c: c });
-      }
-      return out;
-    }
+    waveLine: function () { return mixRGB(api.color('bg'), api.color('ink'), TUNING.WAVE_LINE_MIX); }
   };
 
   function publish() {
@@ -287,8 +272,7 @@
     // a quick double-click would otherwise select the name
     el.addEventListener('mousedown', function (e) { if (e.detail > 1) e.preventDefault(); });
 
-    el.addEventListener('click', function (e) {
-      e.stopPropagation();   // keeps sin-wave.js from spawning a pulse for this click
+    el.addEventListener('click', function () {
       override = !targetDay;
       setTheme(override, true);
     });
