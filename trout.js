@@ -3,7 +3,8 @@
    A rainbow trout: dark olive back, silver belly, and a stripe down the middle of each side that
    fades into the body above and below. The stripe takes the site accent from theme.js through
    window.siteTheme; the box glow takes the theme's text color. The fish's other colors (back,
-   flank, belly, fins, spots, eye) are its own neutral anatomy and live in this file. */
+   flank, belly, fins, spots, eye) are its own neutral anatomy and live in this file.
+   Drawn as strict Bayer-dithered square dots (the 'tile' look). */
 
 /* ============================ TROUT ENGINE ============================ */
 (function (root) {
@@ -15,7 +16,7 @@
      TUNING — everything you'll want to play with lives here.
      ------------------------------------------------------------------ */
   var CFG = {
-    LENGTH: 130,           // snout-to-tail length in px
+    LENGTH: 150,           // snout-to-tail length in px
     NODES: 30,            // number of slices (more = smoother, finer banding)
     FOCAL: 820,           // perspective strength; lower = stronger depth effect
 
@@ -182,13 +183,13 @@
   // 'pair' fins are mirrored left/right.
   var FINS = [
     { pair: false, color: [52, 52, 51, 0.94], fn: function (s, Hm, h, w) {     // dorsal
-      if (s < 0.37 || s > 0.50) return null;
-      var u = (s - 0.37) / 0.13, hd = 0.52 * Hm * Math.pow(Math.sin(PI * u), 0.8) * (1 - 0.4 * u);
+      if (s < 0.36 || s > 0.52) return null;
+      var u = (s - 0.36) / 0.16, hd = 0.85 * Hm * Math.pow(Math.sin(PI * u), 0.8) * (1 - 0.4 * u);
       return hd < 0.6 ? null : [0, h * 0.9, 0, h * 0.98 + hd];
     } },
     { pair: false, color: [150, 152, 150, 0.9], fn: function (s, Hm, h, w) {   // anal
-      if (s < 0.66 || s > 0.745) return null;
-      var u = (s - 0.66) / 0.085, ha = 0.68 * Hm * Math.pow(Math.sin(PI * u), 0.8);
+      if (s < 0.65 || s > 0.76) return null;
+      var u = (s - 0.65) / 0.11, ha = 0.95 * Hm * Math.pow(Math.sin(PI * u), 0.8);
       return ha < 0.6 ? null : [0, -h * 0.9, 0, -(h * 0.98 + ha)];
     } },
     { pair: true, color: [140, 142, 140, 0.9], fn: function (s, Hm, h, w) {    // pectoral
@@ -197,8 +198,8 @@
       return lp < 0.6 ? null : [w * 0.9, -0.42 * h, w * 0.9 + lp * 0.9, -0.42 * h - lp * 0.45];
     } },
     { pair: true, color: [150, 152, 150, 0.9], fn: function (s, Hm, h, w) {    // pelvic
-      if (s < 0.46 || s > 0.53) return null;
-      var u = (s - 0.46) / 0.07, lp = 0.90 * Hm * Math.pow(Math.sin(PI * u), 0.8);
+      if (s < 0.45 || s > 0.55) return null;
+      var u = (s - 0.45) / 0.10, lp = 1.25 * Hm * Math.pow(Math.sin(PI * u), 0.8);
       return lp < 0.6 ? null : [w * 0.55, -0.88 * h, w * 0.55 + lp * 0.55, -0.88 * h - lp * 0.8];
     } },
     { pair: false, color: [70, 70, 68, 0.94], fn: function (s, Hm, h, w) {     // tail, upper lobe
@@ -259,6 +260,7 @@
     this.L2 = [new Float64Array(N), new Float64Array(N), new Float64Array(N)];
 
     this.w = 800; this.h = 500;
+    this.eyes = [];
     this.ease = c.EASE;
     this.setLength(c.LENGTH);
     this.reset(this.w / 2, this.h / 2);
@@ -432,10 +434,11 @@
     }
   };
 
-  Trout.prototype.draw = function () {
-    var ctx = this.ctx, c = this.cfg, N = this.N, L = this.L, F = c.FOCAL * this.S;
+  Trout.prototype.draw = function (target) {   // target: the hidden canvas context the tile look renders into
+    var ctx = target || this.ctx, c = this.cfg, N = this.N, L = this.L, F = c.FOCAL * this.S;
     var hx = this.hx, hy = this.hy, i, j, k;
     updateLook();
+    this.eyes = [];   // visible eye positions this frame (the tile look draws the eyes itself)
 
     // 1) 3D spine: planar chain + depth that grows toward the tail
     for (i = 0; i < N; i++) { this.ax[i] = this.px[i]; this.ay[i] = this.py[i]; this.az[i] = this.zc[i]; }
@@ -517,6 +520,7 @@
       var ez3 = Qz[ie] + Uz[ie] * bH[ie] * 0.12 + Lz[ie] * es * bW[ie] * 0.84;
       var nx = Lx[ie] * es * 0.8 + Tx[ie] * 0.6, ny = Ly[ie] * es * 0.8 + Ty[ie] * 0.6, nz = Lz[ie] * es * 0.8 + Tz[ie] * 0.6;
       var facing = -nz / Math.sqrt(nx * nx + ny * ny + nz * nz);
+      if (facing > 0.04) this.eyes.push({ x: projX(ex3, ez3), y: projY(ey3, ez3), f: facing });
       if (facing > 0.04) prims.push({ t: 2, x: projX(ex3, ez3), y: projY(ey3, ez3), r: Math.max(0.8, 0.016 * L) * (F / (F + ez3)) * (0.8 + 0.2 * Math.min(1, facing * 2.5)), z: Qz[Math.max(0, ie - 2)] - 0.5 });
     }
 
@@ -644,10 +648,47 @@
   'use strict';
 
   var INSET = 0;   // px between the stage edge and the activity box (room for the wall glow)
-  var MOBILE_HOLD_MS = 1000;   // touch only: how long (ms) the trout stays on a tap before returning to center
+  var MOBILE_HOLD_MS = 2000;   // touch only: how long (ms) the trout stays on a tap before returning to center
+  var LABEL_HOLD_MS = 2000;      // after a label click: how long the trout stays at the click spot once it arrives
+  var LABEL_FALLBACK_MS = 1500;  // if the trout hasn't arrived by then, run the click action anyway
+  var LABEL_ARRIVE_PX = 10;      // snout within this many px of the click spot counts as arrived
+  var locked = false, pendingCb = null, fallbackTimer = 0, arrivedAt = 0;   // label-click state
   var SHOW_BOX_OUTLINE = false;   // true = draw a faint outline of the box, to see exactly where it is
 
+  /* ---- fish look: Bayer-dithered tiles ---- */
+
+  var EYE_MIN_FACING = 0.3;      // an eye is only drawn when it faces the viewer this much (0-1). Lower = the far eye shows too
+
+  var TILE_SIZE = 5;             // tile look: size of one cell in px. Fewer/larger cells = chunkier fish, more shading steps
+  var TILE_DOT = 1;              // tile look: size of one square dot in px. A cell holds (TILE_SIZE / TILE_DOT)^2 dots
+  var TILE_ALPHA_CUT = 23;       // tile look: how much of a cell the fish must cover (0-255) before any dot is drawn
+  var TILE_DENSITY_FLOOR = 0.75; // tile look: dot density of the darkest parts (0-1), so the dark back stays visible
+
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+
+  // Bayer threshold matrix for an n x n cell, as ranks 0 .. n*n-1 (row-major).
+  // Power-of-two sizes are the true Bayer matrix; other sizes use the matching corner of the next
+  // power-of-two matrix, re-ranked so every level from 0 to n*n is still reachable.
+  function bayerRanks(n) {
+    var s = 1, m = [[0]], x, y, size, add = [[0, 2], [3, 1]];
+    while (s < n) s *= 2;
+    for (size = 1; size < s; size *= 2) {
+      var m2 = [];
+      for (y = 0; y < size * 2; y++) {
+        m2.push([]);
+        for (x = 0; x < size * 2; x++) {
+          m2[y].push(4 * m[y % size][x % size] + add[Math.floor(y / size)][Math.floor(x / size)]);
+        }
+      }
+      m = m2;
+    }
+    var list = [];
+    for (y = 0; y < n; y++) for (x = 0; x < n; x++) list.push({ i: y * n + x, v: m[y][x] });
+    list.sort(function (a, b) { return a.v - b.v; });
+    var out = new Array(n * n);
+    for (var r = 0; r < list.length; r++) out[list[r].i] = r;
+    return out;
+  }
 
   function init() {
     var stage = document.getElementById('troutStage');
@@ -667,6 +708,72 @@
     var engaged = false, leaving = false, mobileUntil = 0, ready = false;
     var lastPointer = null;   // last pointer position in client coords
     var mobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+
+    /* ---- fish look: Bayer-dithered tiles ----
+       The fish is drawn into a small hidden canvas (one canvas pixel per cell), then each cell becomes a
+       strict Bayer-dithered block of square dots; brightness and coverage decide how many dots are lit.
+       The grid stays fixed to the box, so the fish slides across it. The box glow is drawn directly on the main canvas. */
+    var fx = document.createElement('canvas');
+    var fxctx = fx.getContext('2d', { willReadFrequently: true });
+
+    function fishLength() {
+      return Math.min(cfg.LENGTH, w * 0.5);
+    }
+
+    function sizeFx() {
+      if (!w || !h) return;
+      fx.width = Math.max(1, Math.ceil(w / TILE_SIZE));
+      fx.height = Math.max(1, Math.ceil(h / TILE_SIZE));
+    }
+
+    // draws the fish into the small canvas (one canvas pixel = s by s px of the box) and reads it back
+    function renderToFx(s) {
+      fxctx.setTransform(1, 0, 0, 1, 0, 0);
+      fxctx.clearRect(0, 0, fx.width, fx.height);
+      fxctx.setTransform(1 / s, 0, 0, 1 / s, 0, 0);
+      trout.draw(fxctx);
+      fxctx.setTransform(1, 0, 0, 1, 0, 0);
+      return fxctx.getImageData(0, 0, fx.width, fx.height);
+    }
+
+    var tileN = 0, tileRanks = null;   // cached Bayer thresholds for the current cell layout
+
+    function drawTile() {
+      var T = TILE_SIZE, D = Math.max(1, TILE_DOT), n = Math.max(1, Math.floor(T / D)), n2 = n * n;
+      if (n !== tileN) { tileN = n; tileRanks = bayerRanks(n); }
+      var img = renderToFx(T), d = img.data, fw = fx.width, fh = fx.height;
+      var mix = window.siteTheme.mix;
+      var ink = String(window.siteTheme.rgb('ink')).split(',').map(Number);
+      var cx, cy, tx, ty, i, e;
+      for (cy = 0; cy < fh; cy++) {
+        for (cx = 0; cx < fw; cx++) {
+          var p = (cy * fw + cx) * 4, a = d[p + 3];
+          if (a < TILE_ALPHA_CUT) continue;
+          var r = d[p], g = d[p + 1], b = d[p + 2];
+          var lum = (0.3 * r + 0.59 * g + 0.11 * b) / 255;
+          // density follows contrast with the background: brighter = denser at night, darker = denser by day
+          var contrast = lum + (1 - 2 * lum) * mix;
+          var dens = (TILE_DENSITY_FLOOR + (1 - TILE_DENSITY_FLOOR) * contrast) * Math.min(1, a / 255);   // edge cells light fewer dots in proportion to coverage
+          var lit = dens * n2;
+          if (lit <= 0) continue;
+          // low-contrast colors (the dark back at night) are pushed toward the text color so they stay readable
+          var m = 0.5 * (1 - contrast) * (1 - contrast);
+          ctx.fillStyle = 'rgb(' + Math.round(r + (ink[0] - r) * m) + ',' + Math.round(g + (ink[1] - g) * m) + ',' + Math.round(b + (ink[2] - b) * m) + ')';
+          var bx = cx * T, by = cy * T;
+          for (ty = 0; ty < n; ty++) {
+            for (tx = 0; tx < n; tx++) {
+              if (lit > tileRanks[ty * n + tx]) ctx.fillRect(bx + tx * D, by + ty * D, D, D);
+            }
+          }
+        }
+      }
+      ctx.fillStyle = '#0b0b0b';                                      // each eye is one solid cell
+      for (i = 0; i < trout.eyes.length; i++) {
+        e = trout.eyes[i];
+        if (e.f < EYE_MIN_FACING) continue;
+        ctx.fillRect(Math.floor(e.x / T) * T, Math.floor(e.y / T) * T, T, T);
+      }
+    }
 
     function insideBox(x, y) {
       return x >= box.x && x <= box.x + box.w && y >= box.y && y <= box.y + box.h;
@@ -693,7 +800,8 @@
       center.y = box.y + box.h / 2;
 
       trout.setViewport(w, h);
-      trout.setLength(Math.min(cfg.LENGTH, w * 0.5));
+      trout.setLength(fishLength());
+      sizeFx();
       trout.setEaseScale(Math.min(box.w, box.h));
 
       if (!ready) { trout.reset(center.x, center.y); ready = true; }
@@ -701,11 +809,11 @@
       else clampTarget(target.x, target.y);
     }
 
-    function engageAt(x, y) { clampTarget(x, y); engaged = true; leaving = false; }
+    function engageAt(x, y) { if (locked) return; clampTarget(x, y); engaged = true; leaving = false; }
 
     // cursor left the box: aim for the edge point nearest the cursor, return to center only after arriving
     function beginLeave(x, y) {
-      if (!engaged || leaving) return;
+      if (locked || !engaged || leaving) return;
       clampTarget(x, y);
       leaving = true;
     }
@@ -801,12 +909,42 @@
       return { l: r.left + INSET, t: r.top + INSET, r: r.left + w - INSET, b: r.top + h - INSET };
     };
 
+    /* ---- label clicks: swim to the clicked spot, run the action on arrival, hold, then go home ---- */
+    function runPending() {
+      clearTimeout(fallbackTimer);
+      var cb = pendingCb; pendingCb = null;
+      if (cb) cb();
+    }
+
+    window.troutGoTo = function (el, e, cb) {
+      if (!ready) { cb(); return; }
+      var p;
+      if (e && e.detail > 0) p = local(e.clientX, e.clientY);   // mouse or tap: the exact spot clicked
+      else { var r = el.getBoundingClientRect(); p = local(r.left + r.width / 2, r.top + r.height / 2); }   // keyboard: label center
+      clampTarget(p.x, p.y);
+      engaged = true; leaving = false; mobileUntil = 0;
+      locked = true; arrivedAt = 0;
+      pendingCb = cb;                                           // a newer click replaces an older one
+      clearTimeout(fallbackTimer);
+      fallbackTimer = setTimeout(runPending, LABEL_FALLBACK_MS);
+    };
+
+    function updateLock(now) {
+      if (!locked) return;
+      mobileUntil = 0;
+      var near = Math.hypot(trout.hx - target.x, trout.hy - target.y) < LABEL_ARRIVE_PX;
+      if (near && pendingCb) runPending();
+      if (near && !arrivedAt) arrivedAt = now;
+      if (arrivedAt && now - arrivedAt >= LABEL_HOLD_MS) { locked = false; arrivedAt = 0; disengage(); }
+    }
+
     /* ---- animation loop (only runs while the stage is on screen) ---- */
     var last = performance.now(), running = false;
 
     function frame(now) {
       if (!running) return;
       var dt = Math.min(0.05, (now - last) / 1000); last = now;
+      updateLock(now);
 
       if (mobile && engaged && mobileUntil && now >= mobileUntil) disengage();
 
@@ -820,7 +958,7 @@
       }
       drawBoxGlow();
       trout.step(dt, target.x, target.y);
-      trout.draw();
+      drawTile();
 
       requestAnimationFrame(frame);
     }
