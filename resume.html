@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="iconoir--sine-wave.png">
+  <link rel="icon" type="image/png" href="favicon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sam Nguyen — Resume</title>
+<title>Resume • Sam Nguyen</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -108,7 +108,6 @@
     justify-content: space-between;
     margin-bottom: 28px;
   }
-
   .name {
     font-family: 'Azeret Mono';
     font-size: clamp(22px, 5vw, 30px);
@@ -116,6 +115,9 @@
     font-weight: 600;
     line-height: 1;
     color: var(--ink);
+    margin-left: -16px;   /* lines up with the left rails */
+    position: relative;
+    top: 2px;             /* nudges it down to sit level with HOME */
   }
 
   .home {
@@ -142,9 +144,11 @@
 
   section {
     margin: 0 0 56px 0;
+    position: relative;
   }
 
-  /* Section dividers: the accent-to-ink gradient (--flame) */
+  /* Section dividers: the accent-to-ink gradient (--flame), overhanging 16px each side.
+     The box is 2px tall with a 1px line in its lower row, like the grey divider on the front page. */
 
   #skills::before,
   #education::before,
@@ -155,7 +159,7 @@
     content: '';
     display: block;
     height: 2px;
-    background: var(--flame);
+    background: var(--flame) left bottom / 100% 1px no-repeat;
     margin: 0 -16px 24px -16px;
   }
 
@@ -208,22 +212,22 @@
     width: calc(100% + 16px);
   }
 
-  /* Left-side vertical rails, positioned/sized by JS */
+  /* Left-side vertical rails: JS only adds the two elements inside each section; CSS anchors
+     them to the section's box, so they always match its position and height. */
 
   .rail-base,
   .rail-accent {
     position: absolute;
-    left: 8px;
+    left: var(--rail-left, 8px);
+    top: var(--rail-top, 0);
+    bottom: 0;
+    width: 2px;
     pointer-events: none;
   }
 
   .rail-base {
-    width: 2px;
     background: var(--line);
-    transition:
-      background-color 0.15s ease,
-      top 0.35s ease,
-      height 0.35s ease;
+    transition: background-color 0.15s ease;
   }
 
   .rail-base.centered {
@@ -231,20 +235,21 @@
   }
 
   .rail-accent {
-    width: 2px;
     background: var(--accent-fade-vertical);
     transform-origin: top;
     transform: scaleY(0);
     transition:
       transform 0.35s ease,
-      top 0.35s ease,
-      height 0.35s ease,
       background 0.35s ease;
   }
 
   .rail-accent.show {
     transform: scaleY(1);
   }
+
+  section { --rail-left: -16px; }
+  .resume-section { --rail-left: 0; }
+  #skills, #education, #experience, #fsae, #solidworks-club, #projects { --rail-top: 26px; }   /* clears the 2px divider + its 24px margin */
 
   /* Entries */
 
@@ -459,7 +464,7 @@
 <div class="content">
 
   <div class="top-row">
-    <div class="name">SamsungNguyen</div>
+    <div class="name">SamsungN</div>
     <a class="home" href="index.html">HOME</a>
   </div>
 
@@ -587,13 +592,14 @@
 </div>
 
 <script src="sin-wave.js"></script>
+<script src="bg-trout.js"></script>
 
 <script>
 (function () {
+  var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   /* ---- Section rails ---- */
 
-  var contentEl = document.querySelector('.content');
   var allSectionEls = Array.prototype.slice.call(
     document.querySelectorAll('.content > section')
   );
@@ -606,51 +612,21 @@
     var accent = document.createElement('div');
     accent.className = 'rail-accent';
 
-    contentEl.appendChild(base);
-    contentEl.appendChild(accent);
+    sec.insertBefore(accent, sec.firstChild);
+    sec.insertBefore(base, sec.firstChild);
 
-    railMap.set(sec, {
-      base: base,
-      accent: accent
-    });
+    railMap.set(sec, { base: base, accent: accent });
 
-    if (
-      window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
-      sec.classList.contains('resume-section')
-    ) {
+    if (hoverCapable && sec.classList.contains('resume-section')) {
       sec.addEventListener('mouseenter', function () {
-        railMap.get(sec).accent.classList.add('show');
+        accent.classList.add('show');
       });
 
       sec.addEventListener('mouseleave', function () {
-        railMap.get(sec).accent.classList.remove('show');
+        accent.classList.remove('show');
       });
     }
   });
-
-  function layoutRails() {
-    var contentRect = contentEl.getBoundingClientRect();
-
-    allSectionEls.forEach(function (sec) {
-      var rail = railMap.get(sec);
-      var h2 = sec.querySelector('h2');
-
-      var topY =
-        (h2 ? h2.getBoundingClientRect().top : sec.getBoundingClientRect().top)
-        - contentRect.top;
-
-      var bottomY =
-        sec.getBoundingClientRect().bottom - contentRect.top;
-
-      var height = Math.max(0, bottomY - topY);
-
-      rail.base.style.top = topY + 'px';
-      rail.base.style.height = height + 'px';
-
-      rail.accent.style.top = topY + 'px';
-      rail.accent.style.height = height + 'px';
-    });
-  }
 
   /* ---- Center-section highlight ---- */
 
@@ -671,10 +647,7 @@
     });
 
     allSectionEls.forEach(function (sec) {
-      railMap.get(sec).base.classList.toggle(
-        'centered',
-        sec === closest
-      );
+      railMap.get(sec).base.classList.toggle('centered', sec === closest);
     });
   }
 
@@ -691,25 +664,15 @@
     });
   }
 
-  window.addEventListener(
-    'scroll',
-    requestCenterUpdate,
-    { passive: true }
-  );
+  window.addEventListener('scroll', requestCenterUpdate, { passive: true });
+  window.addEventListener('resize', requestCenterUpdate);
+  window.addEventListener('load', updateCenteredSection);
 
-  window.addEventListener('resize', function () {
-    layoutRails();
-    requestCenterUpdate();
-  });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(updateCenteredSection);
+  }
 
-  window.addEventListener('load', function () {
-    layoutRails();
-    updateCenteredSection();
-  });
-
-  layoutRails();
   updateCenteredSection();
-
 })();
 </script>
 
