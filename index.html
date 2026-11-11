@@ -511,6 +511,49 @@
     }
   }
 
+  /* Link-style project section (Fishing Pole Holder): the whole section is one link to its own page.
+     The arrow replaces the + toggle, has no circle, and lines up with the h2 title row. */
+  .section-link {
+    display: block;
+    position: relative;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .section-link:hover { color: inherit; }
+
+  .section-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+
+  .section-link .entry { border-bottom: none; }   /* the arrow follows .entry, so :last-child no longer hides its border */
+
+  .entry-row {
+    padding: 10px 0 18px 0;
+    line-height: 1.35;   /* same metrics the toggle button used */
+  }
+
+  .go-arrow {
+    position: absolute;
+    right: 8px;   /* centers the 22px arrow in the same 34px-wide column the + circles use ((34 - 22) / 2) */
+    top: calc(16px + (1.65 * 23px - 22px) / 2);   /* h2: 16px top padding, then centered in its 23px * 1.65 line */
+    color: var(--ink-soft);
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  .section-centered .go-arrow {
+    color: var(--accent);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .section-link:hover .go-arrow {
+      color: var(--accent);
+      transform: translateX(4px);
+    }
+  }
+
   .entry-detail {
     max-height: 0;
     overflow: hidden;
@@ -681,21 +724,12 @@
     .entry-date { font-size: 13px; }
     .entry-sub { font-size: 14px; }
     .plus { margin-top: -6px; }
+    .go-arrow { top: calc(16px + (1.65 * 20px - 22px) / 2); }   /* h2 is 20px on phones */
     .entry-detail p { font-size: 15.5px; }
     #education .edu-title { font-size: 15px; }
     .skill-pill { font-size: 13px; }
     .contact-links a { font-size: 15px; }
     footer { font-size: 12.5px; }
-  }
-
-  /* Scroll reveal: sections fade in the first time they enter the screen */
-  @keyframes revealFade { from { opacity: 0; } to { opacity: 1; } }
-  .reveal { opacity: 0; }
-  .reveal.in { opacity: 1; animation: revealFade 0.9s ease; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .reveal { opacity: 1; }
-    .reveal.in { animation: none; }
   }
 
 </style>
@@ -803,22 +837,24 @@
   <div class="group-title" id="projects" role="heading" aria-level="2">Projects</div>
 
   <section id="fishing-pole-holder" class="toggle-section">
-    <h2>Fishing Pole Holder</h2>
+    <a class="section-link" href="fishing-pole-holder.html">
+      <h2>Fishing Pole Holder</h2>
 
-    <div class="entry">
-      <button class="entry-toggle" aria-expanded="false">
-        <div class="entry-main">
-          <div class="entry-top">
-            <h3>Self taught hand-sketching, CAD, and 3D printing.</h3>
+      <div class="entry">
+        <div class="entry-row">
+          <div class="entry-main">
+            <div class="entry-top">
+              <h3>Self taught hand-sketching, CAD, and 3D printing.</h3>
+            </div>
           </div>
         </div>
-        <span class="plus" aria-hidden="true">+</span>
-      </button>
-
-      <div class="entry-detail">
-        <p>Write-up coming soon. Check out my resume for details.</p>
       </div>
-    </div>
+
+      <!-- Arrow: sits on the title row ("Fishing Pole Holder"), not the grey line below -->
+      <svg class="go-arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 12h16M14 6l6 6-6 6"/>
+      </svg>
+    </a>
   </section>
 
   <section id="skills">
@@ -860,26 +896,26 @@
 
     <div class="placeholder-grid" id="anglingGrid">
         <button class="photo-thumb" data-src="angling-4.jpg" aria-label="Open photo: holding a small trout">
-          <img src="angling-4.jpg" alt="Holding a small trout caught along the bank">
+          <img src="images/angling-4.jpg" alt="Holding a small trout caught along the bank">
         </button>
         <button class="photo-thumb" data-src="angling-5.jpg" aria-label="Open photo: holding a largemouth bass">
-          <img src="angling-5.jpg" alt="Holding a largemouth bass near the water">
+          <img src="images/angling-5.jpg" alt="Holding a largemouth bass near the water">
         </button>
         <button class="photo-thumb" data-src="angling-6.jpg" aria-label="Open photo: holding a brown trout in the shallows">
-          <img src="angling-6.jpg" alt="Holding a brown trout in the shallows">
+          <img src="images/angling-6.jpg" alt="Holding a brown trout in the shallows">
       </button>
     </div>
 
     <div class="hero-extra" id="anglingExtra">
       <div class="placeholder-grid">
       <button class="photo-thumb" data-src="angling-1.jpg" aria-label="Open photo: fishing rod over a misty river at sunset">
-        <img src="angling-1.jpg" alt="Fishing rod extended over a misty river at sunset">
+        <img src="images/angling-1.jpg" alt="Fishing rod extended over a misty river at sunset">
       </button>
       <button class="photo-thumb" data-src="angling-2.jpg" aria-label="Open photo: misty river through summer trees">
-        <img src="angling-2.jpg" alt="Misty river winding through summer trees">
+        <img src="images/angling-2.jpg" alt="Misty river winding through summer trees">
       </button>
       <button class="photo-thumb" data-src="angling-3.jpg" aria-label="Open photo: dusk over a creek in a grassy field">
-        <img src="angling-3.jpg" alt="Dusk view of a creek in a grassy field">
+        <img src="images/angling-3.jpg" alt="Dusk view of a creek in a grassy field">
         </button>
       </div>
     </div>
@@ -1076,33 +1112,6 @@
   }
 
   updateCenteredSection();
-
-  // ---- Scroll reveal: anything off-screen at load fades in once, when it first scrolls into view ----
-  (function () {
-    if (!('IntersectionObserver' in window)) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var items = Array.prototype.slice.call(
-      document.querySelectorAll('.content > .group-title, .content > section, .content > footer')
-    );
-    var vh = window.innerHeight;
-
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (!en.isIntersecting) return;
-        io.unobserve(en.target);
-        en.target.classList.add('in');
-      });
-    }, { threshold: 0.05, rootMargin: '0px 0px -6% 0px' });
-
-    items.forEach(function (el) {
-      var r = el.getBoundingClientRect();
-      if (r.bottom > 0 && r.top < vh * 0.92) return;   // already on screen at load: stays visible
-
-      el.classList.add('reveal');
-      io.observe(el);
-    });
-  })();
 
   // ---- Hero link row: Work / FSAE / Projects jump links ----
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
