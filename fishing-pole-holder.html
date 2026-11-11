@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fishing Pole Holder • Sam Nguyen</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+<script src="theme.js"></script>
+<style>
+  @font-face {
+    font-family: 'Azeret Mono';
+    src: url('fonts/AzeretMono-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Azeret Mono';
+    src: url('fonts/AzeretMono-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Azeret Mono';
+    src: url('fonts/AzeretMono-600.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Azeret Mono';
+    src: url('fonts/AzeretMono-700.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* All colors come from theme.js as CSS variables:
+     --bg --ink --ink-soft --accent --accent-tint --line --surface --hover-tint
+     --flame --flame-vertical --accent-fade --accent-fade-vertical
+     To change a color, edit the PALETTE in theme.js, not this file. */
+  :root {
+    --content-max: 620px;
+
+    /* ---- Desktop values: edit these. Phones scale automatically (see --scale below). ---- */
+    --space-top: 70px;       /* "SamsungN" row  ->  page title */
+    --space-section: 65px;    /* last paragraph  ->  next divider */
+    --space-divider: 28px;    /* divider  ->  its header */
+    --space-header: 18px;     /* header  ->  first paragraph */
+    --space-para: 20px;       /* paragraph  ->  paragraph */
+    --space-meta: 20px;       /* grey line under the title  ->  first paragraph */
+    --space-media: 36px;      /* text  <->  image galleries */
+    --gap-images: 14px;       /* between images */
+
+    --size-head: 27px;        /* page title + section headers */
+    --size-text: 18px;        /* paragraphs */
+    --size-meta: 16px;        /* grey line under the title */
+
+    /* Phone multipliers: spacing, header text and body text each shrink by these on screens <= 600px. */
+    --scale: 1;
+    --head-scale: 1;
+    --text-scale: 1;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Bitter';
+    font-size: 19px;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: var(--ink);
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+
+  canvas#wave {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    display: block;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 64px 24px 90px;
+  }
+
+  /* Top row */
+
+  .top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: calc(var(--space-top) * var(--scale));
+  }
+  .name {
+    font-family: 'Azeret Mono';
+    font-size: clamp(22px, 5vw, 30px);
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--ink);
+    margin-left: 0;         /* every left edge on this page (name, text, dividers, images) is the same line */
+    position: relative;
+    top: 2px;
+  }
+
+  .home {
+    font-family: 'Bitter';
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+
+  .home:hover {
+    color: var(--accent);
+  }
+
+  /* Page title and section headers share one style, so "Fishing Pole Holder" matches every header below it. */
+
+  h1,
+  h2 {
+    font-family: 'Azeret Mono';
+    font-size: calc(var(--size-head) * var(--head-scale));
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    text-align: left;
+    margin: 0 0 calc(var(--space-header) * var(--scale)) 0;
+    padding: 0;
+  }
+
+  /* Grey line under the title: "Custom 3D-printed vehicle attachment · Completed" */
+
+  .page-meta {
+    font-family: 'Bitter';
+    font-size: calc(var(--size-meta) * var(--text-scale));
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin: calc(0px * var(--scale)) 0 calc(var(--space-meta) * var(--scale)) 0;
+  }
+
+  section {
+    margin: 0 0 calc(var(--space-section) * var(--scale)) 0;
+    position: relative;
+  }
+
+  /* Static section dividers: the accent-to-ink gradient (--flame), full content width.
+     Small gap from divider down to its header; the big gap sits below the last paragraph (section margin). */
+
+  section.divided::before {
+    content: '';
+    display: block;
+    height: 2px;
+    background: var(--flame) left bottom / 100% 1px no-repeat;
+    margin: 0 0 calc(var(--space-divider) * var(--scale)) 0;
+  }
+
+  /* Write-up text */
+
+  .writeup p {
+    margin: 0 0 calc(var(--space-para) * var(--scale)) 0;
+    font-size: calc(var(--size-text) * var(--text-scale));
+    line-height: 1.78;
+    color: var(--ink);
+  }
+
+  .writeup p:last-of-type {
+    margin-bottom: 0;
+  }
+
+  /* Static Bayer-dithered CAD V3 figure */
+
+  .dither-wrap {
+    margin: calc(var(--space-media) * var(--scale)) auto 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  canvas#cad-dither {
+    display: block;
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+    border: none;
+    outline: none;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  /* Full-width uncropped image */
+
+  .wide-media {
+    margin: calc(var(--space-media) * var(--scale)) 0 0 0;
+  }
+
+  .wide-media button {
+    appearance: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: zoom-in;
+    display: block;
+    transition: border-color 0.25s ease;
+  }
+
+  .wide-media button:hover,
+  .wide-media button:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .wide-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Image galleries */
+
+  .gallery {
+    display: grid;
+    gap: calc(var(--gap-images) * var(--scale));
+    margin: calc(var(--space-media) * var(--scale)) 0;
+  }
+
+  .gallery.thumbs {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .gallery.cad {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .writeup .gallery:last-child {
+    margin-bottom: 0;
+  }
+
+  .gallery button {
+    appearance: none;
+    padding: 0;
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: zoom-in;
+    display: block;
+    aspect-ratio: 1 / 1;
+    transition: border-color 0.25s ease;
+  }
+
+  .gallery button:hover,
+  .gallery button:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .gallery img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Results: 2x2 grid that fits inside the content width (each photo can still be enlarged) */
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: calc(var(--gap-images) * var(--scale));
+    margin: calc(var(--space-media) * var(--scale)) 0 0 0;
+  }
+
+  .results-grid button {
+    appearance: none;
+    padding: 0;
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: zoom-in;
+    display: block;
+    aspect-ratio: 1 / 1;
+    transition: border-color 0.25s ease;
+  }
+
+  .results-grid button:hover,
+  .results-grid button:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .results-grid img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Lightbox */
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 10, 10, 0.88);
+    padding: 24px;
+  }
+
+  .lightbox.open {
+    display: flex;
+  }
+
+  .lightbox img {
+    max-width: min(92vw, 900px);
+    max-height: 88vh;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    display: block;
+  }
+
+  .lightbox button {
+    appearance: none;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #fff;
+    font-family: 'Azeret Mono';
+    font-size: 15px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color 0.25s ease, color 0.25s ease;
+  }
+
+  .lightbox button:hover,
+  .lightbox button:focus-visible {
+    border-color: #fff;
+    outline: none;
+  }
+
+  .lb-prev,
+  .lb-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    padding: 0;
+  }
+
+  .lb-prev { left: 18px; }
+  .lb-next { right: 18px; }
+
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* Phones: only the multipliers change; every spacing/size above follows from the desktop values. */
+  @media (max-width: 600px) {
+    :root {
+      --scale: 0.7;
+      --head-scale: 0.8;
+      --text-scale: 0.85;
+    }
+
+    body {
+      font-size: 17px;
+    }
+
+    .content {
+      padding: 48px 20px 70px;
+    }
+
+    .name {
+      font-size: 24px;
+    }
+
+    .home {
+      font-size: 15px;
+    }
+
+    .gallery.thumbs {
+      grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    }
+
+    .lb-prev { left: 8px; }
+    .lb-next { right: 8px; }
+
+    footer {
+      font-size: 12.5px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<canvas id="wave"></canvas>
+
+<div class="content">
+
+  <div class="top-row">
+    <div class="name">SamsungN</div>
+    <a class="home" href="index.html">HOME</a>
+  </div>
+
+  <section id="overview" class="writeup">
+    <h1>Fishing Pole Holder</h1>
+    <div class="page-meta">Custom 3D-printed vehicle attachment · Completed</div>
+    <p>
+      My first year of college, I knew I wanted to build something using the knowledge gained from my coursework. I found a problem that bugged me daily, so I started measuring vehicle interior dimensions, drawing hand sketches, and modeling in CAD. A few prototypes later and I had myself a custom fishing pole holder for my car.
+    </p>
+    <div class="dither-wrap">
+      <canvas id="cad-dither" aria-label="Bayer-dithered CAD model of the V3 fishing pole holder"></canvas>
+    </div>
+  </section>
+
+  <section id="rattle" class="writeup divided">
+    <h2>The rattle in the trunk</h2>
+    <p>
+      Every fishing trip ended with me tossing the pole into the trunk. As soon as I started driving, the rattling of the fishing rod in the back would make itself known. It rolled and tumbled at every bump and turn, making a constant noise like a poorly designed interior trim. Unlike a car's interior trim however, which usually comes faulty straight from the manufacturer, this was entirely self-inflicted. I got tired of my talkative fishing pole and decided to fix it myself.
+    </p>
+    <div class="wide-media" data-gallery="rattle-pole">
+      <button type="button" aria-label="Enlarge photo: fishing pole and reel">
+        <img src="images/fishing-pole.jpg" alt="Okuma Stratus 7 fishing rod and spinning reel held over the water">
+      </button>
+    </div>
+  </section>
+
+  <section id="constraints" class="writeup divided">
+    <h2>The design constraints</h2>
+    <p>
+      My solution had to be portable, in case I wanted to maximize storage for a large item, so no fasteners were allowed. Durability was also important in the event of any harsh driving conditions. Additionally, I wanted it to be quick to use, and keep the pole suspended high enough so the trunk floor underneath stayed free for other storage. And most importantly, it had to be cheap.
+    </p>
+    <div class="gallery thumbs" data-gallery="sketches">
+      <button type="button" aria-label="Enlarge sketch: overall concept"><img src="images/sketch-1.jpg" alt="Hand sketch of the trunk with a left and right fishing pole holder supporting a two-piece pole"></button>
+      <button type="button" aria-label="Enlarge sketch: right view"><img src="images/sketch-2.jpg" alt="Hand sketch of the holder, right view, with dimensions"></button>
+      <button type="button" aria-label="Enlarge sketch: top view"><img src="images/sketch-3.jpg" alt="Hand sketch of the holder, top view, with dimensions"></button>
+      <button type="button" aria-label="Enlarge sketch: front view"><img src="images/sketch-4.jpg" alt="Hand sketch of the holder, front view, with dimensions"></button>
+      <button type="button" aria-label="Enlarge sketch: isometric view"><img src="images/sketch-5.jpg" alt="Hand sketch of the holder, isometric view"></button>
+    </div>
+
+    <p>
+      With that in mind, I measured my car's interior and came up with a design. My Honda Civic Hatchback came with a privacy cover that rested on two rails on either side of the trunk. When removed, it left the rails as potential mounting points for my holders. I just needed to make these holders long enough to securely hold my 2-piece fishing pole. I made necessary measurements, drew up some hand sketches on the spot, and translated them into CAD.
+    </p>
+  </section>
+
+  <section id="prototyping" class="writeup divided">
+    <h2>Prototyping</h2>
+    <p>
+      I modeled the holder in SolidWorks and went through three versions. V1 was a quick prototype, and it taught me plenty. The holder was too short to reach the end of the pole, and the indent cut was too small. V2 fixed those issues, and did the job, but after some testing (repeatedly driving over parking lot speedbumps), the pole jumped right out of the holder. V3 added taller walls to address this, with tighter cuts to create a secure interference fit onto the rails.
+    </p>
+
+    <div class="gallery cad" data-gallery="cad">
+      <button type="button" aria-label="Enlarge CAD model, version 1"><img src="images/cad-v1.jpg" alt="SolidWorks model, version 1"></button>
+      <button type="button" aria-label="Enlarge CAD model, version 2"><img src="images/cad-v2.jpg" alt="SolidWorks model, version 2"></button>
+      <button type="button" aria-label="Enlarge CAD model, version 3"><img src="images/cad-v3.jpg" alt="SolidWorks model, version 3, final design"></button>
+    </div>
+
+    <p>
+      3D printing was the ideal method for fabricating the holders. Iteration was easy, and the Bambu Lab X1C at ISU's makerspace was free to use. The only cost was the PLA filament, which totaled about $2.87. With only 5% infill, the parts were plenty durable. The holders were two unique designs, because one end of the pole was the large handle, while the other was the small rod end. 
+    </p>
+  </section>
+
+  <section id="results" class="writeup divided">
+    <h2>Results</h2>
+    <p>
+      The holder was a success. I just open the trunk, place the pole into the slot, and drive. There's no rattle, plenty of space below for groceries, and it's easily replaceable. When I need to store a large item, I can remove the holders in seconds, because they're held in place with the help of gravity and friction. I used it for over 10 months, until summer arrived. A warped holder made me switch over to PETG, which is what you see below. I wish I had black PETG at the time, so I could get that OEM look, but clear PETG does the job.
+    </p>
+
+    <div class="results-grid" data-gallery="results">
+      <button type="button" aria-label="Enlarge photo: holder with the pole tip"><img src="images/result-4.jpg" alt="Printed holder supporting the thin end of the pole"></button>
+      <button type="button" aria-label="Enlarge photo: holder gripping the pole handle"><img src="images/result-3.jpg" alt="Printed holder gripping the pole handle in the trunk indent"></button>
+      <button type="button" aria-label="Enlarge photo: pole mounted across the trunk"><img src="images/result-1.jpg" alt="Fishing pole suspended across the trunk between the two holders"></button>
+      <button type="button" aria-label="Enlarge photo: reel hanging below the pole"><img src="images/result-2.jpg" alt="Spinning reel hanging below the pole with the trunk floor free underneath"></button>
+    </div>
+  </section>
+
+  <footer>
+    <span>Sam Nguyen — Mechanical Engineering, Iowa State University</span>
+    <a class="home" href="index.html">HOME</a>
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" tabindex="-1">
+  <button type="button" class="lb-prev" aria-label="Previous image">&larr;</button>
+  <img id="lb-img" src="" alt="">
+  <button type="button" class="lb-next" aria-label="Next image">&rarr;</button>
+</div>
+
+<script src="sin-wave.js"></script>
+<script src="bg-trout.js"></script>
+
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lb-img');
+  var prevBtn = lb.querySelector('.lb-prev');
+  var nextBtn = lb.querySelector('.lb-next');
+  var current = [];
+  var index = 0;
+  var lastFocus = null;
+
+  function show(i) {
+    index = (i + current.length) % current.length;
+    var img = current[index];
+    lbImg.src = img.getAttribute('src');
+    lbImg.alt = img.getAttribute('alt') || '';
+    var multi = current.length > 1;
+    prevBtn.style.display = multi ? '' : 'none';
+    nextBtn.style.display = multi ? '' : 'none';
+  }
+
+  function open(group, i) {
+    current = Array.prototype.slice.call(group.querySelectorAll('img'));
+    lastFocus = document.activeElement;
+    show(i);
+    lb.classList.add('open');
+    lb.focus();
+  }
+
+  function close() {
+    lb.classList.remove('open');
+    lbImg.src = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-gallery]'), function (group) {
+    var buttons = group.querySelectorAll('button');
+    Array.prototype.forEach.call(buttons, function (btn, i) {
+      btn.addEventListener('click', function () { open(group, i); });
+    });
+  });
+
+  prevBtn.addEventListener('click', function () { show(index - 1); });
+  nextBtn.addEventListener('click', function () { show(index + 1); });
+
+  lb.addEventListener('click', function (e) {
+    if (e.target === lb) close();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowLeft') show(index - 1);
+    else if (e.key === 'ArrowRight') show(index + 1);
+  });
+})();
+
+/* Static Bayer-dithered CAD V3 renderer (using exact specs from bg-trout.js) */
+(function () {
+  'use strict';
+
+  var cv = document.getElementById('cad-dither');
+  if (!cv) return;
+
+  var TILE_SIZE = 5;
+  var TILE_DOT = 1;
+  var TILE_ALPHA_CUT = 23;
+  var DISPLAY_SIZE = 200;
+
+  function bayerRanks(n) {
+    var s = 1, m = [[0]], x, y, size, add = [[0, 2], [3, 1]];
+    while (s < n) s *= 2;
+    for (size = 1; size < s; size *= 2) {
+      var m2 = [];
+      for (y = 0; y < size * 2; y++) {
+        m2.push([]);
+        for (x = 0; x < size * 2; x++) {
+          m2[y].push(4 * m[y % size][x % size] + add[Math.floor(y / size)][Math.floor(x / size)]);
+        }
+      }
+      m = m2;
+    }
+    var list = [];
+    for (y = 0; y < n; y++) for (x = 0; x < n; x++) list.push({ i: y * n + x, v: m[y][x] });
+    list.sort(function (a, b) { return a.v - b.v; });
+    var out = new Array(n * n);
+    for (var r = 0; r < list.length; r++) out[list[r].i] = r;
+    return out;
+  }
+
+  /* Normalized silhouette polygon around the V3 CAD block so any ground shadow
+     outside the part boundary is cleanly excluded along with the studio backdrop. */
+  var SILHOUETTE = [
+    [0.508, 0.002],
+    [0.928, 0.232],
+    [0.942, 0.258],
+    [0.942, 0.605],
+    [0.908, 0.748],
+    [0.802, 0.812],
+    [0.682, 0.735],
+    [0.688, 0.858],
+    [0.482, 0.990],
+    [0.435, 0.990],
+    [0.025, 0.752],
+    [0.025, 0.285],
+    [0.048, 0.258]
+  ];
+
+  function inSilhouette(nx, ny) {
+    var inside = false;
+    for (var i = 0, j = SILHOUETTE.length - 1; i < SILHOUETTE.length; j = i++) {
+      var xi = SILHOUETTE[i][0], yi = SILHOUETTE[i][1];
+      var xj = SILHOUETTE[j][0], yj = SILHOUETTE[j][1];
+      if (((yi > ny) !== (yj > ny)) && (nx < (xj - xi) * (ny - yi) / (yj - yi) + xi)) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  var img = new Image();
+  img.src = 'images/cad-v3.jpg';
+
+  function render() {
+    if (!img.complete || !img.naturalWidth) return;
+
+    var T = TILE_SIZE;
+    var Dt = Math.max(1, TILE_DOT);
+    var n = Math.max(1, Math.floor(T / Dt));
+    var n2 = n * n;
+    var tileRanks = bayerRanks(n);
+
+    var w = DISPLAY_SIZE;
+    var h = Math.round(DISPLAY_SIZE * (img.naturalHeight / img.naturalWidth));
+    var wc = Math.floor(w / T);
+    var hc = Math.floor(h / T);
+
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    cv.style.width = w + 'px';
+    cv.style.height = h + 'px';
+
+    /* Sample image at full resolution to strip the background and map CAD shading to density */
+    var raw = document.createElement('canvas');
+    raw.width = w;
+    raw.height = h;
+    var rctx = raw.getContext('2d', { willReadFrequently: true });
+    rctx.drawImage(img, 0, 0, w, h);
+    var rdata = rctx.getImageData(0, 0, w, h).data;
+
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var idx = (y * w + x) * 4;
+        var r = rdata[idx], g = rdata[idx + 1], b = rdata[idx + 2];
+        var lum = 0.299 * r + 0.587 * g + 0.114 * b;
+        var blueTint = b - r;
+
+        /* The CAD model has a cool slate tint (blue > red) and mid-grey luminance,
+           whereas the backdrop and ground shadow are neutral white/grey. */
+        if (!inSilhouette(x / w, y / h) || lum > 212 || (blueTint < 6 && lum > 150)) {
+          rdata[idx + 3] = 0;
+        } else {
+          /* Map darker CAD faces and wireframe creases to higher dot density (0.22 .. 0.95) */
+          var norm = (lum - 55) / (190 - 55);
+          if (norm < 0) norm = 0;
+          if (norm > 1) norm = 1;
+          var dens = 0.22 + (1 - norm) * 0.73;
+          var val = Math.round(dens * 255);
+          rdata[idx] = val;
+          rdata[idx + 1] = val;
+          rdata[idx + 2] = val;
+          rdata[idx + 3] = 255;
+        }
+      }
+    }
+    rctx.putImageData(new ImageData(rdata, w, h), 0, 0);
+
+    /* Downsample into 1px-per-cell canvas just like fx in bg-trout.js */
+    var fx = document.createElement('canvas');
+    fx.width = wc;
+    fx.height = hc;
+    var fxctx = fx.getContext('2d', { willReadFrequently: true });
+    fxctx.drawImage(raw, 0, 0, wc, hc);
+    var d = fxctx.getImageData(0, 0, wc, hc).data;
+
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    var inkColor = getComputedStyle(document.body).getPropertyValue('--ink').trim() || '#e5e5e5';
+    ctx.fillStyle = inkColor;
+    ctx.beginPath();
+
+    for (var cy = 0; cy < hc; cy++) {
+      for (var cx = 0; cx < wc; cx++) {
+        var p = (cy * wc + cx) * 4, a = d[p + 3];
+        if (a < TILE_ALPHA_CUT) continue;
+        var lit = (d[p] / 255) * (a / 255) * n2;
+        if (lit <= 0) continue;
+        var bx = cx * T, by = cy * T;
+        for (var ty = 0; ty < n; ty++) {
+          for (var tx = 0; tx < n; tx++) {
+            if (lit > tileRanks[ty * n + tx]) {
+              ctx.rect(bx + tx * Dt, by + ty * Dt, Dt, Dt);
+            }
+          }
+        }
+      }
+    }
+    ctx.fill();
+  }
+
+  img.onload = render;
+  if (img.complete) render();
+})();
+</script>
+
+</body>
+</html>
