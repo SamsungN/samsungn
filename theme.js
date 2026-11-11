@@ -18,15 +18,15 @@
    - Clicking the name in the index hero (.hero h1) flips the theme by hand. The override lasts
      until the next real sunrise/sunset, or until the page reloads.
    - Shares the animated theme with the canvases (sin-wave.js, trout.js):
-       window.siteTheme.mix             0 = night ... 1 = day (animated)
-       window.siteTheme.isDay()         true if the target theme is day
-       window.siteTheme.blend(n, d)     blends a number (or equal-length array) from night to day
-       window.siteTheme.color(key)      current [r,g,b] of a palette key ('bg','ink','inkSoft','accent')
-       window.siteTheme.rgb(key)        the same, as a "r,g,b" string for rgba(...) use
-       window.siteTheme.accent()        current accent as [r,g,b]
-       window.siteTheme.accentRGB()     current accent as a "r,g,b" string
-       window.siteTheme.waveLine()      [r,g,b] of the faint background wave lines
-       window 'themechange' event       fires on every step of the fade
+       window.siteTheme.mix              0 = night ... 1 = day (animated)
+       window.siteTheme.isDay()          true if the target theme is day
+       window.siteTheme.blend(n, d)      blends a number (or equal-length array) from night to day
+       window.siteTheme.color(key)       current [r,g,b] of a palette key ('bg','ink','inkSoft','accent')
+       window.siteTheme.rgb(key)         the same, as a "r,g,b" string for rgba(...) use
+       window.siteTheme.accent()         current accent as [r,g,b]
+       window.siteTheme.accentRGB()      current accent as a "r,g,b" string
+       window.siteTheme.waveLine()       [r,g,b] of the faint background wave lines
+       window 'themechange' event        fires on every step of the fade
 */
 (function () {
   'use strict';
@@ -177,6 +177,12 @@
   // the name is the hidden toggle: no tap flash on phones
   css.push('.hero h1 { -webkit-tap-highlight-color: transparent; }');
 
+  // scroll reveal: sections fade in the first time they enter the screen
+  css.push('@keyframes revealFade { from { opacity: 0; } to { opacity: 1; } }');
+  css.push('.reveal { opacity: 0; }');
+  css.push('.reveal.in { opacity: 1; animation: revealFade 0.9s ease; }');
+  css.push('@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; } .reveal.in { animation: none; } }');
+
   var styleEl = document.createElement('style');
   styleEl.setAttribute('data-theme-styles', '');
   styleEl.textContent = css.join('\n');
@@ -263,7 +269,7 @@
   });
 
   /* ------------------------------------------------------------------
-     HIDDEN TOGGLE: click the name in the index hero
+     HIDDEN TOGGLE + SCROLL REVEAL
      ------------------------------------------------------------------ */
   function wireToggle() {
     var el = document.querySelector('.hero h1');
@@ -278,6 +284,38 @@
     });
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wireToggle);
-  else wireToggle();
+  function wireReveal() {
+    if (!('IntersectionObserver' in window)) return;
+    if (reduceMotion) return;
+
+    var items = Array.prototype.slice.call(
+      document.querySelectorAll('.content > .group-title, .content > section, .content > footer')
+    );
+    if (!items.length) return;
+    var vh = window.innerHeight;
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        en.target.classList.add('in');
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -6% 0px' });
+
+    items.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < vh * 0.92) return;   // already on screen at load: stays visible
+
+      el.classList.add('reveal');
+      io.observe(el);
+    });
+  }
+
+  function onReady() {
+    wireToggle();
+    wireReveal();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', onReady);
+  else onReady();
 })();
